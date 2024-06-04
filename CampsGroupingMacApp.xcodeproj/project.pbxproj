@@ -11,7 +11,6 @@
 		6D11AE7B2C08F78200ADC811 /* GrouperEventSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D11AE7A2C08F78200ADC811 /* GrouperEventSpace.swift */; };
 		6D1E615A2BAC915B001F3762 /* CampsGroupingMacAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */; };
 		6D1E615C2BAC915B001F3762 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E615B2BAC915B001F3762 /* ContentView.swift */; };
-		6D1E615E2BAC915B001F3762 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E615D2BAC915B001F3762 /* Item.swift */; };
 		6D1E61602BAC915D001F3762 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1E615F2BAC915D001F3762 /* Assets.xcassets */; };
 		6D1E61642BAC915D001F3762 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D1E61632BAC915D001F3762 /* Preview Assets.xcassets */; };
 		6D1E616E2BAC915D001F3762 /* CampsGroupingMacAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E616D2BAC915D001F3762 /* CampsGroupingMacAppTests.swift */; };
@@ -19,10 +18,12 @@
 		6D1E617A2BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E61792BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift */; };
 		6D254F8D2C0E8C9D00684B62 /* CampsAccessAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */; };
 		6D254F922C0E993800684B62 /* AuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F912C0E993800684B62 /* AuthenticationError.swift */; };
-		6D254F942C0EA1E700684B62 /* SignInPannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F932C0EA1E700684B62 /* SignInPannelView.swift */; };
-		6D254F962C0EA26700684B62 /* SignInPannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */; };
+		6D254F942C0EA1E700684B62 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F932C0EA1E700684B62 /* SignInView.swift */; };
+		6D254F962C0EA26700684B62 /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F952C0EA26700684B62 /* SignInViewModel.swift */; };
 		6D254F992C0EAD7600684B62 /* SignInActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F982C0EAD7600684B62 /* SignInActionHandler.swift */; };
 		6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */; };
+		6D254F9D2C0F529E00684B62 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F9C2C0F529E00684B62 /* Strings.swift */; };
+		6D254FA22C0F55CC00684B62 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6D254FA12C0F55CC00684B62 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,7 +49,6 @@
 		6D1E61562BAC915B001F3762 /* CampsGroupingMacApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CampsGroupingMacApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsGroupingMacAppApp.swift; sourceTree = "<group>"; };
 		6D1E615B2BAC915B001F3762 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		6D1E615D2BAC915B001F3762 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		6D1E615F2BAC915D001F3762 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D1E61612BAC915D001F3762 /* CampsGroupingMacApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CampsGroupingMacApp.entitlements; sourceTree = "<group>"; };
 		6D1E61632BAC915D001F3762 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -59,10 +59,12 @@
 		6D1E61792BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsGroupingMacAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsAccessAccount.swift; sourceTree = "<group>"; };
 		6D254F912C0E993800684B62 /* AuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationError.swift; sourceTree = "<group>"; };
-		6D254F932C0EA1E700684B62 /* SignInPannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInPannelView.swift; sourceTree = "<group>"; };
-		6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInPannelViewModel.swift; sourceTree = "<group>"; };
+		6D254F932C0EA1E700684B62 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		6D254F952C0EA26700684B62 /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		6D254F982C0EAD7600684B62 /* SignInActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInActionHandler.swift; sourceTree = "<group>"; };
 		6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInLogicController.swift; sourceTree = "<group>"; };
+		6D254F9C2C0F529E00684B62 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		6D254FA12C0F55CC00684B62 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,12 +124,12 @@
 			isa = PBXGroup;
 			children = (
 				6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */,
-				6D254F902C0E97E900684B62 /* View */,
-				6D254F8F2C0E97D000684B62 /* ViewModels */,
+				6D11AE792C08ED3B00ADC811 /* EventCoordinator */,
 				6D254F8E2C0E97C700684B62 /* Models */,
 				6D254F972C0EAD6400684B62 /* Logic */,
-				6D11AE792C08ED3B00ADC811 /* EventCoordinator */,
-				6D1E615D2BAC915B001F3762 /* Item.swift */,
+				6D254F8F2C0E97D000684B62 /* ViewModels */,
+				6D254F902C0E97E900684B62 /* View */,
+				6D254FA02C0F553000684B62 /* Resources */,
 				6D1E615F2BAC915D001F3762 /* Assets.xcassets */,
 				6D1E61612BAC915D001F3762 /* CampsGroupingMacApp.entitlements */,
 				6D1E61622BAC915D001F3762 /* Preview Content */,
@@ -163,6 +165,7 @@
 		6D254F8E2C0E97C700684B62 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6D254F9C2C0F529E00684B62 /* Strings.swift */,
 				6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */,
 				6D254F912C0E993800684B62 /* AuthenticationError.swift */,
 			);
@@ -172,7 +175,7 @@
 		6D254F8F2C0E97D000684B62 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */,
+				6D254F952C0EA26700684B62 /* SignInViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -181,7 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				6D1E615B2BAC915B001F3762 /* ContentView.swift */,
-				6D254F932C0EA1E700684B62 /* SignInPannelView.swift */,
+				6D254F932C0EA1E700684B62 /* SignInView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -194,6 +197,14 @@
 				6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */,
 			);
 			path = Logic;
+			sourceTree = "<group>";
+		};
+		6D254FA02C0F553000684B62 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6D254FA12C0F55CC00684B62 /* Localizable.xcstrings */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -302,6 +313,7 @@
 			files = (
 				6D1E61642BAC915D001F3762 /* Preview Assets.xcassets in Resources */,
 				6D1E61602BAC915D001F3762 /* Assets.xcassets in Resources */,
+				6D254FA22C0F55CC00684B62 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,16 +338,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D254F942C0EA1E700684B62 /* SignInPannelView.swift in Sources */,
+				6D254F942C0EA1E700684B62 /* SignInView.swift in Sources */,
 				6D11AE782C08D46F00ADC811 /* EventCoordinator.swift in Sources */,
 				6D1E615C2BAC915B001F3762 /* ContentView.swift in Sources */,
 				6D254F992C0EAD7600684B62 /* SignInActionHandler.swift in Sources */,
 				6D254F922C0E993800684B62 /* AuthenticationError.swift in Sources */,
 				6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */,
-				6D1E615E2BAC915B001F3762 /* Item.swift in Sources */,
 				6D11AE7B2C08F78200ADC811 /* GrouperEventSpace.swift in Sources */,
 				6D254F8D2C0E8C9D00684B62 /* CampsAccessAccount.swift in Sources */,
-				6D254F962C0EA26700684B62 /* SignInPannelViewModel.swift in Sources */,
+				6D254F962C0EA26700684B62 /* SignInViewModel.swift in Sources */,
+				6D254F9D2C0F529E00684B62 /* Strings.swift in Sources */,
 				6D1E615A2BAC915B001F3762 /* CampsGroupingMacAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -493,6 +505,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CampsGroupingMacApp/CampsGroupingMacApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CampsGroupingMacApp/Preview Content\"";
@@ -531,6 +544,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CampsGroupingMacApp/CampsGroupingMacApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CampsGroupingMacApp/Preview Content\"";

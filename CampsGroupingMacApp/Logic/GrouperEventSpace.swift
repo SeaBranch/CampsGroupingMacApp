@@ -12,7 +12,7 @@ enum GrouperEventSpace: EventSpace {
         var accounts: [CampAccessAccount] = []
         var activeSignIn: UUID?
         var activeSignInError: AuthenticationError?
-        var signinPannelState: SignInPannelState? = SignInPannelState()
+        var signInFormState: SignInFormState? = SignInFormState()
 
         var isAuthenticated: Bool {
             !accounts.isEmpty
@@ -21,7 +21,7 @@ enum GrouperEventSpace: EventSpace {
 
     enum Event {
         case didSignOut
-        case didEditSignInPannel(email: String, password: String)
+        case didEditSignInForm(email: String, password: String)
         case didSelectSignIn(email: String, password: String, fetchID: UUID = UUID())
         case didSignIn(accounts: [CampAccessAccount], fetchID: UUID)
         case didFailSignIn(fetchID: UUID, error: AuthenticationError)
@@ -34,12 +34,12 @@ enum GrouperEventSpace: EventSpace {
     static func handle(event: Event, state: inout State) -> [Action] {
         switch event {
         case .didSignOut:
-            state.signinPannelState = SignInPannelState()
+            state.signInFormState = SignInFormState()
             state.accounts = []
             state.activeSignIn = nil
             state.activeSignInError = nil
-        case .didEditSignInPannel(let email, let password):
-            state.signinPannelState = SignInPannelState(email: email, password: password)
+        case .didEditSignInForm(let email, let password):
+            state.signInFormState = SignInFormState(email: email, password: password)
         case .didSelectSignIn(let username, let password, let fetchID):
             state.activeSignIn = fetchID
             return [.signIn(username: username, password: password, fetchID: fetchID)]
@@ -47,7 +47,7 @@ enum GrouperEventSpace: EventSpace {
             if state.activeSignIn == fetchID {
                 state.activeSignIn = nil
                 state.accounts = accounts
-                state.signinPannelState = nil
+                state.signInFormState = nil
             }
         case .didFailSignIn(let fetchID, let error):
             if state.activeSignIn == fetchID {
@@ -63,7 +63,7 @@ enum GrouperEventSpace: EventSpace {
 
 // MARK: Leaf States
 
-struct SignInPannelState: Equatable {
+struct SignInFormState: Equatable {
     private enum Constant {
         static let minPasswordLength = 8
         static let emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
@@ -73,7 +73,7 @@ struct SignInPannelState: Equatable {
     var password: String = ""
 
     var isValidFormData: Bool {
-        false
+        isValidEmail && isValidPassword
     }
 
     var isValidEmail: Bool {

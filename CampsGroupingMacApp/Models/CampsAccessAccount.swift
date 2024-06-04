@@ -24,7 +24,7 @@ struct CampAccessAccountInfo: Equatable, Identifiable, Hashable, Codable {
     let firstName: String
     let lastName: String
     let email: String
-    let accountNumber: String
+    let accountNumber: Int
     let accessKey: String
     let isUser: Bool
     let avatarUrl: String
@@ -47,7 +47,7 @@ struct CampAccessAccountInfo: Equatable, Identifiable, Hashable, Codable {
 
 struct AuthenticationResponse: Equatable, Hashable, Codable {
     let data: AuthenticationData
-    let metaData: AuthenticationMetaData
+    let metadata: AuthenticationMetaData
 }
 
 struct AuthenticationData: Equatable, Hashable, Codable {

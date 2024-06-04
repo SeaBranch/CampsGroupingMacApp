@@ -8,28 +8,28 @@
 import Combine
 import SwiftUI
 
-struct SignInPannelViewModelState: Equatable {
+struct SignInViewModelState: Equatable {
     var error: AuthenticationError?
     var isLoading: Bool
-    var pannelState: SignInPannelState
+    var formState: SignInFormState
 
-    init(error: AuthenticationError? = nil, isLoading: Bool = false, pannelState: SignInPannelState = SignInPannelState()) {
+    init(error: AuthenticationError? = nil, isLoading: Bool = false, formState: SignInFormState = SignInFormState()) {
         self.error = error
         self.isLoading = isLoading
-        self.pannelState = pannelState
+        self.formState = formState
     }
 
     init(state: GrouperEventSpace.State) {
         self.init(
             error: state.activeSignInError,
             isLoading: state.activeSignIn != nil,
-            pannelState: state.signinPannelState ?? SignInPannelState()
+            formState: state.signInFormState ?? SignInFormState()
         )
     }
 }
 
-class SignInPannelViewModel: ObservableObject, Observable {
-    @Published var vmState: SignInPannelViewModelState
+class SignInViewModel: ObservableObject, Observable {
+    @Published var vmState: SignInViewModelState
 
     private var onEvent: (GrouperEventSpace.Event) -> Void
     private var stateSubscription: AnyCancellable?
@@ -42,7 +42,7 @@ class SignInPannelViewModel: ObservableObject, Observable {
         self.onEvent = onEvent
         vmState = .init(state: state)
         stateSubscription = statePublisher
-            .map { SignInPannelViewModelState(state: $0) }
+            .map { SignInViewModelState(state: $0) }
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .assign(to: \.vmState, on: self)
@@ -55,7 +55,7 @@ class SignInPannelViewModel: ObservableObject, Observable {
     }
 
     func didSelectSignIn() {
-        let pannelState = self.vmState.pannelState
+        let pannelState = self.vmState.formState
 
         if pannelState.isValidFormData {
             onEvent(.didSelectSignIn(email: pannelState.email, password: pannelState.password))
@@ -63,6 +63,6 @@ class SignInPannelViewModel: ObservableObject, Observable {
     }
 
     func didEditForm() {
-        onEvent(.didEditSignInPannel(email: vmState.pannelState.email, password: vmState.pannelState.password))
+        onEvent(.didEditSignInForm(email: vmState.formState.email, password: vmState.formState.password))
     }
 }

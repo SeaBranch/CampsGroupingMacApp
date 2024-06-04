@@ -11,7 +11,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+//    @Query private var items: [Item]
 
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
 
@@ -19,7 +19,7 @@ struct ContentView: View {
         if coordinator.state.isAuthenticated {
             splitNav()
         } else {
-            SignInPannelView()
+            SignInView()
         }
     }
 
@@ -27,14 +27,13 @@ struct ContentView: View {
     func splitNav() -> some View {
         NavigationSplitView {
             List {
-                ForEach(items) { item in
+                ForEach(coordinator.state.accounts) { account in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        Text(account.scope.rawValue)
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Text(account.scope.rawValue)
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
 #if os(macOS)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
@@ -45,41 +44,26 @@ struct ContentView: View {
                     EditButton()
                 }
 #endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+//                ToolbarItem {
+//                    Button(action: addItem) {
+//                        Label("Add Item", systemImage: "plus")
+//                    }
+//                }
             }
         } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+            Text(Strings.selectACampsCategory)
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+//        .modelContainer(for: Item.self, inMemory: true)
         .environmentObject(
             EventCoordinator<GrouperEventSpace>(state: .init())
         )
         .environmentObject(
-            SignInPannelViewModel(
+            SignInViewModel(
                 state: .init(),
                 statePublisher: Just(GrouperEventSpace.State()).eraseToAnyPublisher(),
                 onEvent: { _ in }

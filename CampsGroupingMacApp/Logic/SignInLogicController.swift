@@ -11,8 +11,10 @@ private enum Constant {
     static var defaultHeaders: [String : String] {
         [
             "Content-Type":"application/json",
-            "Accept":"application/json",
-            "ApplicationToken":"QmFzZWNhbXAgSGVhZHF1YXJ0ZXJz"
+            "Accept":"*/*",
+            "ApplicationToken":"QmFzZWNhbXAgSGVhZHF1YXJ0ZXJz",
+            "Connection":"keep-alive",
+            "Accept-Encoding":"gzip, deflate, br"
         ]
     }
 
@@ -43,15 +45,19 @@ class SignInLogicController: SignInLogicControllerProtocol {
                 } else {
                     completion(.success(accounts))
                 }
-            case .failure(let nsError):
-                completion(.failure(AuthenticationError.fromNSError(nsError)))
+            case .failure(let error):
+                if let decodingError = error as? DecodingError {
+                    completion(.failure(AuthenticationError.decodingError(decodingError)))
+                } else {
+                    completion(.failure(AuthenticationError.fromNSError(error as NSError)))
+                }
             }
         }
     }
 }
 
 protocol SignInCommunicatorProtocol {
-    func signIn(body: AuthenticationRequestBody, completion: @escaping (Result<AuthenticationResponse, NSError>) -> Void)
+    func signIn(body: AuthenticationRequestBody, completion: @escaping (Result<AuthenticationResponse, Error>) -> Void)
 }
 
 class SignInCommunicator: SignInCommunicatorProtocol {
@@ -66,7 +72,7 @@ class SignInCommunicator: SignInCommunicatorProtocol {
         self.defaultHeaders = defaultHeaders
     }
 
-    func signIn(body: AuthenticationRequestBody, completion: @escaping (Result<AuthenticationResponse, NSError>) -> Void) {
+    func signIn(body: AuthenticationRequestBody, completion: @escaping (Result<AuthenticationResponse, Error>) -> Void) {
         var request = URLRequest(url: Constant.signInURL)
         request.httpMethod = "POST"
         defaultHeaders.forEach { key, value in
@@ -90,11 +96,15 @@ class SignInCommunicator: SignInCommunicatorProtocol {
                 return
             }
 
-            if let data = data,
-               let responseObject = try? JSONDecoder().decode(AuthenticationResponse.self, from: data) {
-                completion(.success(responseObject))
-            } else {
-                completion(.failure(NSError(domain: Constant.signInEndpoint, code: 404)))
+            do {
+                if let data = data {
+                    let responseObject = try JSONDecoder().decode(AuthenticationResponse.self, from: data)
+                    completion(.success(responseObject))
+                } else {
+                    completion(.failure(NSError(domain: Constant.signInEndpoint, code: 404)))
+                }
+            } catch {
+                completion(.failure(error))
             }
         }.resume()
     }
