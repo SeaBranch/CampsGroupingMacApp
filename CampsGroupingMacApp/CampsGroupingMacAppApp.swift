@@ -10,6 +10,15 @@ import SwiftData
 
 @main
 struct CampsGroupingMacAppApp: App {
+    var coordinator: EventCoordinator<GrouperEventSpace> {
+        EventCoordinator<GrouperEventSpace>(
+            state: GrouperEventSpace.State(),
+            actionHandlers: [
+                SignInActionHandler()
+            ]
+        )
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -24,9 +33,13 @@ struct CampsGroupingMacAppApp: App {
     }()
 
     var body: some Scene {
+        let coordinator = self.coordinator
+
         WindowGroup {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
+        .environmentObject(coordinator)
+        .environmentObject(SignInPannelViewModel(coordinator: coordinator))
     }
 }

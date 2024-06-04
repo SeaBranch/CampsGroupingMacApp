@@ -5,6 +5,7 @@
 //  Created by Nathan Sjoquist on 3/21/24.
 //
 
+import Combine
 import SwiftUI
 import SwiftData
 
@@ -12,7 +13,18 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
+    @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
+
     var body: some View {
+        if coordinator.state.isAuthenticated {
+            splitNav()
+        } else {
+            SignInPannelView()
+        }
+    }
+
+    @ViewBuilder
+    func splitNav() -> some View {
         NavigationSplitView {
             List {
                 ForEach(items) { item in
@@ -63,4 +75,14 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .modelContainer(for: Item.self, inMemory: true)
+        .environmentObject(
+            EventCoordinator<GrouperEventSpace>(state: .init())
+        )
+        .environmentObject(
+            SignInPannelViewModel(
+                state: .init(),
+                statePublisher: Just(GrouperEventSpace.State()).eraseToAnyPublisher(),
+                onEvent: { _ in }
+            )
+        )
 }

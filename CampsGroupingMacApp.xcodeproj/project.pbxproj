@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D11AE782C08D46F00ADC811 /* EventCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D11AE772C08D46F00ADC811 /* EventCoordinator.swift */; };
+		6D11AE7B2C08F78200ADC811 /* GrouperEventSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D11AE7A2C08F78200ADC811 /* GrouperEventSpace.swift */; };
 		6D1E615A2BAC915B001F3762 /* CampsGroupingMacAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */; };
 		6D1E615C2BAC915B001F3762 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E615B2BAC915B001F3762 /* ContentView.swift */; };
 		6D1E615E2BAC915B001F3762 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E615D2BAC915B001F3762 /* Item.swift */; };
@@ -15,6 +17,12 @@
 		6D1E616E2BAC915D001F3762 /* CampsGroupingMacAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E616D2BAC915D001F3762 /* CampsGroupingMacAppTests.swift */; };
 		6D1E61782BAC915D001F3762 /* CampsGroupingMacAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E61772BAC915D001F3762 /* CampsGroupingMacAppUITests.swift */; };
 		6D1E617A2BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1E61792BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift */; };
+		6D254F8D2C0E8C9D00684B62 /* CampsAccessAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */; };
+		6D254F922C0E993800684B62 /* AuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F912C0E993800684B62 /* AuthenticationError.swift */; };
+		6D254F942C0EA1E700684B62 /* SignInPannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F932C0EA1E700684B62 /* SignInPannelView.swift */; };
+		6D254F962C0EA26700684B62 /* SignInPannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */; };
+		6D254F992C0EAD7600684B62 /* SignInActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F982C0EAD7600684B62 /* SignInActionHandler.swift */; };
+		6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6D11AE772C08D46F00ADC811 /* EventCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCoordinator.swift; sourceTree = "<group>"; };
+		6D11AE7A2C08F78200ADC811 /* GrouperEventSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrouperEventSpace.swift; sourceTree = "<group>"; };
 		6D1E61562BAC915B001F3762 /* CampsGroupingMacApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CampsGroupingMacApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsGroupingMacAppApp.swift; sourceTree = "<group>"; };
 		6D1E615B2BAC915B001F3762 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -47,6 +57,12 @@
 		6D1E61732BAC915D001F3762 /* CampsGroupingMacAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CampsGroupingMacAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D1E61772BAC915D001F3762 /* CampsGroupingMacAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsGroupingMacAppUITests.swift; sourceTree = "<group>"; };
 		6D1E61792BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsGroupingMacAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsAccessAccount.swift; sourceTree = "<group>"; };
+		6D254F912C0E993800684B62 /* AuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationError.swift; sourceTree = "<group>"; };
+		6D254F932C0EA1E700684B62 /* SignInPannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInPannelView.swift; sourceTree = "<group>"; };
+		6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInPannelViewModel.swift; sourceTree = "<group>"; };
+		6D254F982C0EAD7600684B62 /* SignInActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInActionHandler.swift; sourceTree = "<group>"; };
+		6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInLogicController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +90,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6D11AE792C08ED3B00ADC811 /* EventCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				6D11AE772C08D46F00ADC811 /* EventCoordinator.swift */,
+			);
+			path = EventCoordinator;
+			sourceTree = "<group>";
+		};
 		6D1E614D2BAC915B001F3762 = {
 			isa = PBXGroup;
 			children = (
@@ -98,7 +122,11 @@
 			isa = PBXGroup;
 			children = (
 				6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */,
-				6D1E615B2BAC915B001F3762 /* ContentView.swift */,
+				6D254F902C0E97E900684B62 /* View */,
+				6D254F8F2C0E97D000684B62 /* ViewModels */,
+				6D254F8E2C0E97C700684B62 /* Models */,
+				6D254F972C0EAD6400684B62 /* Logic */,
+				6D11AE792C08ED3B00ADC811 /* EventCoordinator */,
 				6D1E615D2BAC915B001F3762 /* Item.swift */,
 				6D1E615F2BAC915D001F3762 /* Assets.xcassets */,
 				6D1E61612BAC915D001F3762 /* CampsGroupingMacApp.entitlements */,
@@ -130,6 +158,42 @@
 				6D1E61792BAC915D001F3762 /* CampsGroupingMacAppUITestsLaunchTests.swift */,
 			);
 			path = CampsGroupingMacAppUITests;
+			sourceTree = "<group>";
+		};
+		6D254F8E2C0E97C700684B62 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6D254F8C2C0E8C9D00684B62 /* CampsAccessAccount.swift */,
+				6D254F912C0E993800684B62 /* AuthenticationError.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6D254F8F2C0E97D000684B62 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6D254F952C0EA26700684B62 /* SignInPannelViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		6D254F902C0E97E900684B62 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6D1E615B2BAC915B001F3762 /* ContentView.swift */,
+				6D254F932C0EA1E700684B62 /* SignInPannelView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6D254F972C0EAD6400684B62 /* Logic */ = {
+			isa = PBXGroup;
+			children = (
+				6D11AE7A2C08F78200ADC811 /* GrouperEventSpace.swift */,
+				6D254F982C0EAD7600684B62 /* SignInActionHandler.swift */,
+				6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */,
+			);
+			path = Logic;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,8 +326,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D254F942C0EA1E700684B62 /* SignInPannelView.swift in Sources */,
+				6D11AE782C08D46F00ADC811 /* EventCoordinator.swift in Sources */,
 				6D1E615C2BAC915B001F3762 /* ContentView.swift in Sources */,
+				6D254F992C0EAD7600684B62 /* SignInActionHandler.swift in Sources */,
+				6D254F922C0E993800684B62 /* AuthenticationError.swift in Sources */,
+				6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */,
 				6D1E615E2BAC915B001F3762 /* Item.swift in Sources */,
+				6D11AE7B2C08F78200ADC811 /* GrouperEventSpace.swift in Sources */,
+				6D254F8D2C0E8C9D00684B62 /* CampsAccessAccount.swift in Sources */,
+				6D254F962C0EA26700684B62 /* SignInPannelViewModel.swift in Sources */,
 				6D1E615A2BAC915B001F3762 /* CampsGroupingMacAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
