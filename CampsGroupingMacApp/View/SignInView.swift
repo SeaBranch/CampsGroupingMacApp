@@ -16,14 +16,30 @@ private enum Constant {
 
 struct SignInView: View {
     @EnvironmentObject var signInViewModel: SignInViewModel
-    
+
+    @State var isPickingScope: Bool = false
+
     var body: some View {
         VStack {
             Spacer()
             HStack {
                 Spacer()
+                Button {
+                    isPickingScope = true
+                } label: {
+                    Text("Logging into: \(signInViewModel.vmState.formState.scope.rawValue)")
+                }.confirmationDialog("Select a Camps Login Type", isPresented: $isPickingScope, titleVisibility: .visible) {
+                    ForEach(CampsScope.allCases) { scope in
+                        Button(scope.rawValue) {
+                            signInViewModel.vmState.formState.scope = scope
+                        }
+                    }
+                }
+
+                Spacer()
                 signInForm()
                     .frame(maxWidth: Constant.formMaxWidth)
+                Spacer()
                 Spacer()
             }
             Spacer()
@@ -48,33 +64,35 @@ struct SignInView: View {
     }
 
     @ViewBuilder
-    fileprivate func errorOverlay(error: AuthenticationError) -> some View {
+    fileprivate func errorOverlay(error: CampsGroupingAPIError) -> some View {
         VStack {
             switch error {
-            case .badAuthentication(let nSError):
+            case .badAuthentication(let nSError, let endpoint):
                 Text("Bad Authentication: \(nSError.code)")
                     .foregroundStyle(.red)
-            case .noAccess(let nSError):
+            case .noAccess(let nSError, let endpoint):
                 Text("No Access Found: \(nSError.code)")
                     .foregroundStyle(.red)
-            case .forbidden(let nSError):
+            case .forbidden(let nSError, let endpoint):
                 Text("Forbidden: \(nSError.code)")
                     .foregroundStyle(.red)
-            case .tooManyRequests(let nSError):
+            case .tooManyRequests(let nSError, let endpoint):
                 Text("Too Many Requests have been made: \(nSError.code)")
                     .foregroundStyle(.red)
-            case .badRequest(let nSError):
+            case .badRequest(let nSError, let endpoint):
                 Text("Bad Request: \(nSError.code)")
                     .foregroundStyle(.red)
-            case .serviceFailure(let nSError):
+            case .serviceFailure(let nSError, let endpoint):
                 Text("Service Error: \(nSError.code)")
                     .foregroundStyle(.red)
             case .unknownError:
                 Text("Unknown Error :(")
                     .foregroundStyle(.red)
-            case .decodingError(let decodingError):
+            case .decodingError(let decodingError, let endpoint):
                 Text("Could Not Decode Data")
                 Text("\(decodingError)")
+            case .notFound(let error, let endpoint):
+                Text("\(endpoint.path) returned no results")
             }
             Spacer()
         }

@@ -9,11 +9,11 @@ import Combine
 import SwiftUI
 
 struct SignInViewModelState: Equatable {
-    var error: AuthenticationError?
+    var error: CampsGroupingAPIError?
     var isLoading: Bool
     var formState: SignInFormState
 
-    init(error: AuthenticationError? = nil, isLoading: Bool = false, formState: SignInFormState = SignInFormState()) {
+    init(error: CampsGroupingAPIError? = nil, isLoading: Bool = false, formState: SignInFormState = SignInFormState()) {
         self.error = error
         self.isLoading = isLoading
         self.formState = formState
@@ -58,11 +58,11 @@ class SignInViewModel: ObservableObject, Observable {
         let pannelState = self.vmState.formState
 
         if pannelState.isValidFormData {
-            onEvent(.didSelectSignIn(email: pannelState.email, password: pannelState.password))
+            onEvent(.signIn(event: .didSelectSignIn(email: pannelState.email, password: pannelState.password, scope: pannelState.scope)))
         }
     }
 
     func didEditForm() {
-        onEvent(.didEditSignInForm(email: vmState.formState.email, password: vmState.formState.password))
+        onEvent(.signIn(event: .didEditSignInForm(email: vmState.formState.email, password: vmState.formState.password, scope: vmState.formState.scope)))
     }
 }

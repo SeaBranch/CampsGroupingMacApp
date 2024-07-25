@@ -1,10 +1,3 @@
-//
-//  Strings.swift
-//  CampsGroupingMacApp
-//
-//  Created by Nathan Sjoquist on 6/4/24.
-//
-
 import SwiftUI
 
 // MARK: Raw Constants

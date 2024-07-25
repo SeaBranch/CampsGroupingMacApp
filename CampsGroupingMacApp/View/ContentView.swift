@@ -16,22 +16,36 @@ struct ContentView: View {
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
 
     var body: some View {
-        if coordinator.state.isAuthenticated {
-            splitNav()
+        if coordinator.state.isAuthenticated, let scope = coordinator.state.scope {
+            splitNav(navMode: coordinator.state.navigationMode)
         } else {
             SignInView()
         }
     }
 
     @ViewBuilder
-    func splitNav() -> some View {
+    fileprivate func campView(for camp: Camp, andScope scope: CampsScope) -> some View {
+        VStack {
+            Text(camp.title)
+            if let reportID = camp.reportID {
+                Button("Manage Report") {
+                    coordinator.send(event: .camp(event: .didSelectManageReport(camp: camp, scope: scope)))
+                }
+            } else {
+                Text("No Report Found")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func campsSplitNav(scope: CampsScope) -> some View {
         NavigationSplitView {
             List {
-                ForEach(coordinator.state.accounts) { account in
+                ForEach(coordinator.state.camps) { camp in
                     NavigationLink {
-                        Text(account.scope.rawValue)
+                        campView(for: camp, andScope: scope)
                     } label: {
-                        Text(account.scope.rawValue)
+                        Text(camp.title)
                     }
                 }
             }
@@ -39,6 +53,13 @@ struct ContentView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
             .toolbar {
+
+                    ToolbarItem(placement: .navigation) {
+                        Button("Sign Out") {
+                            coordinator.send(event: .menu(event: .didSignOut))
+                        }
+                    }
+
 #if os(iOS)
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
@@ -52,6 +73,27 @@ struct ContentView: View {
             }
         } detail: {
             Text(Strings.selectACampsCategory)
+        }
+    }
+
+    @ViewBuilder
+    func splitNav(navMode: NavigationMode) -> some View {
+        switch navMode {
+        case .signin:
+            Text("Please Sign In")
+        case .camps(let scope):
+            campsSelectionView(scope: scope)
+        case .report:
+            ReportView()
+        }
+    }
+
+    @ViewBuilder
+    func campsSelectionView(scope: CampsScope) -> some View {
+        if coordinator.state.campsResult == nil {
+            ProgressView()
+        } else {
+            campsSplitNav(scope: scope)
         }
     }
 }

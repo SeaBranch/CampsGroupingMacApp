@@ -14,7 +14,7 @@ struct CampsGroupingMacAppApp: App {
         EventCoordinator<GrouperEventSpace>(
             state: GrouperEventSpace.State(),
             actionHandlers: [
-                SignInActionHandler()
+                NetworkActionHandler()
             ]
         )
     }

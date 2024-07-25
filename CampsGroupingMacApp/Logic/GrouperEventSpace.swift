@@ -7,57 +7,76 @@
 
 import Foundation
 
+typealias GrouperState = GrouperEventSpace.State
+typealias GrouperEvent = GrouperEventSpace.Event
+typealias GrouperAction = GrouperEventSpace.Action
+typealias APIEvent = GrouperEvent.APIEvent
+typealias SignInFormEvent = GrouperEvent.SignInFormEvent
+typealias MenuEvent = GrouperEvent.MenuEvent
+typealias CampSpecificEvent = GrouperEvent.CampSpecificEvent
+
 enum GrouperEventSpace: EventSpace {
     struct State: Equatable {
-        var accounts: [CampAccessAccount] = []
+        var accessAccount: CampAccessAccount?
         var activeSignIn: UUID?
-        var activeSignInError: AuthenticationError?
+        var activeSignInError: CampsGroupingAPIError?
         var signInFormState: SignInFormState? = SignInFormState()
+        var navigationMode: NavigationMode = .signin
+
+        var activeCampsFetch: UUID?
+        var campsResult: Result<[Camp], CampsGroupingAPIError>?
+        var selectedCamp: Camp?
+
+        var report: Report?
+
+        var scope: CampsScope? {
+            switch navigationMode {
+            case .signin: nil
+            case .camps(let scope): scope
+            case .report(_, _, let scope): scope
+            }
+        }
 
         var isAuthenticated: Bool {
-            !accounts.isEmpty
+            accessAccount != nil
+        }
+
+        var selectedReportID: ReportID? {
+            selectedCamp?.reportID
+        }
+
+        var camps: [Camp] {
+            switch campsResult {
+            case .success(let camps): camps
+            case .failure: []
+            case nil: []
+            }
         }
     }
 
-    enum Event {
-        case didSignOut
-        case didEditSignInForm(email: String, password: String)
-        case didSelectSignIn(email: String, password: String, fetchID: UUID = UUID())
-        case didSignIn(accounts: [CampAccessAccount], fetchID: UUID)
-        case didFailSignIn(fetchID: UUID, error: AuthenticationError)
+    enum Event: Equatable {
+        case api(event: APIEvent)
+        case signIn(event: SignInFormEvent)
+        case menu(event: MenuEvent)
+        case camp(event: CampSpecificEvent)
     }
 
     enum Action {
-        case signIn(username: String, password: String, fetchID: UUID)
+        case signIn(username: String, password: String, scope: CampsScope, fetchID: UUID)
+        case getCamps(account: CampAccessAccount, scope: CampsScope, fetchID: UUID)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
         switch event {
-        case .didSignOut:
-            state.signInFormState = SignInFormState()
-            state.accounts = []
-            state.activeSignIn = nil
-            state.activeSignInError = nil
-        case .didEditSignInForm(let email, let password):
-            state.signInFormState = SignInFormState(email: email, password: password)
-        case .didSelectSignIn(let username, let password, let fetchID):
-            state.activeSignIn = fetchID
-            return [.signIn(username: username, password: password, fetchID: fetchID)]
-        case .didSignIn(let accounts, let fetchID):
-            if state.activeSignIn == fetchID {
-                state.activeSignIn = nil
-                state.accounts = accounts
-                state.signInFormState = nil
-            }
-        case .didFailSignIn(let fetchID, let error):
-            if state.activeSignIn == fetchID {
-                state.activeSignIn = nil
-                state.accounts = []
-                state.activeSignInError = error
-            }
+        case .api(let event):
+            APIEventReducer.handle(event: event, state: &state)
+        case .signIn(let event):
+            SignInFormEventReducer.handle(event: event, state: &state)
+        case .menu(let event):
+            MenuEventReducer.handle(event: event, state: &state)
+        case .camp(let event):
+            CampSpecificEventReducer.handle(event: event, state: &state)
         }
-
-        return []
     }
 }
 
@@ -71,6 +90,7 @@ struct SignInFormState: Equatable {
 
     var email: String = ""
     var password: String = ""
+    var scope: CampsScope = .camps
 
     var isValidFormData: Bool {
         isValidEmail && isValidPassword
