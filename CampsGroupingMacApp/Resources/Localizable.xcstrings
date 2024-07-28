@@ -23,10 +23,13 @@
     "Bad Request: %lld" : {
 
     },
-    "compare" : {
+    "Begin Grouping" : {
 
     },
     "Could Not Decode Data" : {
+
+    },
+    "Details about selected campers and groups" : {
 
     },
     "email" : {
@@ -43,6 +46,9 @@
 
     },
     "Forbidden: %lld" : {
+
+    },
+    "Grouping" : {
 
     },
     "Handle Directly" : {
@@ -81,13 +87,13 @@
         }
       }
     },
-    "Please Sign In" : {
-
-    },
-    "Rows" : {
+    "Search Campers Needing Grouped" : {
 
     },
     "Search Fields" : {
+
+    },
+    "Search for a camper or group" : {
 
     },
     "Select a Camps Login Type" : {
@@ -104,9 +110,6 @@
       }
     },
     "Service Error: %lld" : {
-
-    },
-    "Set Data Type" : {
 
     },
     "Sign Out" : {
@@ -153,6 +156,9 @@
 
     },
     "Use to Group" : {
+
+    },
+    "View In Table" : {
 
     }
   },

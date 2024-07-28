@@ -4,11 +4,23 @@ import SwiftCSV
 enum ReportID: String, CaseIterable {
     case fatherSonDemo = "https://app.brushfire.com/r/b2abb5b6-4e02-434e-b897-ccb18fce25aa/export"
 
-    var report: Report? {
-        if let csv = try? CSV<Named>(url: URL(string: self.rawValue)!) {
-            Report(csv: csv, campID: campID)
-        } else {
-            nil
+    func getReport(result: @escaping (Result<Report, NSError>) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            do {
+                if let csv = try? CSV<Named>(url: URL(string: self.rawValue)!) {
+                    let report  = Report(csv: csv, campID: campID)
+                    DispatchQueue.main.async {
+                        result(.success(report))
+                    }
+                } else {
+                    throw NSError(domain: "csv", code: 404)
+                }
+            } catch {
+                let nsError = error as NSError
+                DispatchQueue.main.async {
+                    result(.failure(nsError))
+                }
+            }
         }
     }
 
@@ -31,14 +43,16 @@ enum ReportID: String, CaseIterable {
     }
 }
 
+typealias ReportRow = [String: ReportFieldValue?]
+
 struct Report: Equatable {
     let csv: CSV<Named>
     let campID: Int
     var fields: [ReportField]
     
-    var rows: [[String: ReportFieldValue?]] {
+    var rows: [ReportRow] {
         csv.rows.map { rowData in
-            var values = [String: ReportFieldValue?]()
+            var values = ReportRow()
             for field in fields {
                 values[field.fieldName] = value(for: field, in: rowData)
             }
@@ -73,6 +87,10 @@ struct Report: Equatable {
         })
         return changedReport
     }
+
+    func asCamperRows(existingCampers: [Camper] = []) -> [CamperRow] {
+        CamperRow.arrayFromReportAndData(self, campers: existingCampers)
+    }
 }
 
 
@@ -84,6 +102,7 @@ struct ReportField: Equatable, Identifiable {
     let fieldName: String
     var fieldType: ReportFieldType = .string
     var visable: Bool = false
+    var showInTable: Bool = false
     var includeInGrouping: Bool = false
     var handleDirectly: Bool = false
     var equivalance: Double = 1
@@ -93,9 +112,14 @@ struct ReportField: Equatable, Identifiable {
         if let string = rawValue {
             switch fieldType {
             case .string: .string(string)
-            case .int: .int(Int(string))
-            case .bool: .bool(Bool(string))
-            case .zip: .zip(ZipLocation.fromZipString(string))
+            case .fullName: .fullName(string)
+            case .partOfName: .partOfName(string)
+            case .int: .int(Int(string), string)
+            case .bool: .bool(Bool(string), string)
+            case .zip: .zip(ZipLocation.fromZipString(string), string)
+            case .camperID: .camperID(Int(string), string)
+            case .groupID: .groupID(Int(string), string)
+            case .crossroadsSite: .crossroadsSite(string)
             }
         } else {
             .empty
@@ -103,11 +127,16 @@ struct ReportField: Equatable, Identifiable {
     }
 }
 
-enum ReportFieldValue: Equatable {
+enum ReportFieldValue: Equatable, Hashable {
     case string(String)
-    case int(Int?)
-    case bool(Bool?)
-    case zip(ZipLocation?)
+    case fullName(String)
+    case partOfName(String)
+    case int(Int?, String)
+    case bool(Bool?, String)
+    case zip(ZipLocation?, String)
+    case camperID(Int?, String)
+    case groupID(Int?, String)
+    case crossroadsSite(String)
     case empty
 
     func difference(from other: ReportFieldValue, with equivalance: Double) -> Double? {
@@ -116,22 +145,29 @@ enum ReportFieldValue: Equatable {
             if case .string(let stringR) = other {
                 return (stringL == stringR ? 0 : 1) * equivalance
             }
-        case .int(let intL):
-            if case .int(let intR) = other,
+
+        case .crossroadsSite(let stringL):
+            if case .crossroadsSite(let stringR) = other {
+                return (stringL == stringR ? 0 : 1) * equivalance
+            }
+
+        case .int(let intL, _):
+            if case .int(let intR, _) = other,
                let ourInt = intL,
                let otherInt = intR
             {
                 return Double(abs(ourInt - otherInt)) * equivalance
             }
-        case .bool(let bool):
-            if case .bool(let otherBool) = other,
+
+        case .bool(let bool, _):
+            if case .bool(let otherBool, _) = other,
                let bool = bool,
                let otherBool = otherBool {
                 return (bool == otherBool ? 0 : 1) * equivalance
             }
 
-        case .zip(let zipLocation):
-            if case .zip(let otherZip) = other,
+        case .zip(let zipLocation, _):
+            if case .zip(let otherZip, _) = other,
                let location = zipLocation?.location,
                let otherLocation = otherZip?.location {
                 return location.distance(from: otherLocation) * equivalance
@@ -143,15 +179,35 @@ enum ReportFieldValue: Equatable {
 
         return nil
     }
+
+    var rawValue: String {
+        switch self {
+        case .string(let string):           string
+        case .fullName(let string):         string
+        case .partOfName(let string):       string
+        case .int(_, let string):           string
+        case .bool(_, let string):          string
+        case .zip(_, let string):           string
+        case .camperID(_, let string):      string
+        case .groupID(_, let string):       string
+        case .crossroadsSite(let string):   string
+        case .empty:                        ""
+        }
+    }
 }
 
 enum ReportFieldType: String, Equatable, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     case string,
+         fullName,
+         partOfName,
          int,
          bool,
-         zip
+         zip,
+         camperID,
+         groupID,
+         crossroadsSite
 }
 
 struct FatherSonReportRow {

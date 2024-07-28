@@ -24,22 +24,8 @@ struct SignInView: View {
             Spacer()
             HStack {
                 Spacer()
-                Button {
-                    isPickingScope = true
-                } label: {
-                    Text("Logging into: \(signInViewModel.vmState.formState.scope.rawValue)")
-                }.confirmationDialog("Select a Camps Login Type", isPresented: $isPickingScope, titleVisibility: .visible) {
-                    ForEach(CampsScope.allCases) { scope in
-                        Button(scope.rawValue) {
-                            signInViewModel.vmState.formState.scope = scope
-                        }
-                    }
-                }
-
-                Spacer()
                 signInForm()
                     .frame(maxWidth: Constant.formMaxWidth)
-                Spacer()
                 Spacer()
             }
             Spacer()
@@ -54,6 +40,18 @@ struct SignInView: View {
     @ViewBuilder
     fileprivate func signInForm() -> some View {
         VStack(spacing: Constant.majorSpacing) {
+            Button {
+                isPickingScope = true
+            } label: {
+                Text("Logging into: \(signInViewModel.vmState.formState.scope.rawValue)")
+            }.confirmationDialog("Select a Camps Login Type", isPresented: $isPickingScope, titleVisibility: .visible) {
+                ForEach(CampsScope.allCases) { scope in
+                    Button(scope.rawValue) {
+                        signInViewModel.vmState.formState.scope = scope
+                    }
+                }
+            }
+
             VStack(spacing: Constant.minorSpacing) {
                 emailField()
                 passwordField()

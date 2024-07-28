@@ -27,13 +27,27 @@ enum GrouperEventSpace: EventSpace {
         var campsResult: Result<[Camp], CampsGroupingAPIError>?
         var selectedCamp: Camp?
 
-        var report: Report?
+        var fieldTypeFieldBeingChanged: ReportField?
+
+        var currentReport: Report?
+        var campers: [CamperRow] = []
+
 
         var scope: CampsScope? {
             switch navigationMode {
-            case .signin: nil
-            case .camps(let scope): scope
-            case .report(_, _, let scope): scope
+            case .signin:                       nil
+            case .camps(let scope):             scope
+            case .report(_, _, let scope):      scope
+            case .grouping(_, _, let scope):    scope
+            }
+        }
+
+        var camp: Camp? {
+            switch navigationMode {
+            case .signin:                       nil
+            case .camps:                        nil
+            case .report(_, let camp, _):      camp
+            case .grouping(_, let camp, _):    camp
             }
         }
 
@@ -64,6 +78,9 @@ enum GrouperEventSpace: EventSpace {
     enum Action {
         case signIn(username: String, password: String, scope: CampsScope, fetchID: UUID)
         case getCamps(account: CampAccessAccount, scope: CampsScope, fetchID: UUID)
+        case updateReportFormatWithField(Report, ReportField)
+        case getCampReport(Camp, CampsScope)
+        case getReportFormatForCamp(Camp, Report)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
@@ -84,7 +101,7 @@ enum GrouperEventSpace: EventSpace {
 
 struct SignInFormState: Equatable {
     private enum Constant {
-        static let minPasswordLength = 8
+        static let minPasswordLength = 1
         static let emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
     }
 
@@ -104,3 +121,4 @@ struct SignInFormState: Equatable {
         password.count >= Constant.minPasswordLength
     }
 }
+

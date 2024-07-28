@@ -21,9 +21,18 @@ struct CampDatesDTO: Codable, Equatable, Hashable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.doorsAt = try container.decodeIfPresent(String.self, forKey: .doorsAt)?.asDate
-        self.startsAt = try container.decodeIfPresent(String.self, forKey: .startsAt)?.asDate
-        self.endsAt = try container.decodeIfPresent(String.self, forKey: .endsAt)?.asDate
+        self.doorsAt = try container.decodeIfPresent(
+            String.self,
+            forKey: .doorsAt
+        )?.asDate
+        self.startsAt = try container.decodeIfPresent(
+            String.self,
+            forKey: .startsAt
+        )?.asDate
+        self.endsAt = try container.decodeIfPresent(
+            String.self,
+            forKey: .endsAt
+        )?.asDate
     }
 
     func translateToModel() -> CampDatesSet? {
@@ -43,21 +52,29 @@ struct CampDatesDTO: Codable, Equatable, Hashable {
 }
 
 private extension String {
-    // 2024-06-25T15:02:02.550Z
-    static var dateformatter: ISO8601DateFormatter {
-        var formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [
-            .withYear,
-            .withMonth,
-            .withDay,
-            .withTimeZone,
-            .withTime,
-            .withDashSeparatorInDate,
-            .withFractionalSeconds,
-            .withColonSeparatorInTime
-        ]
-        return formatter
+    enum Constant {
+        static let dateformatter: ISO8601DateFormatter = standardISO8601DateFormatter()
+
+        // 2024-06-25T15:02:02.550Z
+        static func standardISO8601DateFormatter() -> ISO8601DateFormatter {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [
+                .withYear,
+                .withMonth,
+                .withDay,
+                .withTimeZone,
+                .withTime,
+                .withDashSeparatorInDate,
+                .withFractionalSeconds,
+                .withColonSeparatorInTime
+            ]
+            return formatter
+        }
     }
+
+    static let dateformatter: ISO8601DateFormatter = {
+        Constant.dateformatter
+    }()
 
     var asDate: Date? {
         Self.dateformatter.date(from: self)

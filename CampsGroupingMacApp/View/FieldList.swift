@@ -28,10 +28,10 @@ struct FieldList: View {
             }.searchable(text: $searchText, prompt: "Search Fields")
         }
         .onAppear {
-            reportFields = coordinator.state.report?.fields ?? []
+            reportFields = coordinator.state.currentReport?.fields ?? []
         }
         .onChange(of: coordinator.state) { oldValue, newValue in
-            reportFields = newValue.report?.fields ?? []
+            reportFields = newValue.currentReport?.fields ?? []
         }
     }
 

@@ -16,11 +16,7 @@ struct ContentView: View {
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
 
     var body: some View {
-        if coordinator.state.isAuthenticated, let scope = coordinator.state.scope {
-            splitNav(navMode: coordinator.state.navigationMode)
-        } else {
-            SignInView()
-        }
+        splitNav(navMode: coordinator.state.navigationMode)
     }
 
     @ViewBuilder
@@ -80,11 +76,13 @@ struct ContentView: View {
     func splitNav(navMode: NavigationMode) -> some View {
         switch navMode {
         case .signin:
-            Text("Please Sign In")
+            SignInView()
         case .camps(let scope):
             campsSelectionView(scope: scope)
         case .report:
             ReportView()
+        case .grouping:
+            Text("Grouping")
         }
     }
 

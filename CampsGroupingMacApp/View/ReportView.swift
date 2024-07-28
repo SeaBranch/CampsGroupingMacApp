@@ -12,25 +12,20 @@ struct ReportView: View {
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
 
     @State var reportFields: [ReportField] = []
-    @State var fieldForTypeChange: ReportField?
 
     var body: some View {
         if case .report(let possibleReport, let camp, let scope) = coordinator.state.navigationMode, let report = possibleReport {
-            HStack {
-                reportNavStack(report: report, camp: camp, scope: scope)
-                    .onAppear {
-                        reportFields = report.fields.filter({ field in
-                            field.visable
-                        })
-                    }
-                    .onChange(of: coordinator.state) { oldValue, newValue in
-                        reportFields = newValue.report?.fields.filter({ field in
-                            field.visable
-                        }) ?? []
-                    }
-
-                FieldList().frame(width: 300)
-            }
+            reportNavStack(report: report, camp: camp, scope: scope)
+                .onAppear {
+                    reportFields = report.fields.filter({ field in
+                        field.visable
+                    })
+                }
+                .onChange(of: coordinator.state) { oldValue, newValue in
+                    reportFields = newValue.currentReport?.fields.filter({ field in
+                        field.visable
+                    }) ?? []
+                }
         } else {
             Text("No Report Found")
         }
@@ -39,15 +34,13 @@ struct ReportView: View {
     @ViewBuilder
     func reportNavStack(report: Report, camp: Camp, scope: CampsScope) -> some View {
         NavigationSplitView {
-            List {
-                ForEach(reportFields) { field in
-                    fieldView(for: field)
-                }
-            }
+            FieldList()
         } content: {
-            Text("Rows")
+            selectedFieldList(camp: camp, scope: scope)
         } detail: {
-            Text("compare")
+            if let field = coordinator.state.fieldTypeFieldBeingChanged {
+                fieldTypingList(for: field)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {
@@ -56,7 +49,54 @@ struct ReportView: View {
                 }
             }
         }
+    }
 
+    func beginGrouping(camp: Camp, scope: CampsScope) {
+        guard let campers = coordinator
+            .state
+            .currentReport?
+            .asCamperRows(existingCampers: coordinator.state.campers.map(\.camper))
+        else {
+            return
+        }
+
+        guard !campers.isEmpty else { return }
+
+        coordinator.send(
+            event: .camp(
+                event: .didSelectBeginGrouping(
+                    campers: campers,
+                    camp: camp,
+                    scope: scope
+                )
+            )
+        )
+    }
+
+    @ViewBuilder
+    func selectedFieldList(camp: Camp, scope: CampsScope) -> some View {
+        List {
+            Button("Begin Grouping") {
+                self.beginGrouping(camp: camp, scope: scope)
+            }
+
+            ForEach(reportFields) { field in
+                fieldView(for: field)
+            }
+        }
+    }
+
+    @ViewBuilder
+    func fieldTypingList(for field: ReportField) -> some View {
+        List {
+            ForEach(ReportFieldType.allCases) { type in
+                Button(type.rawValue) {
+                    var newField = field
+                    newField.fieldType = type
+                    coordinator.send(event: .camp(event: .didChangeField(newField)))
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -67,40 +107,14 @@ struct ReportView: View {
                 Text("Handle Directly")
             }
             Button("Type: \(field.fieldType.rawValue)") {
-                fieldForTypeChange = field
+                coordinator.send(event: .camp(event: .didSelectFieldTypeButtonForField(field)))
             }
-            .confirmationDialog(
-                "Set Data Type",
-                isPresented: typeSetBinding()) {
-                    ForEach(ReportFieldType.allCases) { dataType in
-                        Button(dataType.rawValue) {
-                            reportFields = reportFields.map({ oldField in
-                                if oldField.fieldName == field.fieldName {
-                                    var newField = oldField
-                                    newField.fieldType = dataType
-                                    coordinator.send(event: .camp(event: .didChangeField(newField)))
-
-                                    return newField
-                                } else {
-                                    return oldField
-                                }
-                            })
-                        }
-                    }
-                }
             Text("equivelent to: \(field.equivalance)")
             Toggle(isOn: useBinding(for: field)) {
                 Text("Use to Group")
             }
-        }
-    }
-
-    func typeSetBinding() -> Binding<Bool> {
-        Binding {
-            fieldForTypeChange != nil
-        } set: { newValue in
-            if !newValue {
-                fieldForTypeChange = nil
+            Toggle(isOn: showInTableBinding(for: field)) {
+                Text("View In Table")
             }
         }
     }
@@ -142,6 +156,33 @@ struct ReportView: View {
                 if fieldRef.fieldName == field.fieldName {
                     var newField = fieldRef
                     newField.includeInGrouping = newValue
+
+                    DispatchQueue.main.async {
+                        coordinator.send(
+                            event: .camp(
+                                event: .didChangeField(newField)
+                            )
+                        )
+                    }
+                    return newField
+                }
+
+                return fieldRef
+            })
+        }
+
+    }
+
+    func showInTableBinding(for field: ReportField) -> Binding<Bool> {
+        Binding {
+            reportFields.first { fieldRef in
+                fieldRef.fieldName == field.fieldName
+            }?.showInTable ?? false
+        } set: { newValue in
+            reportFields = reportFields.map({ fieldRef in
+                if fieldRef.fieldName == field.fieldName {
+                    var newField = fieldRef
+                    newField.showInTable = newValue
 
                     DispatchQueue.main.async {
                         coordinator.send(

@@ -9,6 +9,7 @@ extension MenuEventReducer {
             state.accessAccount = nil
             state.activeSignIn = nil
             state.activeSignInError = nil
+            state.navigationMode = .signin
 
             return []
         }

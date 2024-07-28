@@ -9,7 +9,7 @@ import CoreLocation
 import Foundation
 import SwiftCSV
 
-struct ZipLocation: Equatable {
+struct ZipLocation: Equatable, Hashable {
     let zip: String
     let type: String?
     let decommissioned: String?
