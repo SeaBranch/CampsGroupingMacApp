@@ -100,30 +100,8 @@ struct SignInFormState: Equatable {
 }
 
 extension GrouperEventSpace.State {
-    var scope: CampsScope? {
-        switch navigationMode {
-        case .signin:                       nil
-        case .camps(let scope):             scope
-        case .report(_, _, let scope):      scope
-        case .grouping(_, _, let scope):    scope
-        }
-    }
-
-    var camp: CampInfo? {
-        switch navigationMode {
-        case .signin:                       nil
-        case .camps:                        nil
-        case .report(_, let camp, _):      camp
-        case .grouping(_, let camp, _):    camp
-        }
-    }
-
     var isAuthenticated: Bool {
         accessAccount != nil
-    }
-
-    var selectedReportID: TestReportID? {
-        selectedCamp?.reportID
     }
 
     var camps: [CampInfo] {

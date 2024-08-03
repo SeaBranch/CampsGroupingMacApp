@@ -18,7 +18,7 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
     case getCamps(accessKey: String)
     case getCampSettings(camp: Camp)
     case getReport(campSettings: CampSettings)
-    case updateCamp(camp: Camp, campSettings: CampSettings, changes: [CampChange])
+    case updateCamp(camp: Camp)
 
     var path: String {
         switch self {
@@ -30,7 +30,7 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
             "\(campsGroupingAPI)camp/\(camp.info.eventNumber)"
         case .getReport(let campSettings):
             "\(brushfire)r/\(campSettings.report.reportID)/export"
-        case .updateCamp(let camp, _, _):
+        case .updateCamp(let camp):
             "\(campsGroupingAPI)camp/\(camp.info.eventNumber)"
         }
     }

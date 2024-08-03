@@ -5,7 +5,7 @@ struct ReportFormat: Equatable, Codable, Hashable {
     let reportID: String
     let campEventNumber: Int
     let campScope: CampsScope
-    let reportFieldSettings: [ReportFieldSetting]
+    var reportFieldSettings: [ReportFieldSetting]
 
     var reportEndpoint: URL {
         URL(string: "https://app.brushfire.com/r/\(reportID)/export")!
@@ -29,6 +29,12 @@ struct ReportFormat: Equatable, Codable, Hashable {
                 }
             }
         }
+    }
+
+    func formatWithSetting(_ setting: ReportFieldSetting) -> ReportFormat {
+        var format = self
+        format.reportFieldSettings = reportFieldSettings.arrayWithSetting(setting)
+        return format
     }
 }
 
@@ -76,7 +82,7 @@ enum TestReportID: String, CaseIterable {
 
 typealias ReportRow = [String: String]
 
-struct Report: Equatable {
+struct Report: Equatable, Hashable {
     let csv: CSV<Named>
     let campID: Int
 
@@ -87,6 +93,11 @@ struct Report: Equatable {
     init(csv: CSV<Named>, campID: Int) {
         self.csv = csv
         self.campID = campID
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(csv.rows)
+        hasher.combine(campID)
     }
 }
 
@@ -115,23 +126,23 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
         if let string = rawValue {
             switch fieldType {
             case .string: 
-                    .string(rawValue: string, fieldName: fieldName)
-            case .fullName: 
-                    .fullName(rawValue: string, fieldName: fieldName)
-            case .partOfName: 
-                    .partOfName(rawValue: string, fieldName: fieldName)
-            case .int: 
-                    .int(value: Int(string), rawValue: string, fieldName: fieldName)
-            case .bool: 
-                    .bool(value: Bool(string), rawValue: string, fieldName: fieldName)
-            case .zip: 
-                    .zip(value: ZipLocation.fromZipString(string), rawValue: string, fieldName: fieldName)
-            case .camperID: 
-                    .camperID(value: Int(string), rawValue: string, fieldName: fieldName)
-            case .groupID: 
-                    .groupID(value: Int(string), rawValue: string, fieldName: fieldName)
-            case .crossroadsSite: 
-                    .crossroadsSite(rawValue: string, fieldName: fieldName)
+                    .string(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .fullName:
+                    .fullName(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .partOfName:
+                    .partOfName(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .int:
+                    .int(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .bool:
+                    .bool(value: Bool(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .zip:
+                    .zip(value: ZipLocation.fromZipString(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .camperID:
+                    .camperID(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .groupID:
+                    .groupID(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            case .crossroadsSite:
+                    .crossroadsSite(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             default: 
                     .empty(fieldName: fieldName)
             }
@@ -142,46 +153,46 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
 }
 
 enum ReportFieldValue: Equatable, Hashable {
-    case string(rawValue: String, fieldName: String)
-    case fullName(rawValue: String, fieldName: String)
-    case partOfName(rawValue: String, fieldName: String)
-    case int(value: Int?, rawValue: String, fieldName: String)
-    case bool(value: Bool?, rawValue: String, fieldName: String)
-    case zip(value: ZipLocation?, rawValue: String, fieldName: String)
-    case camperID(value: Int?, rawValue: String, fieldName: String)
-    case groupID(value: Int?, rawValue: String, fieldName: String)
-    case crossroadsSite(rawValue: String, fieldName: String)
+    case string(rawValue: String, fieldName: String, primary: Bool)
+    case fullName(rawValue: String, fieldName: String, primary: Bool)
+    case partOfName(rawValue: String, fieldName: String, primary: Bool)
+    case int(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case bool(value: Bool?, rawValue: String, fieldName: String, primary: Bool)
+    case zip(value: ZipLocation?, rawValue: String, fieldName: String, primary: Bool)
+    case camperID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case groupID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case crossroadsSite(rawValue: String, fieldName: String, primary: Bool)
     case empty(fieldName: String)
 
     func difference(from other: ReportFieldValue, with equivalance: Double) -> Double? {
         switch self {
-        case .string(let stringL, _):
-            if case .string(let stringR, _) = other {
+        case .string(let stringL, _, _):
+            if case .string(let stringR, _, _) = other {
                 return (stringL == stringR ? 0 : 1) * equivalance
             }
 
-        case .crossroadsSite(let stringL, _):
-            if case .crossroadsSite(let stringR, _) = other {
+        case .crossroadsSite(let stringL, _, _):
+            if case .crossroadsSite(let stringR, _, _) = other {
                 return (stringL == stringR ? 0 : 1) * equivalance
             }
 
-        case .int(let intL, _, _):
-            if case .int(let intR, _, _) = other,
+        case .int(let intL, _, _, _):
+            if case .int(let intR, _, _, _) = other,
                let ourInt = intL,
                let otherInt = intR
             {
                 return Double(abs(ourInt - otherInt)) * equivalance
             }
 
-        case .bool(let bool, _, _):
-            if case .bool(let otherBool, _, _) = other,
+        case .bool(let bool, _, _, _):
+            if case .bool(let otherBool, _, _, _) = other,
                let bool = bool,
                let otherBool = otherBool {
                 return (bool == otherBool ? 0 : 1) * equivalance
             }
 
-        case .zip(let zipLocation, _, _):
-            if case .zip(let otherZip, _, _) = other,
+        case .zip(let zipLocation, _, _, _):
+            if case .zip(let otherZip, _, _, _) = other,
                let location = zipLocation?.location,
                let otherLocation = otherZip?.location {
                 return location.distance(from: otherLocation) * equivalance
@@ -196,15 +207,15 @@ enum ReportFieldValue: Equatable, Hashable {
 
     var rawValue: String {
         switch self {
-        case .string(let string, _):            string
-        case .fullName(let string, _):          string
-        case .partOfName(let string, _):        string
-        case .int(_, let string, _):            string
-        case .bool(_, let string, _):           string
-        case .zip(_, let string, _):            string
-        case .camperID(_, let string, _):       string
-        case .groupID(_, let string, _):        string
-        case .crossroadsSite(let string, _):    string
+        case .string(let string, _, _):            string
+        case .fullName(let string, _, _):          string
+        case .partOfName(let string, _, _):        string
+        case .int(_, let string, _, _):            string
+        case .bool(_, let string, _, _):           string
+        case .zip(_, let string, _, _):            string
+        case .camperID(_, let string, _, _):       string
+        case .groupID(_, let string, _, _):        string
+        case .crossroadsSite(let string, _, _):    string
         case .empty:                            ""
         }
     }
