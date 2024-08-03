@@ -9,14 +9,14 @@ extension GrouperEvent {
             fetchID: UUID
         )
         case didRespondToGetCamps(
-            result: Result<[Camp], CampsGroupingAPIError>,
+            result: Result<[CampInfo], CampsGroupingAPIError>,
             account: CampAccessAccount,
             scope: CampsScope,
             fetchID: UUID
         )
         case didRespondToGetReport(
             result: Result<Report, CampsGroupingAPIError>,
-            camp: Camp,
+            camp: CampInfo,
             scope: CampsScope,
             fetchID: UUID
         )

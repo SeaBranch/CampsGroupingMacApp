@@ -4,8 +4,8 @@ struct CampResponse: Codable {
     let event: CampEventDTO
     let hasReport: Bool
 
-    func translateToModel() -> Camp {
-        Camp(
+    func translateToModel() -> CampInfo {
+        CampInfo(
             title: event.title,
             subtitle: event.subtitle,
             urlKey: event.urlKey,
@@ -47,7 +47,7 @@ struct CampResponse: Codable {
 }
 
 extension Collection where Element == CampResponse {
-    func translateToModels() -> [Camp] {
+    func translateToModels() -> [CampInfo] {
         map { $0.translateToModel() }
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 extension CampSpecificEventReducer {
     enum DidSelectViewGroupingReducer {
         static func handleEvent(
-            camp: Camp,
+            camp: CampInfo,
             fetchID: UUID,
             state: inout GrouperState
         ) -> [GrouperAction] {

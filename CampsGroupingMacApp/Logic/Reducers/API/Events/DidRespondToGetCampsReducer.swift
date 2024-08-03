@@ -3,7 +3,7 @@ import Foundation
 extension APIEventReducer {
     enum DidRespondToGetCampsReducer {
         static func handleEvent(
-            result: Result<[Camp], CampsGroupingAPIError>,
+            result: Result<[CampInfo], CampsGroupingAPIError>,
             account: CampAccessAccount,
             scope: CampsScope,
             fetchID: UUID,

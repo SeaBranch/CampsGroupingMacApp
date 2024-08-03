@@ -11,7 +11,7 @@ protocol GetCampsCommunicatorProtocol {
     func getCamps(
         accessKey: String,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], Error>) -> Void
+        completion: @escaping (Result<[CampInfo], Error>) -> Void
     )
 }
 
@@ -27,7 +27,7 @@ class GetCampsCommunicator: GetCampsCommunicatorProtocol {
     func getCamps(
         accessKey: String,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], Error>) -> Void
+        completion: @escaping (Result<[CampInfo], Error>) -> Void
     ) {
         let endpoint = CampsGroupingEndpoint.getCamps(accessKey: accessKey)
 
@@ -53,7 +53,7 @@ class GetCampsCommunicator: GetCampsCommunicatorProtocol {
 
             do {
                 if let data = data {
-                    let responseObject = try JSONDecoder().decode([Camp].self, from: data)
+                    let responseObject = try JSONDecoder().decode([CampInfo].self, from: data)
                     completion(.success(responseObject))
                 } else {
                     completion(.failure(NSError(domain: endpoint.domain, code: 404)))

@@ -4,7 +4,7 @@ protocol GetCampsLogicControllerProtocol {
     func getCamps(
         account: CampAccessAccount,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], CampsGroupingAPIError>) -> Void
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
     )
 }
 
@@ -18,7 +18,7 @@ class GetCampsLogicController: GetCampsLogicControllerProtocol {
     func getCamps(
         account: CampAccessAccount,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], CampsGroupingAPIError>) -> Void
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
     ) {
         let accessKey = account.accessKey
         communicator.getCamps(accessKey: accessKey, scope: scope) { result in

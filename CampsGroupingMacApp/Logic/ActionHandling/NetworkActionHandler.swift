@@ -90,8 +90,8 @@ extension DispatchQueue {
     static let processing = DispatchQueue(label: "processing", qos: .background)
 }
 
-extension ReportField {
-    func setPlaceholderFormat() -> ReportField {
+extension ReportFieldSetting {
+    func setPlaceholderFormat() -> ReportFieldSetting {
         var updatedField = self
         switch fieldName {
         case "Attendee Number":

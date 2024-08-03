@@ -24,7 +24,7 @@
 		6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */; };
 		6D254F9D2C0F529E00684B62 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D254F9C2C0F529E00684B62 /* Strings.swift */; };
 		6D254FA22C0F55CC00684B62 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6D254FA12C0F55CC00684B62 /* Localizable.xcstrings */; };
-		6D7AAAA72C2B12C80093291F /* Camp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAA62C2B12C80093291F /* Camp.swift */; };
+		6D7AAAA72C2B12C80093291F /* CampInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAA62C2B12C80093291F /* CampInfo.swift */; };
 		6D7AAAA92C2B12F50093291F /* CampEventResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAA82C2B12F50093291F /* CampEventResponse.swift */; };
 		6D7AAAAC2C2B3A190093291F /* AuthenticationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAAB2C2B3A190093291F /* AuthenticationResponse.swift */; };
 		6D7AAAAF2C2B3A600093291F /* AuthenticationRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAAE2C2B3A600093291F /* AuthenticationRequestBody.swift */; };
@@ -76,6 +76,7 @@
 		6D9CC18D2C5586A500D0809B /* CampersToBeGroupedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC18C2C5586A500D0809B /* CampersToBeGroupedView.swift */; };
 		6D9CC18F2C55870A00D0809B /* CamperAndGroupSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC18E2C55870A00D0809B /* CamperAndGroupSearchView.swift */; };
 		6D9CC1912C55874500D0809B /* CampersAndGroupsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1902C55874500D0809B /* CampersAndGroupsDetailView.swift */; };
+		7A4DE3562C5A839C00BAFADD /* Camp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A4DE3552C5A839C00BAFADD /* Camp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,7 +118,7 @@
 		6D254F9A2C0EADE400684B62 /* SignInLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInLogicController.swift; sourceTree = "<group>"; };
 		6D254F9C2C0F529E00684B62 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		6D254FA12C0F55CC00684B62 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		6D7AAAA62C2B12C80093291F /* Camp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camp.swift; sourceTree = "<group>"; };
+		6D7AAAA62C2B12C80093291F /* CampInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampInfo.swift; sourceTree = "<group>"; };
 		6D7AAAA82C2B12F50093291F /* CampEventResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampEventResponse.swift; sourceTree = "<group>"; };
 		6D7AAAAB2C2B3A190093291F /* AuthenticationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationResponse.swift; sourceTree = "<group>"; };
 		6D7AAAAE2C2B3A600093291F /* AuthenticationRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequestBody.swift; sourceTree = "<group>"; };
@@ -168,6 +169,7 @@
 		6D9CC18C2C5586A500D0809B /* CampersToBeGroupedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampersToBeGroupedView.swift; sourceTree = "<group>"; };
 		6D9CC18E2C55870A00D0809B /* CamperAndGroupSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamperAndGroupSearchView.swift; sourceTree = "<group>"; };
 		6D9CC1902C55874500D0809B /* CampersAndGroupsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampersAndGroupsDetailView.swift; sourceTree = "<group>"; };
+		7A4DE3552C5A839C00BAFADD /* Camp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,11 +273,12 @@
 		6D254F8E2C0E97C700684B62 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6D7AAAA62C2B12C80093291F /* Camp.swift */,
+				6D7AAAA62C2B12C80093291F /* CampInfo.swift */,
 				6D9CC1862C51E9B200D0809B /* Camper.swift */,
 				6D254F8C2C0E8C9D00684B62 /* CampAccessAccount.swift */,
 				6D7AAAFC2C2B70E50093291F /* CampDatesSet.swift */,
 				6D7AAAB02C2B597A0093291F /* CampReport.swift */,
+				7A4DE3552C5A839C00BAFADD /* Camp.swift */,
 				6D254F912C0E993800684B62 /* CampsGroupingAPIError.swift */,
 				6D7AAAF62C2B70600093291F /* CampsScope.swift */,
 				6D7AAAFA2C2B70C00093291F /* DateDisplay.swift */,
@@ -650,7 +653,7 @@
 				6D254F942C0EA1E700684B62 /* SignInView.swift in Sources */,
 				6D7AAABD2C2B624B0093291F /* DidRespondToSignInReducer.swift in Sources */,
 				6D7AAAC72C2B68750093291F /* DidEditSignInFormReducer.swift in Sources */,
-				6D7AAAA72C2B12C80093291F /* Camp.swift in Sources */,
+				6D7AAAA72C2B12C80093291F /* CampInfo.swift in Sources */,
 				6D9CC1872C51E9B200D0809B /* Camper.swift in Sources */,
 				6D11AE782C08D46F00ADC811 /* EventCoordinator.swift in Sources */,
 				6D7AAAB42C2B59CF0093291F /* HashID.swift in Sources */,
@@ -676,6 +679,7 @@
 				6D7AAAE72C2B6F060093291F /* CampDatesDTO.swift in Sources */,
 				6D7AAB182C46ED360093291F /* FieldList.swift in Sources */,
 				6D254F922C0E993800684B62 /* CampsGroupingAPIError.swift in Sources */,
+				7A4DE3562C5A839C00BAFADD /* Camp.swift in Sources */,
 				6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */,
 				6D7AAAB12C2B597A0093291F /* CampReport.swift in Sources */,
 				6D9CC18F2C55870A00D0809B /* CamperAndGroupSearchView.swift in Sources */,

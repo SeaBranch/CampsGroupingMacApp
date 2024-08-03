@@ -20,7 +20,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    fileprivate func campView(for camp: Camp, andScope scope: CampsScope) -> some View {
+    fileprivate func campView(for camp: CampInfo, andScope scope: CampsScope) -> some View {
         VStack {
             Text(camp.title)
             if let reportID = camp.reportID {

@@ -7,7 +7,7 @@ extension GrouperEvent {
             account: CampAccessAccount,
             fetchID: UUID = UUID()
         )
-        case didSelectCamp(camp: Camp)
+        case didSelectCamp(camp: CampInfo)
         case didGoBackToCamps(scope: CampsScope)
     }
 }

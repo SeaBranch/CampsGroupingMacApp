@@ -8,36 +8,50 @@ protocol CampsGroupingEndpointProtocol: Equatable, Hashable {
 }
 
 extension CampsGroupingEndpointProtocol {
-    var site: String { "https://api.brushfire.com/" }
+    var brushfire: String { "https://api.brushfire.com/" }
+    var campsGroupingAPI: String { "https://api/" }
     var url: URL { URL(string: path)! }
 }
 
 enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
     case authenticate
     case getCamps(accessKey: String)
+    case getCampSettings(camp: Camp)
+    case getReport(campSettings: CampSettings)
+    case updateCamp(camp: Camp, campSettings: CampSettings, changes: [CampChange])
 
     var path: String {
         switch self {
         case .authenticate:
-            "\(site)accounts/auth"
+            "\(brushfire)accounts/auth"
         case .getCamps(let accessKey):
-            "\(site)events?accessKey=\(accessKey)&inactive=false&archive=false"
+            "\(brushfire)events?accessKey=\(accessKey)&inactive=false&archive=false"
+        case .getCampSettings(let camp):
+            "\(campsGroupingAPI)camp/\(camp.info.eventNumber)"
+        case .getReport(let campSettings):
+            "\(brushfire)r/\(campSettings.report.reportID)/export"
+        case .updateCamp(let camp, _, _):
+            "\(campsGroupingAPI)camp/\(camp.info.eventNumber)"
         }
     }
 
     var domain: String {
         switch self {
         case .authenticate:
-            "\(site)accounts/auth"
+            "\(brushfire)accounts/auth"
         case .getCamps:
-            "\(site)events"
+            "\(brushfire)events"
+        case .getCampSettings, .updateCamp:
+            "\(campsGroupingAPI)camp"
+        case .getReport:
+            "\(brushfire)/r"
         }
     }
 
     var method: RequestMethod {
         switch self {
-        case .authenticate: .POST
-        case .getCamps: .GET
+        case .authenticate, .updateCamp: .POST
+        case .getCamps, .getCampSettings, .getReport: .GET
         }
     }
 }

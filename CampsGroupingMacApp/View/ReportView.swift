@@ -11,7 +11,7 @@ struct ReportView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
 
-    @State var reportFields: [ReportField] = []
+    @State var reportFields: [ReportFieldSetting] = []
 
     var body: some View {
         if case .report(let possibleReport, let camp, let scope) = coordinator.state.navigationMode, let report = possibleReport {
@@ -32,7 +32,7 @@ struct ReportView: View {
     }
 
     @ViewBuilder
-    func reportNavStack(report: Report, camp: Camp, scope: CampsScope) -> some View {
+    func reportNavStack(report: Report, camp: CampInfo, scope: CampsScope) -> some View {
         NavigationSplitView {
             FieldList()
         } content: {
@@ -51,7 +51,7 @@ struct ReportView: View {
         }
     }
 
-    func beginGrouping(camp: Camp, scope: CampsScope) {
+    func beginGrouping(camp: CampInfo, scope: CampsScope) {
         guard let campers = coordinator
             .state
             .currentReport?
@@ -74,7 +74,7 @@ struct ReportView: View {
     }
 
     @ViewBuilder
-    func selectedFieldList(camp: Camp, scope: CampsScope) -> some View {
+    func selectedFieldList(camp: CampInfo, scope: CampsScope) -> some View {
         List {
             Button("Begin Grouping") {
                 self.beginGrouping(camp: camp, scope: scope)
@@ -87,7 +87,7 @@ struct ReportView: View {
     }
 
     @ViewBuilder
-    func fieldTypingList(for field: ReportField) -> some View {
+    func fieldTypingList(for field: ReportFieldSetting) -> some View {
         List {
             ForEach(ReportFieldType.allCases) { type in
                 Button(type.rawValue) {
@@ -100,7 +100,7 @@ struct ReportView: View {
     }
 
     @ViewBuilder
-    func fieldView(for field: ReportField) -> some View {
+    func fieldView(for field: ReportFieldSetting) -> some View {
         VStack(alignment: .leading) {
             Text(field.fieldName)
             Toggle(isOn: handleBinding(for: field)) {
@@ -119,7 +119,7 @@ struct ReportView: View {
         }
     }
 
-    func handleBinding(for field: ReportField) -> Binding<Bool> {
+    func handleBinding(for field: ReportFieldSetting) -> Binding<Bool> {
         Binding {
             reportFields.first { fieldRef in
                 fieldRef.fieldName == field.fieldName
@@ -146,7 +146,7 @@ struct ReportView: View {
 
     }
 
-    func useBinding(for field: ReportField) -> Binding<Bool> {
+    func useBinding(for field: ReportFieldSetting) -> Binding<Bool> {
         Binding {
             reportFields.first { fieldRef in
                 fieldRef.fieldName == field.fieldName
@@ -173,7 +173,7 @@ struct ReportView: View {
 
     }
 
-    func showInTableBinding(for field: ReportField) -> Binding<Bool> {
+    func showInTableBinding(for field: ReportFieldSetting) -> Binding<Bool> {
         Binding {
             reportFields.first { fieldRef in
                 fieldRef.fieldName == field.fieldName

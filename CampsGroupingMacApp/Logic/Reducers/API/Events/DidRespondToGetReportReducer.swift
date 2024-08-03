@@ -4,7 +4,7 @@ extension APIEventReducer {
     enum DidRespondToGetReportReducer {
         static func handleEvent(
             result: Result<Report, CampsGroupingAPIError>,
-            camp: Camp,
+            camp: CampInfo,
             fetchID: UUID,
             state: inout GrouperState
         ) -> [GrouperAction] {
@@ -28,7 +28,7 @@ extension APIEventReducer {
 
         static func didGetReport(
             report: Report,
-            camp: Camp,
+            camp: CampInfo,
             fetchID: UUID,
             state: inout GrouperState
         ) -> [GrouperAction] {
@@ -38,7 +38,7 @@ extension APIEventReducer {
 
         static func didFailToGetReport(
             error: CampsGroupingAPIError,
-            camp: Camp,
+            camp: CampInfo,
             fetchID: UUID,
             state: inout GrouperState
         ) -> [GrouperAction] {

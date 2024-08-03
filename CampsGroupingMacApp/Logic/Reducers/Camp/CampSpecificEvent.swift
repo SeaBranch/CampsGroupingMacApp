@@ -4,26 +4,26 @@ extension GrouperEvent {
     enum CampSpecificEvent: Equatable {
         case didGetReportForCamp(
             report: Report,
-            camp: Camp,
+            camp: CampInfo,
             scope: CampsScope
         )
 
         case didSelectManageReport(
-            camp: Camp,
+            camp: CampInfo,
             scope: CampsScope
         )
 
         case didSelectViewGrouping(
-            camp: Camp,
+            camp: CampInfo,
             scope: CampsScope,
             fetchID: UUID = UUID()
         )
 
-        case didSelectFieldTypeButtonForField(ReportField)
-        case didChangeField(ReportField)
+        case didSelectFieldTypeButtonForField(ReportFieldSetting)
+        case didChangeField(ReportFieldSetting)
         case didUpdateReport(Report)
 
-        case didSelectBeginGrouping(campers: [CamperRow], camp: Camp, scope: CampsScope)
+        case didSelectBeginGrouping(campers: [CamperRow], camp: CampInfo, scope: CampsScope)
 
         case didSelectCamperRow(camper: Camper, inSection: GroupingSection)
         case didSelectFilterOptions(inSection: GroupingSection)
