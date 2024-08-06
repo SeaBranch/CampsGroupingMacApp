@@ -25,8 +25,8 @@ enum GrouperEventSpace: EventSpace {
         var errors: Set<NetworkError> = []
 
         var navigationMode: NavigationMode = .signin
-        var campsResult: Result<[CampInfo], CampsGroupingAPIError>?
-        var camp: Camp?
+        var camps: [Camp] = []
+        var selectedCamp: Int?
     }
 
     enum Event: Equatable {
@@ -37,11 +37,11 @@ enum GrouperEventSpace: EventSpace {
     }
 
     enum Action {
-        case signIn(username: String, password: String, scope: CampsScope, fetchID: UUID)
-        case getCamps(account: CampAccessAccount, scope: CampsScope, fetchID: UUID)
-        case updateReportFormatWithField(Report, ReportFieldSetting)
-        case getCampReport(CampInfo, CampsScope)
-        case getReportFormatForCamp(CampInfo, Report)
+        case signIn(username: String, password: String, scope: CampsScope, networkCall: NetworkCall = .signIn())
+        case getCamps(account: CampAccessAccount, scope: CampsScope, networkCall: NetworkCall = .camps())
+        case getCampReportForCamp(camp: Camp, networkCall: NetworkCall = .campReport())
+        case getSettingsForCamp(camp: Camp, networkCall: NetworkCall = .campSettings())
+        case updateCampSettings(camp: Camp, networkCall: NetworkCall = .updateCamp())
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
@@ -59,19 +59,19 @@ enum GrouperEventSpace: EventSpace {
 }
 
 enum NetworkCall: Equatable, Hashable {
-    case signIn(UUID)
-    case camps(UUID)
-    case campSettings(UUID)
-    case campReport(UUID)
-    case updateCamp(UUID)
+    case signIn(UUID = UUID())
+    case camps(UUID = UUID())
+    case campSettings(UUID = UUID())
+    case campReport(UUID = UUID())
+    case updateCamp(UUID = UUID())
 }
 
 enum NetworkError: Error, Equatable, Hashable {
-    case signIn(nsError: NSError, networkCall: NetworkCall)
-    case camps(nsError: NSError, networkCall: NetworkCall)
-    case campSettings(nsError: NSError, networkCall: NetworkCall)
-    case campReport(nsError: NSError, networkCall: NetworkCall)
-    case updateCamp(nsError: NSError, networkCall: NetworkCall)
+    case signIn(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case camps(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case campSettings(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case campReport(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case updateCamp(error: CampsGroupingAPIError, networkCall: NetworkCall)
 }
 
 // MARK: Leaf States
@@ -104,12 +104,8 @@ extension GrouperEventSpace.State {
         accessAccount != nil
     }
 
-    var camps: [CampInfo] {
-        switch campsResult {
-        case .success(let camps): camps
-        case .failure: []
-        case nil: []
-        }
+    var camp: Camp? {
+        camps.first { $0.info.eventNumber == selectedCamp }
     }
 
     mutating func beginNewSignInCall(fetchID: UUID = UUID()) {

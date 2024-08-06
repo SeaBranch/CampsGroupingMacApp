@@ -21,13 +21,13 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
 
     override func handle(action: GrouperEventSpace.Action, handleEvent: @escaping (GrouperEventSpace.Event) -> Void) {
         switch action {
-        case .signIn(let email, let password, let scope, let fetchID):
+        case .signIn(let email, let password, let scope, let networkCall):
             signInLogicController.signIn(email: email, password: password, scope: scope) { result in
                 handleEvent(
-                    .api(event: .didRespondToSignIn(result: result, scope: scope, fetchID: fetchID))
+                    .api(event: .didRespondToSignIn(result: result, scope: scope, networkCall: networkCall))
                 )
             }
-        case .getCamps(let account, let scope, let fetchID):
+        case .getCamps(let account, let scope, let networkCall):
             getCampsLogicController.getCamps(account: account, scope: scope) { result in
                 handleEvent(
                     .api(
@@ -35,33 +35,20 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
                             result: result,
                             account: account, 
                             scope: scope,
-                            fetchID: fetchID
+                            networkCall: networkCall
                         )
                     )
                 )
             }
-        case .updateReportFormatWithField(let report, let field):
-            DispatchQueue.processing.async {
-                let updatedReport = report.withChangedField(field)
-                // TODO: sync format change
-
-                DispatchQueue.main.async {
-                    handleEvent(.camp(event: .didUpdateReport(updatedReport)))
-                }
-            }
-        case .getCampReport(let camp, let scope):
-            camp.reportID?.getReport() { result in
-                if case .success(let report) = result {
-                    handleEvent(
-                        .camp(
-                            event: .didGetReportForCamp(
-                                report: report,
-                                camp: camp,
-                                scope: scope
-                            )
-                        )
+        case .updateCampSettings(let camp, let networkCall)
+            break
+        case .getCampReportForCamp(let camp, let networkCall):
+            camp.campSettings?.report.getReport() { result in
+                handleEvent(
+                    .api(
+                        event: .didRespondToGetReport(result: result, camp: camp, networkCall: networkCall)
                     )
-                }
+                )
             }
         case .getReportFormatForCamp(let camp, let report):
 

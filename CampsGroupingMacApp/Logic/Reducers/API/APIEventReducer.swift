@@ -4,28 +4,32 @@ enum APIEventReducer {
         state: inout GrouperState
     ) -> [GrouperAction] {
         switch event {
-        case .didRespondToSignIn(let result, let scope, let fetchID):
+        case .didRespondToSignIn(let result, let scope, let networkCall):
             DidRespondToSignInReducer.handleEvent(
-                result: result, 
+                result: result,
                 scope: scope,
-                fetchID: fetchID,
+                networkCall: networkCall,
                 state: &state
             )
-        case .didRespondToGetCamps(let result, let account, let scope, let fetchID):
+        case .didRespondToGetCamps(let result, let account, let scope, let networkCall):
             DidRespondToGetCampsReducer.handleEvent(
                 result: result,
                 account: account,
                 scope: scope,
-                fetchID: fetchID,
+                networkCall: networkCall,
                 state: &state
             )
-        case .didRespondToGetReport(let result, let camp, let scope, let fetchID):
+        case .didRespondToGetReport(let result, let camp, let scope, let networkCall):
             DidRespondToGetReportReducer.handleEvent(
                 result: result,
                 camp: camp,
-                fetchID: fetchID,
+                networkCall: networkCall,
                 state: &state
             )
+        case .didRespondToGetCampSettings(let result, let camp, let networkCall):
+            []
+        case .didRespondToUpdateCampSettings(let result, let camp, let networkCall):
+            []
         }
     }
 }

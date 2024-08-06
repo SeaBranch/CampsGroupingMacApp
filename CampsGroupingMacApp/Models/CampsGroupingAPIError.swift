@@ -27,7 +27,7 @@ enum CampsGroupingAPIError: Error, Equatable, HashID, Sendable {
             switch endpoint {
             case .authenticate:
                 return .noAccess(nsError, endpoint)
-            case .getCamps:
+            default:
                 return .notFound(nsError, endpoint)
             }
 

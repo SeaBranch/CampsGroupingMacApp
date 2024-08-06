@@ -6,19 +6,28 @@ extension GrouperEvent {
         case didRespondToSignIn(
             result: Result<CampAccessAccount, CampsGroupingAPIError>,
             scope: CampsScope,
-            fetchID: UUID
+            networkCall: NetworkCall
         )
         case didRespondToGetCamps(
             result: Result<[CampInfo], CampsGroupingAPIError>,
             account: CampAccessAccount,
             scope: CampsScope,
-            fetchID: UUID
+            networkCall: NetworkCall
         )
         case didRespondToGetReport(
             result: Result<Report, CampsGroupingAPIError>,
-            camp: CampInfo,
-            scope: CampsScope,
-            fetchID: UUID
+            camp: Camp,
+            networkCall: NetworkCall
+        )
+        case didRespondToGetCampSettings(
+            result: Result<CampSettings, CampsGroupingAPIError>,
+            camp: Camp,
+            networkCall: NetworkCall
+        )
+        case didRespondToUpdateCampSettings(
+            result: Result<CampSettings, CampsGroupingAPIError>,
+            camp: Camp,
+            networkCall: NetworkCall
         )
     }
 }

@@ -2,9 +2,9 @@ import Foundation
 import SwiftCSV
 
 struct ReportFormat: Equatable, Codable, Hashable {
-    let reportID: String
     let campEventNumber: Int
     let campScope: CampsScope
+    var reportID: String
     var reportFieldSettings: [ReportFieldSetting]
 
     var reportEndpoint: URL {

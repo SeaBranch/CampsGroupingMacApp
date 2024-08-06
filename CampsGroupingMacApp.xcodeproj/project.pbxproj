@@ -42,7 +42,6 @@
 		6D7AAAD02C2B69250093291F /* DidSelectAccessAccountReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAACF2C2B69250093291F /* DidSelectAccessAccountReducer.swift */; };
 		6D7AAAD22C2B693F0093291F /* DidSelectCampReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAD12C2B693F0093291F /* DidSelectCampReducer.swift */; };
 		6D7AAAD42C2B69950093291F /* CampSpecificEventReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAD32C2B69950093291F /* CampSpecificEventReducer.swift */; };
-		6D7AAAD72C2B69B70093291F /* DidSelectViewGroupingReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAD62C2B69B70093291F /* DidSelectViewGroupingReducer.swift */; };
 		6D7AAAD92C2B6B5B0093291F /* APIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAAD82C2B6B5B0093291F /* APIEvent.swift */; };
 		6D7AAADB2C2B6B670093291F /* SignInFormEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAADA2C2B6B670093291F /* SignInFormEvent.swift */; };
 		6D7AAADD2C2B6B720093291F /* MenuEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7AAADC2C2B6B720093291F /* MenuEvent.swift */; };
@@ -136,7 +135,6 @@
 		6D7AAACF2C2B69250093291F /* DidSelectAccessAccountReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidSelectAccessAccountReducer.swift; sourceTree = "<group>"; };
 		6D7AAAD12C2B693F0093291F /* DidSelectCampReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidSelectCampReducer.swift; sourceTree = "<group>"; };
 		6D7AAAD32C2B69950093291F /* CampSpecificEventReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampSpecificEventReducer.swift; sourceTree = "<group>"; };
-		6D7AAAD62C2B69B70093291F /* DidSelectViewGroupingReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidSelectViewGroupingReducer.swift; sourceTree = "<group>"; };
 		6D7AAAD82C2B6B5B0093291F /* APIEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEvent.swift; sourceTree = "<group>"; };
 		6D7AAADA2C2B6B670093291F /* SignInFormEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInFormEvent.swift; sourceTree = "<group>"; };
 		6D7AAADC2C2B6B720093291F /* MenuEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuEvent.swift; sourceTree = "<group>"; };
@@ -405,7 +403,6 @@
 			children = (
 				6D7AAAD32C2B69950093291F /* CampSpecificEventReducer.swift */,
 				6D7AAADE2C2B6B800093291F /* CampSpecificEvent.swift */,
-				6D7AAAD52C2B69AF0093291F /* Events */,
 			);
 			path = Camp;
 			sourceTree = "<group>";
@@ -435,14 +432,6 @@
 				6D7AAACD2C2B69120093291F /* DidSignOutReducer.swift */,
 				6D7AAACF2C2B69250093291F /* DidSelectAccessAccountReducer.swift */,
 				6D7AAAD12C2B693F0093291F /* DidSelectCampReducer.swift */,
-			);
-			path = Events;
-			sourceTree = "<group>";
-		};
-		6D7AAAD52C2B69AF0093291F /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				6D7AAAD62C2B69B70093291F /* DidSelectViewGroupingReducer.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -693,7 +682,6 @@
 				6D7AAB122C45CEA50093291F /* ZipLocation.swift in Sources */,
 				6D254F8D2C0E8C9D00684B62 /* CampAccessAccount.swift in Sources */,
 				6D9CC1912C55874500D0809B /* CampersAndGroupsDetailView.swift in Sources */,
-				6D7AAAD72C2B69B70093291F /* DidSelectViewGroupingReducer.swift in Sources */,
 				6D7AAB062C2C74380093291F /* SignInCommunicator.swift in Sources */,
 				6D7AAAAF2C2B3A600093291F /* AuthenticationRequestBody.swift in Sources */,
 				6D7AAACE2C2B69120093291F /* DidSignOutReducer.swift in Sources */,

@@ -2,17 +2,20 @@ import Foundation
 
 struct Camp: Equatable, Hashable {
     let info: CampInfo
+    let scope: CampsScope
     var report: Report?
     var campSettings: CampSettings?
     var changes: [CampChange]
 
     init(
         info: CampInfo,
+        scope: CampsScope,
         report: Report? = nil,
         campSettings: CampSettings? = nil,
         changes: [CampChange] = []
     ) {
         self.info = info
+        self.scope = scope
         self.report = report
         self.campSettings = campSettings
         self.changes = changes
@@ -40,9 +43,14 @@ struct Camp: Equatable, Hashable {
         camp.changes = []
         return camp
     }
+
+    mutating func applyChange(_ change: CampChange) {
+        changes = changes.pendingChanges(toSettings: campSettings, addingChange: change)
+    }
 }
 
 enum CampChange: Equatable, Hashable {
+    case reportIdChange(String)
     case formatChange(ReportFieldSetting)
     case camperChange(CamperSetting)
 }
@@ -62,6 +70,8 @@ struct CampSettings: Equatable, Codable, Hashable {
         var settings = self
         for change in changes.pendingChanges(toSettings: self) {
             switch change {
+            case .reportIdChange(let reportID):
+                settings.report.reportID = reportID
             case .formatChange(let reportFieldSetting):
                 settings.report = settings.report.formatWithSetting(reportFieldSetting)
             case .camperChange(let camperSetting):
@@ -73,39 +83,41 @@ struct CampSettings: Equatable, Codable, Hashable {
 }
 
 extension Array where Element == CampChange {
-    func camperChanges(forSettings settings: CampSettings?) -> [CampChange] {
+    private func camperChanges(forSettings settings: CampSettings?, addingChange change: CampChange?) -> [CampChange] {
         camperChanges.filter { setting in
             !(settings?.campers ?? [])
                 .contains { camper in
                     camper == setting
             }
         }
+        .applyingChange(change)
         .sortedByID
         .map {
             .camperChange($0)
         }
     }
 
-    func reportChanges(forSettings settings: CampSettings?) -> [CampChange] {
+    private func reportChanges(forSettings settings: CampSettings?, addingChange change: CampChange?) -> [CampChange] {
         reportChanges.filter { setting in
             !(settings?.report.reportFieldSettings ?? [])
                 .contains { fieldSetting in
                     fieldSetting == setting
             }
         }
+        .applyingChange(change)
         .sortedByFieldName
         .map {
             .formatChange($0)
         }
     }
 
-    func pendingChanges(toSettings settings: CampSettings?) -> [CampChange] {
-        var changes = camperChanges(forSettings: settings)
-        changes.append(contentsOf: reportChanges(forSettings: settings))
+    func pendingChanges(toSettings settings: CampSettings?, addingChange change: CampChange? = nil) -> [CampChange] {
+        var changes = camperChanges(forSettings: settings, addingChange: change)
+        changes.append(contentsOf: reportChanges(forSettings: settings, addingChange: change))
         return changes
     }
 
-    var reportChanges: [ReportFieldSetting] {
+    private var reportChanges: [ReportFieldSetting] {
         compactMap {
             if case .formatChange(let setting) = $0 {
                 setting
@@ -115,7 +127,7 @@ extension Array where Element == CampChange {
         }
     }
 
-    var camperChanges: [CamperSetting] {
+    private var camperChanges: [CamperSetting] {
         compactMap {
             if case .camperChange(let setting) = $0 {
                 setting
@@ -138,6 +150,17 @@ extension Array where Element == CamperSetting {
             setting1.id < setting2.id
         })
     }
+
+    func applyingChange(_ change: CampChange?) -> [CamperSetting] {
+        switch change {
+        case .camperChange(let camperSetting):
+            var updated = filter { $0.id != camperSetting.id }
+            updated.append(camperSetting)
+            return updated
+        default:
+            return self
+        }
+    }
 }
 
 extension Array where Element == ReportFieldSetting {
@@ -151,5 +174,32 @@ extension Array where Element == ReportFieldSetting {
         sorted(by: { setting1, setting2 in
             setting1.fieldName < setting2.fieldName
         })
+    }
+
+    func applyingChange(_ change: CampChange?) -> [ReportFieldSetting] {
+        switch change {
+        case .formatChange(let setting):
+            var updated = filter { $0.fieldName != setting.fieldName }
+            updated.append(setting)
+            return updated
+        default:
+            return self
+        }
+    }
+}
+
+extension Array where Element == Camp {
+
+
+    mutating func applyChange(_ change: CampChange, toCampNumber campID: Int) -> [Camp] {
+        map {
+            if $0.info.eventNumber == campID {
+                var updated = $0
+                updated.applyChange(change)
+                return updated
+            } else {
+                return $0
+            }
+        }
     }
 }
