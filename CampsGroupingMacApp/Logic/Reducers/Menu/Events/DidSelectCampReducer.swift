@@ -3,12 +3,22 @@ import Foundation
 extension MenuEventReducer {
     enum DidSelectCampReducer {
         static func handleEvent(
-            info: CampInfo,
+            camp: Camp,
             scope: CampsScope,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            state.activeFetches.insert(.campReport(<#T##UUID#>))
-            [.getCampReport(info, scope)]
+            state.selectedCamp = camp.info.eventNumber
+            state.navigationMode = .camps
+
+            return if let settings = camp.campSettings {
+                [
+                    state.beginGetReportForCamp(campSettings: settings),
+                    state.beginGetReportFormatForCamp(campSettings: settings),
+                    state.beginGetCamperSettingsForCamp(camp: camp)
+                ]
+            } else {
+                []
+            }
         }
     }
 }

@@ -22,6 +22,8 @@ extension APIEventReducer {
                         }
                     }
                     state.navigationMode = .camps
+
+                    return [state.beginGetReports()]
                 case .failure(let error):
                     state.errors = state.errors.filter { error in
                         if case .camps = error {

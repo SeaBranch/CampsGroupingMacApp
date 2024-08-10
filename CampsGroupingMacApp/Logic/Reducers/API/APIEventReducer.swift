@@ -19,17 +19,55 @@ enum APIEventReducer {
                 networkCall: networkCall,
                 state: &state
             )
-        case .didRespondToGetReport(let result, let camp, let scope, let networkCall):
-            DidRespondToGetReportReducer.handleEvent(
+        case .didRespondToGetCampReports(let result, let requestData, networkCall: let networkCall):
+            DidRespondToGetCampReportsReducer.handleEvent(
                 result: result,
-                camp: camp,
+                requestData: requestData,
                 networkCall: networkCall,
                 state: &state
             )
-        case .didRespondToGetCampSettings(let result, let camp, let networkCall):
-            []
-        case .didRespondToUpdateCampSettings(let result, let camp, let networkCall):
-            []
+        case .didRespondToGetReport(let result, let requestData, let networkCall):
+            DidRespondToGetReportReducer.handleEvent(
+                result: result,
+                campSettings: requestData.campSettings,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToGetReportFormat(let result, let requestData, let networkCall):
+            DidRespondToGetReportFormatReducer.handleEvent(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToGetCamperSettings(let result, let requestData, let networkCall):
+            DidRespondToGetCamperSettingsReducer.handleEvent(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToSetReport(let result, let requestData, let networkCall):
+            DidRespondToSetReportReducer.handleEvent(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToUpdateReportFormat(let result, let requestData, let networkCall):
+            DidRespondToUpdateReportFormatReducer.handleEvent(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToSetCamperAssigments(let result, let requestData, let networkCall):
+            DidRespondToSetCamperAssigmentsReducer.handleEvent(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
         }
     }
 }

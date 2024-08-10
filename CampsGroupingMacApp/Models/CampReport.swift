@@ -7,30 +7,6 @@ struct ReportFormat: Equatable, Codable, Hashable {
     var reportID: String
     var reportFieldSettings: [ReportFieldSetting]
 
-    var reportEndpoint: URL {
-        URL(string: "https://app.brushfire.com/r/\(reportID)/export")!
-    }
-
-    func getReport(result: @escaping (Result<Report, NSError>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            do {
-                if let csv = try? CSV<Named>(url: reportEndpoint) {
-                    let report  = Report(csv: csv, campID: campEventNumber)
-                    DispatchQueue.main.async {
-                        result(.success(report))
-                    }
-                } else {
-                    throw NSError(domain: "https://app.brushfire.com/r", code: 404)
-                }
-            } catch {
-                let nsError = error as NSError
-                DispatchQueue.main.async {
-                    result(.failure(nsError))
-                }
-            }
-        }
-    }
-
     func formatWithSetting(_ setting: ReportFieldSetting) -> ReportFormat {
         var format = self
         format.reportFieldSettings = reportFieldSettings.arrayWithSetting(setting)
@@ -38,46 +14,9 @@ struct ReportFormat: Equatable, Codable, Hashable {
     }
 }
 
-enum TestReportID: String, CaseIterable {
-    case fatherSonDemo = "https://app.brushfire.com/r/b2abb5b6-4e02-434e-b897-ccb18fce25aa/export"
-
-    func getReport(result: @escaping (Result<Report, NSError>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            do {
-                if let csv = try? CSV<Named>(url: URL(string: self.rawValue)!) {
-                    let report  = Report(csv: csv, campID: campID)
-                    DispatchQueue.main.async {
-                        result(.success(report))
-                    }
-                } else {
-                    throw NSError(domain: "csv", code: 404)
-                }
-            } catch {
-                let nsError = error as NSError
-                DispatchQueue.main.async {
-                    result(.failure(nsError))
-                }
-            }
-        }
-    }
-
-    var campID: Int {
-        switch self {
-        case .fatherSonDemo: 573184
-        }
-    }
-
-    var scope: CampsScope {
-        switch self {
-        case .fatherSonDemo: .sandbox
-        }
-    }
-
-    static func forCamp(_ camp: CampInfo) -> TestReportID? {
-        Self.allCases.first { reportID in
-            reportID.campID == camp.eventNumber
-        }
-    }
+struct ReportAddress: Codable, Equatable {
+    let campID: String
+    let reportID: String
 }
 
 typealias ReportRow = [String: String]

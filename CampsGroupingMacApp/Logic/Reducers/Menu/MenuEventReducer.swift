@@ -8,16 +8,15 @@ enum MenuEventReducer {
         switch event {
         case .didSignOut:
             return DidSignOutReducer.handleEvent(state: &state)
-        case .didSelectAccessAccount(let account, let fetchID):
-            return DidSelectAccessAccountReducer.handleEvent(
-                account: account,
-                fetchID: fetchID,
+        case .didSelectCamp(let camp, let scope):
+            return DidSelectCampReducer.handleEvent(
+                camp: camp,
+                scope: scope,
                 state: &state
             )
-        case .didSelectCamp(let camp):
-            return DidSelectCampReducer.handleEvent(camp: camp, state: &state)
         case .didGoBackToCamps(let scope):
-            state.navigationMode = .camps(scope: scope)
+            state.campScope = scope
+            state.navigationMode = .camps
             return []
         }
     }

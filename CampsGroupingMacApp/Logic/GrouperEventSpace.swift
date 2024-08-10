@@ -37,11 +37,15 @@ enum GrouperEventSpace: EventSpace {
     }
 
     enum Action {
-        case signIn(username: String, password: String, scope: CampsScope, networkCall: NetworkCall = .signIn())
-        case getCamps(account: CampAccessAccount, scope: CampsScope, networkCall: NetworkCall = .camps())
-        case getCampReportForCamp(camp: Camp, networkCall: NetworkCall = .campReport())
-        case getSettingsForCamp(camp: Camp, networkCall: NetworkCall = .campSettings())
-        case updateCampSettings(camp: Camp, networkCall: NetworkCall = .updateCamp())
+        case signIn(username: String, password: String, scope: CampsScope, networkCall: NetworkCall)
+        case getCamps(account: CampAccessAccount, scope: CampsScope, networkCall: NetworkCall)
+        case getReports(networkCall: NetworkCall)
+        case getReportForCamp(campSettings: CampSettings, networkCall: NetworkCall)
+        case getReportFormatForCamp(campSettings: CampSettings, networkCall: NetworkCall)
+        case getCamperSettingsForCamp(camp: Camp, networkCall: NetworkCall)
+        case setReportForCamp(reportID: String, camp: Camp, userID: Int, networkCall: NetworkCall)
+        case updateReportFormatForCamp(campSettings: CampSettings, userID: Int, networkCall: NetworkCall)
+        case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, userID: Int, networkCall: NetworkCall)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
@@ -61,17 +65,25 @@ enum GrouperEventSpace: EventSpace {
 enum NetworkCall: Equatable, Hashable {
     case signIn(UUID = UUID())
     case camps(UUID = UUID())
-    case campSettings(UUID = UUID())
+    case campReports(UUID = UUID())
     case campReport(UUID = UUID())
-    case updateCamp(UUID = UUID())
+    case campReportFormat(UUID = UUID())
+    case camperSettings(UUID = UUID())
+    case setReport(UUID = UUID())
+    case updateReportFormat(UUID = UUID())
+    case setCamperAssigments(UUID = UUID())
 }
 
 enum NetworkError: Error, Equatable, Hashable {
     case signIn(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case camps(error: CampsGroupingAPIError, networkCall: NetworkCall)
-    case campSettings(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case campReports(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case campReport(error: CampsGroupingAPIError, networkCall: NetworkCall)
-    case updateCamp(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case campReportFormat(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case camperSettings(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case updateCampers(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case setReport(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case updateReportFormat(error: CampsGroupingAPIError, networkCall: NetworkCall)
 }
 
 // MARK: Leaf States
@@ -108,28 +120,83 @@ extension GrouperEventSpace.State {
         camps.first { $0.info.eventNumber == selectedCamp }
     }
 
-    mutating func beginNewSignInCall(fetchID: UUID = UUID()) {
-        activeFetches.insert(.signIn(fetchID))
+    mutating func beginSignIn(username: String, password: String, scope: CampsScope) -> GrouperAction {
+        let networkCall: NetworkCall = .signIn()
+        activeFetches.insert(networkCall)
+        return .signIn(username: username, password: password, scope: scope, networkCall: networkCall)
     }
-
-    mutating func beginNewCampsCall(fetchID: UUID = UUID()) {
-        activeFetches.insert(.camps(fetchID))
+    
+    mutating func beginGetCamps(account: CampAccessAccount, scope: CampsScope) -> GrouperAction {
+        let networkCall: NetworkCall = .camps()
+        activeFetches.insert(networkCall)
+        return .getCamps(account: account, scope: scope, networkCall: networkCall)
     }
-
-    mutating func beginNewCampSettingsCall(fetchID: UUID = UUID()) {
-        activeFetches.insert(.campSettings(fetchID))
+    
+    mutating func beginGetReports() -> GrouperAction {
+        let networkCall: NetworkCall = .campReports()
+        activeFetches.insert(networkCall)
+        return .getReports(networkCall: networkCall)
     }
-
-    mutating func beginNewCampReportCall(fetchID: UUID = UUID()) {
-        activeFetches.insert(.campReport(fetchID))
+    
+    mutating func beginGetReportForCamp(campSettings: CampSettings) -> GrouperAction {
+        let networkCall: NetworkCall = .campReport()
+        activeFetches.insert(networkCall)
+        return .getReportForCamp(campSettings: campSettings, networkCall: networkCall)
     }
-
-    mutating func beginNewUpdateCampCall(fetchID: UUID = UUID()) {
-        activeFetches.insert(.updateCamp(fetchID))
+    
+    mutating func beginGetReportFormatForCamp(campSettings: CampSettings) -> GrouperAction {
+        let networkCall: NetworkCall = .campReportFormat()
+        activeFetches.insert(networkCall)
+        return .getReportFormatForCamp(campSettings: campSettings, networkCall: networkCall)
     }
-
-    mutating func finishCall(_ networkCall: NetworkCall) {
-        activeFetches.remove(networkCall)
+    
+    mutating func beginGetCamperSettingsForCamp(camp: Camp) -> GrouperAction {
+        let networkCall: NetworkCall = .camperSettings()
+        activeFetches.insert(networkCall)
+        return .getCamperSettingsForCamp(camp: camp, networkCall: networkCall)
+    }
+    
+    mutating func beginSetReportForCamp(
+        reportID: String,
+        camp: Camp,
+        userID: Int
+    ) -> GrouperAction {
+        let networkCall: NetworkCall = .setReport()
+        activeFetches.insert(networkCall)
+        return .setReportForCamp(
+            reportID: reportID,
+            camp: camp,
+            userID: userID,
+            networkCall: networkCall
+        )
+    }
+    
+    mutating func beginUpdateReportFormatForCamp(
+        campSettings: CampSettings,
+        userID: Int
+    ) -> GrouperAction {
+        let networkCall: NetworkCall = .updateReportFormat()
+        activeFetches.insert(networkCall)
+        return .updateReportFormatForCamp(
+            campSettings: campSettings,
+            userID: userID,
+            networkCall: networkCall
+        )
+    }
+    
+    mutating func beginSetCamperAssigmentsForCamp(
+        camp: Camp,
+        campSettings: CampSettings,
+        userID: Int
+    ) -> GrouperAction {
+        let networkCall: NetworkCall = .setCamperAssigments()
+        activeFetches.insert(networkCall)
+        return .setCamperAssigmentsForCamp(
+            camp: camp,
+            campSettings: campSettings,
+            userID: userID,
+            networkCall: networkCall
+        )
     }
 
     var isPerformingSignInCall: Bool {
@@ -141,7 +208,7 @@ extension GrouperEventSpace.State {
             }
         }
     }
-
+    
     var isPerformingCampsCall: Bool {
         activeFetches.contains { call in
             if case .camps = call {
@@ -152,9 +219,9 @@ extension GrouperEventSpace.State {
         }
     }
 
-    var isPerformingCampSettingsCall: Bool {
+    var isPerformingCampReportsCall: Bool {
         activeFetches.contains { call in
-            if case .campSettings = call {
+            if case .campReports = call {
                 true
             } else {
                 false
@@ -172,9 +239,49 @@ extension GrouperEventSpace.State {
         }
     }
 
-    var isPerformingUpdateCampCall: Bool {
+    var isPerformingCampReportFormatCall: Bool {
         activeFetches.contains { call in
-            if case .updateCamp = call {
+            if case .campReportFormat = call {
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    var isPerformingCamperSettingsCall: Bool {
+        activeFetches.contains { call in
+            if case .camperSettings = call {
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    var isPerformingSetReportCall: Bool {
+        activeFetches.contains { call in
+            if case .setReport = call {
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    var isPerformingUpdateReportFormatCall: Bool {
+        activeFetches.contains { call in
+            if case .updateReportFormat = call {
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    var isPerformingSetCamperAssigmentsCall: Bool {
+        activeFetches.contains { call in
+            if case .setCamperAssigments = call {
                 true
             } else {
                 false

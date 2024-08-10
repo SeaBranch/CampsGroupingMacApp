@@ -47,6 +47,25 @@ struct Camp: Equatable, Hashable {
     mutating func applyChange(_ change: CampChange) {
         changes = changes.pendingChanges(toSettings: campSettings, addingChange: change)
     }
+
+    func withNewReportID(reportID: String) -> Camp {
+        var campSettings = self.campSettings
+        ?? CampSettings(
+            report: ReportFormat(
+                campEventNumber: self.info.eventNumber,
+                campScope: self.scope,
+                reportID: reportID,
+                reportFieldSettings: []
+            ),
+            campers: []
+        )
+
+        campSettings.report.reportID = reportID
+        var camp = self
+        camp.campSettings = campSettings
+
+        return camp
+    }
 }
 
 enum CampChange: Equatable, Hashable {

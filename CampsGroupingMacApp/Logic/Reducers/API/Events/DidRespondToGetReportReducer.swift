@@ -4,22 +4,24 @@ extension APIEventReducer {
     enum DidRespondToGetReportReducer {
         static func handleEvent(
             result: Result<Report, CampsGroupingAPIError>,
-            camp: Camp,
+            campSettings: CampSettings,
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
+            state.activeFetches.remove(networkCall)
+
             switch result {
             case .success(let report):
-                didGetReport(
+                return didGetReport(
                     report: report,
-                    camp: camp,
+                    campSettings: campSettings,
                     networkCall: networkCall,
                     state: &state
                 )
             case .failure(let error):
-                didFailToGetReport(
+                return didFailToGetReport(
                     error: error,
-                    camp: camp,
+                    campSettings: campSettings,
                     networkCall: networkCall,
                     state: &state
                 )
@@ -28,11 +30,16 @@ extension APIEventReducer {
 
         static func didGetReport(
             report: Report,
-            camp: Camp,
+            campSettings: CampSettings,
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            var newCamp = camp
+            guard var newCamp = state.camps.first(where: { camp in
+                camp.info.eventNumber == campSettings.report.campEventNumber
+            }) else {
+                return []
+            }
+
             newCamp.report = report
             state.errors = state.errors.filter { error in
                 if case .campReport = error {
@@ -54,7 +61,7 @@ extension APIEventReducer {
 
         static func didFailToGetReport(
             error: CampsGroupingAPIError,
-            camp: Camp,
+            campSettings: CampSettings,
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {

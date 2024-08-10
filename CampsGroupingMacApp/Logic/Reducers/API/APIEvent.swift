@@ -14,19 +14,39 @@ extension GrouperEvent {
             scope: CampsScope,
             networkCall: NetworkCall
         )
+        case didRespondToGetCampReports(
+            result: GetCampReportsResult,
+            requestData: GetCampReportsData,
+            networkCall: NetworkCall
+        )
         case didRespondToGetReport(
-            result: Result<Report, CampsGroupingAPIError>,
-            camp: Camp,
+            result: GetReportResult,
+            requestData: GetReportData,
             networkCall: NetworkCall
         )
-        case didRespondToGetCampSettings(
-            result: Result<CampSettings, CampsGroupingAPIError>,
-            camp: Camp,
+        case didRespondToGetReportFormat(
+            result: GetReportFormatResult,
+            requestData: GetReportFormatData,
             networkCall: NetworkCall
         )
-        case didRespondToUpdateCampSettings(
-            result: Result<CampSettings, CampsGroupingAPIError>,
-            camp: Camp,
+        case didRespondToGetCamperSettings(
+            result: GetCamperSettingsResult,
+            requestData: GetCamperSettingsData,
+            networkCall: NetworkCall
+        )
+        case didRespondToSetReport(
+            result: SetReportResult,
+            requestData: SetReportData,
+            networkCall: NetworkCall
+        )
+        case didRespondToUpdateReportFormat(
+            result: UpdateReportFormatResult,
+            requestData: UpdateReportFormatData,
+            networkCall: NetworkCall
+        )
+        case didRespondToSetCamperAssigments(
+            result: SetCamperAssigmentsResult,
+            requestData: SetCamperAssigmentsData,
             networkCall: NetworkCall
         )
     }

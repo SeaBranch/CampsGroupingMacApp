@@ -38,10 +38,6 @@ struct CampInfo: Codable, Equatable, HashID {
     let isHidden: Bool
     let isFlexPass: Bool
 
-    var hasReport: Bool {
-        reportID != nil
-    }
-
     enum CodingKeys: String, CodingKey {
         case title = "Title"
         case subtitle = "Subtitle"
@@ -199,10 +195,6 @@ struct CampInfo: Codable, Equatable, HashID {
 }
 
 extension CampInfo {
-    var reportID: TestReportID? {
-        TestReportID.forCamp(self)
-    }
-
     enum DefaultValues {
     static let subtitle: String = ""
     static let urlKey: String = ""

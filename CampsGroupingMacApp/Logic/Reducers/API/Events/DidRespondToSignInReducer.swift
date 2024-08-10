@@ -8,7 +8,9 @@ extension APIEventReducer {
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            switch result {
+            state.activeFetches.remove(networkCall)
+
+            return switch result {
             case .success(let account):
                 didSignIn(
                     account: account,
@@ -38,7 +40,7 @@ extension APIEventReducer {
                 state.signInFormState = nil
                 state.navigationMode = .camps
 
-                return [.getCamps(account: account, scope: scope)]
+                return [state.beginGetCamps(account: account, scope: scope)]
             }
 
             return []
