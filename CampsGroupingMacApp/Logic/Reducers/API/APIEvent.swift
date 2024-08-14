@@ -3,6 +3,7 @@ import SwiftCSV
 
 extension GrouperEvent {
     enum APIEvent: Equatable {
+        case retryNetworkCall(NetworkCall)
         case didRespondToSignIn(
             result: Result<CampAccessAccount, CampsGroupingAPIError>,
             scope: CampsScope,

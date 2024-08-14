@@ -31,7 +31,9 @@ struct SignInView: View {
             Spacer()
         }.overlay {
             if let error = signInViewModel.vmState.error {
-                errorOverlay(error: error)
+                if case .signIn(let signInError, let networkCall) = error {
+                    errorOverlay(error: signInError)
+                }
             }
         }
     }

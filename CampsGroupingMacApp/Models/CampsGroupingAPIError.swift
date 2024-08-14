@@ -35,6 +35,20 @@ enum CampsGroupingAPIError: Error, Equatable, HashID, Sendable {
             return .serviceFailure(nsError, endpoint)
         }
     }
+
+    var status: Int {
+        switch self {
+        case .badAuthentication(let nsError, _): nsError.code
+        case .noAccess(let nsError, _): nsError.code
+        case .notFound(let nsError, _): nsError.code
+        case .forbidden(let nsError, _): nsError.code
+        case .tooManyRequests(let nsError, _): nsError.code
+        case .badRequest(let nsError, _): nsError.code
+        case .serviceFailure(let nsError, _): nsError.code
+        case .decodingError(let decodingError, _): (decodingError as NSError).code
+        case .unknownError(_): -1
+        }
+    }
 }
 
 extension DecodingError: Equatable, Hashable {

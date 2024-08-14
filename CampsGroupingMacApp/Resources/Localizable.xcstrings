@@ -1,7 +1,23 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "%@ @ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ @ %2$@"
+          }
+        }
+      }
+    },
     "%@ returned no results" : {
+
+    },
+    "%lld" : {
 
     },
     "< %@" : {
@@ -17,6 +33,9 @@
         }
       }
     },
+    "Active" : {
+
+    },
     "Bad Authentication: %lld" : {
 
     },
@@ -26,7 +45,22 @@
     "Begin Grouping" : {
 
     },
+    "Change Report ID" : {
+
+    },
+    "Configure Report Fields" : {
+
+    },
     "Could Not Decode Data" : {
+
+    },
+    "Could not get camp report" : {
+
+    },
+    "Could not get camp report format" : {
+
+    },
+    "Could not get camper settings" : {
 
     },
     "Details about selected campers and groups" : {
@@ -45,10 +79,19 @@
     "equivelent to: %lf" : {
 
     },
+    "Error: %lld" : {
+
+    },
     "Forbidden: %lld" : {
 
     },
-    "Grouping" : {
+    "getting camp report format" : {
+
+    },
+    "getting camper assignments" : {
+
+    },
+    "getting report" : {
 
     },
     "Handle Directly" : {
@@ -65,13 +108,16 @@
         }
       }
     },
+    "loading camps" : {
+
+    },
     "Logging into: %@" : {
 
     },
-    "Manage Report" : {
+    "No Access Found: %lld" : {
 
     },
-    "No Access Found: %lld" : {
+    "No camps found in %@" : {
 
     },
     "No Report Found" : {
@@ -87,6 +133,12 @@
         }
       }
     },
+    "Report ID" : {
+
+    },
+    "Retry" : {
+
+    },
     "Search Campers Needing Grouped" : {
 
     },
@@ -94,6 +146,9 @@
 
     },
     "Search for a camper or group" : {
+
+    },
+    "Select a Camp" : {
 
     },
     "Select a Camps Login Type" : {
@@ -110,6 +165,12 @@
       }
     },
     "Service Error: %lld" : {
+
+    },
+    "Set Report ID" : {
+
+    },
+    "setting report id" : {
 
     },
     "Sign Out" : {
@@ -156,6 +217,9 @@
 
     },
     "Use to Group" : {
+
+    },
+    "View Camper Grouping" : {
 
     },
     "View In Table" : {

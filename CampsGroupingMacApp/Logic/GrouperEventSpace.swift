@@ -117,7 +117,13 @@ extension GrouperEventSpace.State {
     }
 
     var camp: Camp? {
-        camps.first { $0.info.eventNumber == selectedCamp }
+        guard let selection = selectedCamp else {
+            return nil
+        }
+
+        return camps.first { camp in
+            camp.info.eventNumber == selection
+        }
     }
 
     mutating func beginSignIn(username: String, password: String, scope: CampsScope) -> GrouperAction {
@@ -286,6 +292,84 @@ extension GrouperEventSpace.State {
             } else {
                 false
             }
+        }
+    }
+
+    struct ErrorInfo {
+        let error: CampsGroupingAPIError
+        let networkCall: NetworkCall
+
+        init(_ error: CampsGroupingAPIError, _ networkCall: NetworkCall) {
+            self.error = error
+            self.networkCall = networkCall
+        }
+    }
+
+    var campsErrorInfo: ErrorInfo? {
+        let error = errors.first { error in
+            if case .camps = error {
+                true
+            } else {
+                false
+            }
+        }
+
+        switch error {
+        case .camps(let grouperError, let networkCall): 
+            return ErrorInfo(grouperError, networkCall)
+        default:
+            return nil
+        }
+    }
+
+    var camperSettingsErrorInfo: ErrorInfo? {
+        let error = errors.first { error in
+            if case .camperSettings = error {
+                true
+            } else {
+                false
+            }
+        }
+
+        switch error {
+        case .camperSettings(let grouperError, let networkCall):
+            return ErrorInfo(grouperError, networkCall)
+        default:
+            return nil
+        }
+    }
+
+    var campReportFormatErrorInfo: ErrorInfo? {
+        let error = errors.first { error in
+            if case .campReportFormat = error {
+                true
+            } else {
+                false
+            }
+        }
+
+        switch error {
+        case .campReportFormat(let grouperError, let networkCall):
+            return ErrorInfo(grouperError, networkCall)
+        default:
+            return nil
+        }
+    }
+
+    var campReportErrorInfo: ErrorInfo? {
+        let error = errors.first { error in
+            if case .campReport = error {
+                true
+            } else {
+                false
+            }
+        }
+            
+        switch error {
+        case .campReport(let grouperError, let networkCall):
+            return ErrorInfo(grouperError, networkCall)
+        default:
+            return nil
         }
     }
 }

@@ -2,6 +2,21 @@ import Foundation
 
 typealias UpdateReportFormatResult = Result<Bool, CampsGroupingAPIError>
 
+struct ReportFormatChangeDTO: RequestDTO {
+    let fields: [ReportFieldSettingChangeDTO]
+    let userID: String
+
+    struct ReportFieldSettingChangeDTO: Codable {
+        let fieldName: String
+        let fieldType: String
+        let visable: Bool
+        let primary: Bool
+        let useToGroup: Bool
+        let searchable: Bool
+        let handleDirectly: Bool
+    }
+}
+
 struct UpdateReportFormatData: Equatable, CampGroupingAPISetEndpointModel {
     let endpoint: CampsGroupingEndpoint
     let campSettings: CampSettings

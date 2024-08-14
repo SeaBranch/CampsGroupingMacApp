@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 protocol GetCampsLogicControllerProtocol {
     func getCamps(
@@ -9,13 +10,38 @@ protocol GetCampsLogicControllerProtocol {
 }
 
 class GetCampsLogicController: GetCampsLogicControllerProtocol {
+    let modelContainer: ModelContainer
     let communicator: GetCampsCommunicatorProtocol
 
-    init(communicator: GetCampsCommunicatorProtocol = GetCampsCommunicator()) {
+    init(
+        modelContainer: ModelContainer,
+        communicator: GetCampsCommunicatorProtocol = GetCampsCommunicator()
+    ) {
+        self.modelContainer = modelContainer
         self.communicator = communicator
     }
 
+    @MainActor
     func getCamps(
+        account: CampAccessAccount,
+        scope: CampsScope,
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
+    ) {
+        let campsMemoryArray = try? modelContainer.mainContext.fetch(FetchDescriptor<CampsStateMemory>())
+        if let campsMemory = campsMemoryArray?.first {
+            if Date().timeIntervalSince(campsMemory.dateCreated) <= TimeInterval(30) {
+                completion(.success(campsMemory.camps))
+            } else {
+                modelContainer.mainContext.delete(campsMemory)
+                fetchCamps(account: account, scope: scope, completion: completion)
+            }
+        } else {
+            fetchCamps(account: account, scope: scope, completion: completion)
+        }
+    }
+
+    @MainActor
+    private func fetchCamps(
         account: CampAccessAccount,
         scope: CampsScope,
         completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void

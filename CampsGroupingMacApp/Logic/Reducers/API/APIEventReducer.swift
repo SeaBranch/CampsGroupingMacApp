@@ -4,6 +4,11 @@ enum APIEventReducer {
         state: inout GrouperState
     ) -> [GrouperAction] {
         switch event {
+        case .retryNetworkCall(let networkCall):
+            RetryNetworkCallReducer.handleEvent(
+                networkCall: networkCall,
+                state: &state
+            )
         case .didRespondToSignIn(let result, let scope, let networkCall):
             DidRespondToSignInReducer.handleEvent(
                 result: result,

@@ -14,17 +14,20 @@ struct ReportView: View {
     @State var reportFields: [ReportFieldSetting] = []
 
     var body: some View {
-        if case .report(let possibleReport, let camp, let scope) = coordinator.state.navigationMode, let report = possibleReport {
-            reportNavStack(report: report, camp: camp, scope: scope)
+        if let scope = coordinator.state.campScope,
+           let camp = coordinator.state.camp,
+           let campSettings = camp.campSettings,
+           let report = camp.report {
+            reportNavStack(report: report, camp: camp.info, scope: scope)
                 .onAppear {
-                    reportFields = report.fields.filter({ field in
-                        field.visable
-                    })
+//                    reportFields = report.reportFieldSettings.filter({ field in
+//                        field.visable
+//                    })
                 }
                 .onChange(of: coordinator.state) { oldValue, newValue in
-                    reportFields = newValue.currentReport?.fields.filter({ field in
-                        field.visable
-                    }) ?? []
+//                    reportFields = newValue.camp?.campSettings?.report.reportFieldSettings.filter({ field in
+//                        field.visable
+//                    }) ?? []
                 }
         } else {
             Text("No Report Found")
@@ -38,9 +41,9 @@ struct ReportView: View {
         } content: {
             selectedFieldList(camp: camp, scope: scope)
         } detail: {
-            if let field = coordinator.state.fieldTypeFieldBeingChanged {
-                fieldTypingList(for: field)
-            }
+//            if let field = coordinator.state.fieldTypeFieldBeingChanged {
+//                fieldTypingList(for: field)
+//            }
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {
@@ -51,6 +54,7 @@ struct ReportView: View {
         }
     }
 
+    /*
     func beginGrouping(camp: CampInfo, scope: CampsScope) {
         guard let campers = coordinator
             .state
@@ -72,12 +76,12 @@ struct ReportView: View {
             )
         )
     }
-
+*/
     @ViewBuilder
     func selectedFieldList(camp: CampInfo, scope: CampsScope) -> some View {
         List {
             Button("Begin Grouping") {
-                self.beginGrouping(camp: camp, scope: scope)
+                //self.beginGrouping(camp: camp, scope: scope)
             }
 
             ForEach(reportFields) { field in
@@ -93,7 +97,7 @@ struct ReportView: View {
                 Button(type.rawValue) {
                     var newField = field
                     newField.fieldType = type
-                    coordinator.send(event: .camp(event: .didChangeField(newField)))
+                    coordinator.send(event: .camp(event: .reportEvent(event: .didChangeReportFieldSetting(newField))))
                 }
             }
         }
@@ -107,7 +111,7 @@ struct ReportView: View {
                 Text("Handle Directly")
             }
             Button("Type: \(field.fieldType.rawValue)") {
-                coordinator.send(event: .camp(event: .didSelectFieldTypeButtonForField(field)))
+                // TODO: .didSelectFieldTypeButtonForField(field)))
             }
             Text("equivelent to: \(field.equivalance)")
             Toggle(isOn: useBinding(for: field)) {
@@ -130,11 +134,7 @@ struct ReportView: View {
                     var newField = fieldRef
                     newField.handleDirectly = newValue
                     DispatchQueue.main.async {
-                        coordinator.send(
-                            event: .camp(
-                                event: .didChangeField(newField)
-                            )
-                        )
+                        coordinator.send(event: .camp(event: .reportEvent(event: .didChangeReportFieldSetting(newField))))
                     }
 
                     return newField
@@ -158,11 +158,7 @@ struct ReportView: View {
                     newField.includeInGrouping = newValue
 
                     DispatchQueue.main.async {
-                        coordinator.send(
-                            event: .camp(
-                                event: .didChangeField(newField)
-                            )
-                        )
+                        coordinator.send(event: .camp(event: .reportEvent(event: .didChangeReportFieldSetting(newField))))
                     }
                     return newField
                 }
@@ -185,11 +181,7 @@ struct ReportView: View {
                     newField.showInTable = newValue
 
                     DispatchQueue.main.async {
-                        coordinator.send(
-                            event: .camp(
-                                event: .didChangeField(newField)
-                            )
-                        )
+                        coordinator.send(event: .camp(event: .reportEvent(event: .didChangeReportFieldSetting(newField))))
                     }
                     return newField
                 }

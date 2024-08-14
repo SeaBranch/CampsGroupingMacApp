@@ -91,6 +91,13 @@
 		6D9CC1B32C66AB3600D0809B /* DidRespondToSetReportReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1B22C66AB3600D0809B /* DidRespondToSetReportReducer.swift */; };
 		6D9CC1B52C66AB4600D0809B /* DidRespondToUpdateReportFormatReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1B42C66AB4600D0809B /* DidRespondToUpdateReportFormatReducer.swift */; };
 		6D9CC1B72C66AB5500D0809B /* DidRespondToSetCamperAssigmentsReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1B62C66AB5500D0809B /* DidRespondToSetCamperAssigmentsReducer.swift */; };
+		6D9CC1BC2C682CF800D0809B /* CampsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1BB2C682CF800D0809B /* CampsView.swift */; };
+		6D9CC1BE2C682D4F00D0809B /* CampsNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1BD2C682D4F00D0809B /* CampsNavView.swift */; };
+		6D9CC1C02C682D7200D0809B /* CampsContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1BF2C682D7200D0809B /* CampsContentView.swift */; };
+		6D9CC1C22C682D9200D0809B /* CampsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1C12C682D9200D0809B /* CampsDetailView.swift */; };
+		6D9CC1C42C6832B500D0809B /* RetryNetworkCallReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1C32C6832B500D0809B /* RetryNetworkCallReducer.swift */; };
+		6D9CC1C62C6CF01E00D0809B /* BrushfireClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1C52C6CF01E00D0809B /* BrushfireClient.swift */; };
+		6D9CC1C92C6D1DF800D0809B /* AppSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9CC1C82C6D1DF800D0809B /* AppSession.swift */; };
 		7A4DE3562C5A839C00BAFADD /* Camp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A4DE3552C5A839C00BAFADD /* Camp.swift */; };
 /* End PBXBuildFile section */
 
@@ -199,6 +206,13 @@
 		6D9CC1B22C66AB3600D0809B /* DidRespondToSetReportReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidRespondToSetReportReducer.swift; sourceTree = "<group>"; };
 		6D9CC1B42C66AB4600D0809B /* DidRespondToUpdateReportFormatReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidRespondToUpdateReportFormatReducer.swift; sourceTree = "<group>"; };
 		6D9CC1B62C66AB5500D0809B /* DidRespondToSetCamperAssigmentsReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidRespondToSetCamperAssigmentsReducer.swift; sourceTree = "<group>"; };
+		6D9CC1BB2C682CF800D0809B /* CampsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsView.swift; sourceTree = "<group>"; };
+		6D9CC1BD2C682D4F00D0809B /* CampsNavView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsNavView.swift; sourceTree = "<group>"; };
+		6D9CC1BF2C682D7200D0809B /* CampsContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsContentView.swift; sourceTree = "<group>"; };
+		6D9CC1C12C682D9200D0809B /* CampsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampsDetailView.swift; sourceTree = "<group>"; };
+		6D9CC1C32C6832B500D0809B /* RetryNetworkCallReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryNetworkCallReducer.swift; sourceTree = "<group>"; };
+		6D9CC1C52C6CF01E00D0809B /* BrushfireClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushfireClient.swift; sourceTree = "<group>"; };
+		6D9CC1C82C6D1DF800D0809B /* AppSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSession.swift; sourceTree = "<group>"; };
 		7A4DE3552C5A839C00BAFADD /* Camp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -261,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				6D1E61592BAC915B001F3762 /* CampsGroupingMacAppApp.swift */,
+				6D9CC1C72C6D1CCD00D0809B /* Cache */,
 				6D254F972C0EAD6400684B62 /* Logic */,
 				6D254F8E2C0E97C700684B62 /* Models */,
 				6D254F8F2C0E97D000684B62 /* ViewModels */,
@@ -334,13 +349,10 @@
 			isa = PBXGroup;
 			children = (
 				6D1E615B2BAC915B001F3762 /* ContentView.swift */,
-				6D7AAB152C46DED90093291F /* ReportView.swift */,
-				6D9CC18A2C53DDCE00D0809B /* CamperGroupingView.swift */,
-				6D9CC18C2C5586A500D0809B /* CampersToBeGroupedView.swift */,
-				6D9CC18E2C55870A00D0809B /* CamperAndGroupSearchView.swift */,
-				6D9CC1902C55874500D0809B /* CampersAndGroupsDetailView.swift */,
-				6D7AAB172C46ED360093291F /* FieldList.swift */,
 				6D254F932C0EA1E700684B62 /* SignInView.swift */,
+				6D9CC1B82C68295B00D0809B /* CampsView */,
+				6D9CC1B92C68296900D0809B /* ReportView */,
+				6D9CC1BA2C68297400D0809B /* GroupingView */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -451,6 +463,7 @@
 				6D9CC1B22C66AB3600D0809B /* DidRespondToSetReportReducer.swift */,
 				6D9CC1B42C66AB4600D0809B /* DidRespondToUpdateReportFormatReducer.swift */,
 				6D9CC1B62C66AB5500D0809B /* DidRespondToSetCamperAssigmentsReducer.swift */,
+				6D9CC1C32C6832B500D0809B /* RetryNetworkCallReducer.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -504,6 +517,7 @@
 			children = (
 				6D7AAB022C2B77BB0093291F /* CampsGroupingAPI.swift */,
 				6D254F982C0EAD7600684B62 /* NetworkActionHandler.swift */,
+				6D9CC1C52C6CF01E00D0809B /* BrushfireClient.swift */,
 				6D9CC1972C65A88900D0809B /* Actions */,
 				6D7AAAFF2C2B71D70093291F /* SignIn */,
 				6D7AAB042C2B80CE0093291F /* GetCamps */,
@@ -560,6 +574,45 @@
 				6D9CC1A82C65A95F00D0809B /* SetCamperAssigmentsForCampAction.swift */,
 			);
 			path = Actions;
+			sourceTree = "<group>";
+		};
+		6D9CC1B82C68295B00D0809B /* CampsView */ = {
+			isa = PBXGroup;
+			children = (
+				6D9CC1BB2C682CF800D0809B /* CampsView.swift */,
+				6D9CC1BD2C682D4F00D0809B /* CampsNavView.swift */,
+				6D9CC1BF2C682D7200D0809B /* CampsContentView.swift */,
+				6D9CC1C12C682D9200D0809B /* CampsDetailView.swift */,
+			);
+			path = CampsView;
+			sourceTree = "<group>";
+		};
+		6D9CC1B92C68296900D0809B /* ReportView */ = {
+			isa = PBXGroup;
+			children = (
+				6D7AAB152C46DED90093291F /* ReportView.swift */,
+				6D7AAB172C46ED360093291F /* FieldList.swift */,
+			);
+			path = ReportView;
+			sourceTree = "<group>";
+		};
+		6D9CC1BA2C68297400D0809B /* GroupingView */ = {
+			isa = PBXGroup;
+			children = (
+				6D9CC18A2C53DDCE00D0809B /* CamperGroupingView.swift */,
+				6D9CC18C2C5586A500D0809B /* CampersToBeGroupedView.swift */,
+				6D9CC18E2C55870A00D0809B /* CamperAndGroupSearchView.swift */,
+				6D9CC1902C55874500D0809B /* CampersAndGroupsDetailView.swift */,
+			);
+			path = GroupingView;
+			sourceTree = "<group>";
+		};
+		6D9CC1C72C6D1CCD00D0809B /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				6D9CC1C82C6D1DF800D0809B /* AppSession.swift */,
+			);
+			path = Cache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -700,6 +753,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D9CC1C62C6CF01E00D0809B /* BrushfireClient.swift in Sources */,
 				6D7AAAE92C2B6F460093291F /* DateDisplayDTO.swift in Sources */,
 				6D7AAAED2C2B6FA40093291F /* AuthenticationDTO.swift in Sources */,
 				6D7AAAEF2C2B6FC10093291F /* AuthenticationMetaData.swift in Sources */,
@@ -712,6 +766,7 @@
 				6D11AE782C08D46F00ADC811 /* EventCoordinator.swift in Sources */,
 				6D9CC1B12C66AB2900D0809B /* DidRespondToGetCamperSettingsReducer.swift in Sources */,
 				6D7AAAB42C2B59CF0093291F /* HashID.swift in Sources */,
+				6D9CC1C42C6832B500D0809B /* RetryNetworkCallReducer.swift in Sources */,
 				6D9CC1942C653A0E00D0809B /* GroupingAPILogicController.swift in Sources */,
 				6D7AAAC22C2B62D00093291F /* DidRespondToGetReportReducer.swift in Sources */,
 				6D7AAAC02C2B62AF0093291F /* DidRespondToGetCampsReducer.swift in Sources */,
@@ -720,6 +775,7 @@
 				6D1E615C2BAC915B001F3762 /* ContentView.swift in Sources */,
 				6D7AAAF32C2B70040093291F /* CampsScopeDTO.swift in Sources */,
 				6D9CC1962C653A1F00D0809B /* GroupingAPICommunicators.swift in Sources */,
+				6D9CC1C22C682D9200D0809B /* CampsDetailView.swift in Sources */,
 				6D7AAAC92C2B687D0093291F /* DidSelectSignInReducer.swift in Sources */,
 				6D7AAADF2C2B6B800093291F /* CampSpecificEvent.swift in Sources */,
 				6D7AAAD42C2B69950093291F /* CampSpecificEventReducer.swift in Sources */,
@@ -734,13 +790,16 @@
 				6D7AAACB2C2B68F10093291F /* MenuEventReducer.swift in Sources */,
 				6D254F992C0EAD7600684B62 /* NetworkActionHandler.swift in Sources */,
 				6D7AAAE72C2B6F060093291F /* CampDatesDTO.swift in Sources */,
+				6D9CC1BE2C682D4F00D0809B /* CampsNavView.swift in Sources */,
 				6D9CC19B2C65A8DA00D0809B /* GetCampsAction.swift in Sources */,
 				6D7AAB182C46ED360093291F /* FieldList.swift in Sources */,
 				6D9CC1B72C66AB5500D0809B /* DidRespondToSetCamperAssigmentsReducer.swift in Sources */,
+				6D9CC1BC2C682CF800D0809B /* CampsView.swift in Sources */,
 				6D9CC1A32C65A92C00D0809B /* GetCamperSettingsForCampAction.swift in Sources */,
 				6D254F922C0E993800684B62 /* CampsGroupingAPIError.swift in Sources */,
 				7A4DE3562C5A839C00BAFADD /* Camp.swift in Sources */,
 				6D254F9B2C0EADE400684B62 /* SignInLogicController.swift in Sources */,
+				6D9CC1C02C682D7200D0809B /* CampsContentView.swift in Sources */,
 				6D9CC1B52C66AB4600D0809B /* DidRespondToUpdateReportFormatReducer.swift in Sources */,
 				6D9CC1AD2C66AB1100D0809B /* DidRespondToGetCampReportsReducer.swift in Sources */,
 				6D7AAAB12C2B597A0093291F /* CampReport.swift in Sources */,
@@ -766,6 +825,7 @@
 				6D7AAACE2C2B69120093291F /* DidSignOutReducer.swift in Sources */,
 				6D254F962C0EA26700684B62 /* SignInViewModel.swift in Sources */,
 				6D7AAAF72C2B70600093291F /* CampsScope.swift in Sources */,
+				6D9CC1C92C6D1DF800D0809B /* AppSession.swift in Sources */,
 				6D7AAAF52C2B701E0093291F /* CampAccessAccountInfoDTO.swift in Sources */,
 				6D7AAABB2C2B621F0093291F /* APIEventReducer.swift in Sources */,
 				6D7AAAE12C2B6E970093291F /* GetCampsResponse.swift in Sources */,

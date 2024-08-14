@@ -11,7 +11,7 @@ enum Search {
     struct CamperResult {
         let resultingCampers: [CamperRowResult]
 
-        init(query: String, camperRows: [CamperRow], fullNamesOnly: Bool = false) {
+        init(query: String, camperRows: [Camper], fullNamesOnly: Bool = false) {
             if query.isEmpty {
                 resultingCampers = camperRows.map { CamperRowResult(camper: $0) }
             } else {
@@ -37,29 +37,37 @@ enum Search {
     }
 
     struct CamperRowResult {
-        let camper: CamperRow
+        let camper: Camper
         let rank: Int
         let matchingFields: [ReportFieldValue: [Range<String.Index>]]
 
-        init(camper: CamperRow) {
+        init(camper: Camper) {
             self.camper = camper
             self.rank = 0
             self.matchingFields = [:]
         }
 
-        init?(query: String, camper: CamperRow, fullNamesOnly: Bool = false) {
+        init?(query: String, camper: Camper, fullNamesOnly: Bool = false) {
             self.camper = camper
-            let values =  fullNamesOnly
-            ? [ReportFieldValue.fullName(camper.camper.name)]
-            : camper.row.values.compactMap { $0 }
+            let values = if fullNamesOnly {
+                camper.values.filter({ field in
+                    if case .fullName = field.value {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+            } else {
+                camper.values
+            }
 
             var matches = [ReportFieldValue: [Range<String.Index>]]()
             var bestMatch = Int.max
 
             for value in values {
-                let firstMatch = Search.firstMatchIn(value: value, forQuery: query)
+                let firstMatch = Search.firstMatchIn(value: value.value, forQuery: query)
                 if !firstMatch.0.isEmpty {
-                    matches[value] = firstMatch.0
+                    matches[value.value] = firstMatch.0
                     if bestMatch > firstMatch.1 {
                         bestMatch = firstMatch.1
                     }

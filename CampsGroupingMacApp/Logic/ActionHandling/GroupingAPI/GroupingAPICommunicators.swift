@@ -61,13 +61,15 @@ class CampGroupingAPICommunicator: CampGroupingAPICommunicatorProtocol {
 }
 
 // MARK: URLSession helper extension
-private extension URLSession {
+extension URLSession {
     func passFailTask(
         request: URLRequest,
         domain: String,
+        onResponse: ((URLResponse?) -> Void)? = nil,
         completion: @escaping (Result<Void, NSError>) -> Void
     ) {
         dataTask(with: request) { _, response, error in
+            onResponse?(response)
             if let error = error as? NSError {
                 completion(.failure(error))
                 return
@@ -90,9 +92,11 @@ private extension URLSession {
     func decodableTask<T: Codable>(
         request: URLRequest,
         domain: String,
+        onResponse: ((URLResponse?) -> Void)? = nil,
         completion: @escaping (Result<T, NSError>) -> Void
     ) {
         dataTask(with: request) { data, response, error in
+            onResponse?(response)
             if let error = error as? NSError {
                 completion(.failure(error))
                 return

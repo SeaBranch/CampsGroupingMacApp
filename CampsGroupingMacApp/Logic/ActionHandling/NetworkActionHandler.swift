@@ -1,25 +1,24 @@
 import Foundation
+import SwiftData
 
 extension DispatchQueue {
     static let processing = DispatchQueue(label: "processing", qos: .background)
+    static let network = DispatchQueue(label: "processing", qos: .background)
 }
 
 class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
-    let signInLogicController: SignInLogicControllerProtocol
-    let getCampsLogicController: GetCampsLogicControllerProtocol
-    let groupingAPILogicController: GroupingAPILogicControllerProtocol
+    var signInLogicController: SignInLogicControllerProtocol
+    var getCampsLogicController: GetCampsLogicControllerProtocol
+    var groupingAPILogicController: GroupingAPILogicControllerProtocol
+    let modelContainer: ModelContainer
 
     init(
-        signInLogicController: SignInLogicControllerProtocol
-        = SignInLogicController(),
-        getCampsLogicController: GetCampsLogicControllerProtocol
-        = GetCampsLogicController(),
-        groupingAPILogicController: GroupingAPILogicControllerProtocol
-        = GroupingAPILogicController()
+        modelContainer: ModelContainer
     ) {
-        self.signInLogicController = signInLogicController
-        self.getCampsLogicController = getCampsLogicController
-        self.groupingAPILogicController = groupingAPILogicController
+        self.modelContainer = modelContainer
+        self.signInLogicController = SignInLogicController(modelContainer: modelContainer)
+        self.getCampsLogicController = GetCampsLogicController(modelContainer: modelContainer)
+        self.groupingAPILogicController = GroupingAPILogicController()
     }
 
     override func handle(action: GrouperEventSpace.Action, handleEvent: @escaping (GrouperEventSpace.Event) -> Void) {

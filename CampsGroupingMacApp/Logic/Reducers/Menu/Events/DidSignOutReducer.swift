@@ -5,12 +5,7 @@ extension MenuEventReducer {
         static func handleEvent(
             state: inout GrouperState
         ) -> [GrouperAction] {
-            state.signInFormState = SignInFormState()
-            state.accessAccount = nil
-            state.activeSignIn = nil
-            state.activeSignInError = nil
-            state.navigationMode = .signin
-
+            state = GrouperState()
             return []
         }
     }

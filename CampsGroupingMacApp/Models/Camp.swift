@@ -85,6 +85,10 @@ struct CampSettings: Equatable, Codable, Hashable {
     var report: ReportFormat
     var campers: [CamperSetting]
 
+    var hasMinimumRequiredSettings: Bool {
+        report.hasMinimumRequiredSettings
+    }
+
     func withChanges(_ changes: [CampChange]) -> CampSettings {
         var settings = self
         for change in changes.pendingChanges(toSettings: self) {

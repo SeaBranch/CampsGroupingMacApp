@@ -7,6 +7,39 @@ struct ReportFormat: Equatable, Codable, Hashable {
     var reportID: String
     var reportFieldSettings: [ReportFieldSetting]
 
+    var hasMinimumRequiredSettings: Bool {
+        hasCamperIdSetting &&
+        hasCamperNameSetting &&
+        hasCamperGroupIdSetting
+    }
+
+    var hasCamperNameSetting: Bool {
+        reportFieldSettings.contains { setting in
+            setting.fieldType == .fullName &&
+            setting.isRegistrantData &&
+            setting.visable &&
+            setting.showInTable
+        }
+    }
+
+    var hasCamperIdSetting: Bool {
+        reportFieldSettings.contains { setting in
+            setting.fieldType == .camperID &&
+            setting.isRegistrantData &&
+            setting.visable &&
+            setting.showInTable
+        }
+    }
+
+    var hasCamperGroupIdSetting: Bool {
+        reportFieldSettings.contains { setting in
+            setting.fieldType == .groupID &&
+            setting.isRegistrantData &&
+            setting.visable &&
+            setting.showInTable
+        }
+    }
+
     func formatWithSetting(_ setting: ReportFieldSetting) -> ReportFormat {
         var format = self
         format.reportFieldSettings = reportFieldSettings.arrayWithSetting(setting)
@@ -101,6 +134,7 @@ enum ReportFieldValue: Equatable, Hashable {
     case camperID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
     case groupID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
     case crossroadsSite(rawValue: String, fieldName: String, primary: Bool)
+    case commaSeparatedOptions(values: [String], rawValue: String, fieldName: String, primary: Bool)
     case empty(fieldName: String)
 
     func difference(from other: ReportFieldValue, with equivalance: Double) -> Double? {
@@ -146,16 +180,17 @@ enum ReportFieldValue: Equatable, Hashable {
 
     var rawValue: String {
         switch self {
-        case .string(let string, _, _):            string
-        case .fullName(let string, _, _):          string
-        case .partOfName(let string, _, _):        string
-        case .int(_, let string, _, _):            string
-        case .bool(_, let string, _, _):           string
-        case .zip(_, let string, _, _):            string
-        case .camperID(_, let string, _, _):       string
-        case .groupID(_, let string, _, _):        string
-        case .crossroadsSite(let string, _, _):    string
-        case .empty:                            ""
+        case .string(let string, _, _):                     string
+        case .fullName(let string, _, _):                   string
+        case .partOfName(let string, _, _):                 string
+        case .int(_, let string, _, _):                     string
+        case .bool(_, let string, _, _):                    string
+        case .zip(_, let string, _, _):                     string
+        case .camperID(_, let string, _, _):                string
+        case .groupID(_, let string, _, _):                 string
+        case .crossroadsSite(let string, _, _):             string
+        case .commaSeparatedOptions(_, let string, _, _):   string
+        case .empty:                                        ""
         }
     }
 }
@@ -172,5 +207,22 @@ enum ReportFieldType: String, Equatable, CaseIterable, Identifiable, Codable {
          camperID,
          groupID,
          crossroadsSite,
+         commaSeparatedOptions,
          empty
+
+    var displayName: String {
+        switch self {
+        case .string: "String"
+        case .int: "Int"
+        case .bool: "Bool"
+        case .zip: "Zip"
+        case .fullName: "Full Name"
+        case .partOfName: "Part of Name"
+        case .camperID: "Camper ID"
+        case .groupID: "Group ID"
+        case .crossroadsSite: "Crossroads Site"
+        case .commaSeparatedOptions: "Comma Separated Options"
+        case .empty: "Empty"
+        }
+    }
 }

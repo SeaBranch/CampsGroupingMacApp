@@ -80,6 +80,16 @@ extension Dictionary where Key == String, Value == ReportFieldValue {
             }
         }.contains(true)
     }
+
+    var crossroadsSite: String? {
+        var site: String?
+        values.forEach {
+            if case .crossroadsSite(let rawValue, _ , true) = $0 {
+                site = rawValue
+            }
+        }
+        return site
+    }
 }
 
 //struct CamperRow: Equatable, Identifiable, Hashable {

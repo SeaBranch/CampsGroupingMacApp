@@ -24,8 +24,9 @@ struct CampersToBeGroupedView: View {
     @ViewBuilder
     func prioritizedCampers() -> some View {
         if searchQuery.isEmpty {
+            let campers = coordinator.state.camp?.campers ?? []
             ForEach(
-            coordinator.state.campers.prioritizingFlaggedFields()
+            campers.prioritizingFlaggedFields()
             ) { camperRow in
                 camperView(camperRow)
             }
@@ -38,7 +39,7 @@ struct CampersToBeGroupedView: View {
             ForEach(
                 Search.CamperResult(
                     query: searchQuery,
-                    camperRows: coordinator.state.campers,
+                    camperRows: (coordinator.state.camp?.campers) ?? [],
                     fullNamesOnly: true
                 )
                 .resultingCampers
@@ -50,43 +51,41 @@ struct CampersToBeGroupedView: View {
     }
 
     @ViewBuilder
-    func camperView(_ camperRow: CamperRow) -> some View {
+    func camperView(_ camper: Camper) -> some View {
         VStack {
-            Text(camperRow.camper.name)
+            Text(camper.name)
                 .font(.title3)
-            Text(camperRow.row.crossroadsSite ?? "")
+            Text(camper.values.crossroadsSite ?? "")
                 .font(.footnote)
         }.onTapGesture {
-            coordinator.send(event: .camp(event: .didSelectCamperRow(camper: camperRow.camper, inSection: .camper)))
+            // TODO: hanle tap
         }
     }
 }
 
-private extension Array where Element == CamperRow {
-    func prioritizingFlaggedFields(sortByFieldName: String = "", ascending: Bool = true) -> [CamperRow] {
-        var prioritized = filter { $0.camper.requiresDirectHandling }
+private extension Array where Element == Camper {
+    func prioritizingFlaggedFields(sortByFieldName: String = "", ascending: Bool = true) -> [Camper] {
+        var prioritized = filter { $0.requiresDirectHandling }
             .sortByFieldName(fieldName: sortByFieldName, ascending: ascending)
-        var additionalRows = filter { !$0.camper.requiresDirectHandling }
+        let additionalRows = filter { !$0.requiresDirectHandling }
             .sortByFieldName(fieldName: sortByFieldName, ascending: ascending)
 
         prioritized.append(contentsOf: additionalRows)
         return prioritized
     }
 
-    func sortByFieldName(fieldName: String, ascending: Bool) -> [CamperRow] {
+    func sortByFieldName(fieldName: String, ascending: Bool) -> [Camper] {
         guard !fieldName.isEmpty else { return self }
-
-        var valuesWithField = filter {
-            !($0.row[fieldName]??.rawValue ?? "").isEmpty
+        let valuesWithField = filter { camper in
+            !(camper.values[fieldName]?.rawValue ?? "").isEmpty
         }
-
-        var valuesWithoutField = filter {
-            ($0.row[fieldName]??.rawValue ?? "").isEmpty
+        let valuesWithoutField = filter { camper in
+            (camper.values[fieldName]?.rawValue ?? "").isEmpty
         }
 
         var values = valuesWithField.sorted { row1, row2 in
-            let row1Val = row1.row[fieldName]??.rawValue ?? ""
-            let row2Val = row2.row[fieldName]??.rawValue ?? ""
+            let row1Val = row1.values[fieldName]?.rawValue ?? ""
+            let row2Val = row2.values[fieldName]?.rawValue ?? ""
             return if ascending {
                 row1Val > row2Val
             } else {

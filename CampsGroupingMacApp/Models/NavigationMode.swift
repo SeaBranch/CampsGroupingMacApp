@@ -8,8 +8,8 @@
 import Foundation
 
 enum NavigationMode: Equatable {
-    case signin
-    case camps
-    case report
-    case grouping
+    case signin // signing in
+    case camps // selecting camps and adding reports to camps
+    case report // edit report formats
+    case grouping // grouping campers in a camp
 }

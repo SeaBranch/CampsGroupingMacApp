@@ -8,6 +8,10 @@ extension APIEventReducer {
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
+            guard state.activeFetches.contains(networkCall) else {
+                return []
+            }
+            
             state.activeFetches.remove(networkCall)
 
             return switch result {
@@ -34,16 +38,12 @@ extension APIEventReducer {
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            if state.activeFetches.contains(networkCall) {
-                state.activeFetches.remove(networkCall)
-                state.accessAccount = account
-                state.signInFormState = nil
-                state.navigationMode = .camps
+            state.accessAccount = account
+            state.signInFormState = nil
+            state.campScope = scope
+            state.navigationMode = .camps
 
-                return [state.beginGetCamps(account: account, scope: scope)]
-            }
-
-            return []
+            return [state.beginGetCamps(account: account, scope: scope)]
         }
 
         private static func didFailSignIn(
@@ -52,11 +52,8 @@ extension APIEventReducer {
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            if state.activeFetches.contains(networkCall) {
-                state.activeFetches.remove(networkCall)
-                state.accessAccount = nil
-                state.errors.insert(.signIn(error: error, networkCall: networkCall))
-            }
+            state.accessAccount = nil
+            state.errors.insert(.signIn(error: error, networkCall: networkCall))
 
             return []
         }
