@@ -94,10 +94,19 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
     var differenceIfMissing: Double = 1
     var isRegistrantData: Bool = false
 
+    var isDefault: Bool {
+        fieldType == .string &&
+        !visable &&
+        !showInTable &&
+        !includeInGrouping &&
+        !handleDirectly &&
+        !isRegistrantData
+    }
+
     func value(for rawValue: String?) -> ReportFieldValue {
         if let string = rawValue {
             switch fieldType {
-            case .string: 
+            case .string:
                     .string(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .fullName:
                     .fullName(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
@@ -165,10 +174,11 @@ enum ReportFieldValue: Equatable, Hashable {
             }
 
         case .zip(let zipLocation, _, _, _):
+            let metersInAMile: Double = 1609.344
             if case .zip(let otherZip, _, _, _) = other,
                let location = zipLocation?.location,
                let otherLocation = otherZip?.location {
-                return location.distance(from: otherLocation) * equivalance
+                return (location.distance(from: otherLocation) / metersInAMile) * equivalance
             }
 
         default:

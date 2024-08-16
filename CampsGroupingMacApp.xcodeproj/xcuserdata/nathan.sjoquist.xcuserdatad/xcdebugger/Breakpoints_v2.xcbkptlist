@@ -23,53 +23,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A328F1A8-7BF2-4375-8D09-977D0A11069E"
+            uuid = "6D3C7439-12CD-4C7A-A1AB-39278C68FADF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
-            filePath = "CampsGroupingMacApp/Logic/ActionHandling/SignIn/SignInLogicController.swift"
+            filePath = "CampsGroupingMacApp/Logic/Reducers/Menu/MenuEventReducer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "signIn(email:password:scope:completion:)"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "saveReportFormat(state:)"
             landmarkType = "7">
             <Actions>
                <BreakpointActionProxy
-                  ActionExtensionID = "Xcode.BreakpointAction.Sound">
+                  ActionExtensionID = "Xcode.BreakpointAction.Log">
                   <ActionContent
-                     soundName = "Funk">
+                     message = "Updating fields @fieldsToUpdate@"
+                     conveyanceType = "0">
                   </ActionContent>
                </BreakpointActionProxy>
                <BreakpointActionProxy
                   ActionExtensionID = "Xcode.BreakpointAction.Sound">
                   <ActionContent
-                     soundName = "Glass">
-                  </ActionContent>
-               </BreakpointActionProxy>
-               <BreakpointActionProxy
-                  ActionExtensionID = "Xcode.BreakpointAction.Sound">
-                  <ActionContent
-                     soundName = "Hero">
+                     soundName = "Pop">
                   </ActionContent>
                </BreakpointActionProxy>
             </Actions>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B48640AE-CB7D-48EC-AB8C-F714BD28C4E9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CampsGroupingMacApp/Logic/ActionHandling/BrushfireClient.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "handleResponse(_:)"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

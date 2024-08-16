@@ -69,9 +69,10 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
                 networkCall: networkCall,
                 handleEvent: handleEvent
             )
-        case .updateReportFormatForCamp(let campSettings, let userID, let networkCall):
+        case .updateReportFormatForCamp(let campSettings, let fields, let userID, let networkCall):
             handleUpdateReportFormatForCamp(
                 campSettings: campSettings,
+                fieldsToUpdate: fields,
                 userID: userID,
                 networkCall: networkCall,
                 handleEvent: handleEvent
@@ -89,6 +90,16 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
                 networkCall: networkCall,
                 handleEvent: handleEvent
             )
+        case .getInitialCache:
+            DispatchQueue.main.async {
+                self.getCache(handleEvent: handleEvent)
+            }
         }
+    }
+
+    @MainActor
+    func getCache(handleEvent: @escaping (GrouperEventSpace.Event) -> Void) {
+        let login = try? modelContainer.mainContext.fetch(FetchDescriptor<AppLogin>())
+        handleEvent(.didGetInitialCache(login?.first))
     }
 }

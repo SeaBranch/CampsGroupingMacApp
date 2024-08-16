@@ -30,8 +30,12 @@ enum DidSelectManageReportReducer {
         camp: Camp,
         state: inout GrouperState
     ) -> [GrouperAction] {
+        guard let campSettings = camp.campSettings else {
+            return []
+        }
+
         state.navigationMode = .report
-        return []
+        return [state.beginGetReportForCamp(campSettings: campSettings)]
     }
 }
 

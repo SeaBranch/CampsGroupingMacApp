@@ -9,6 +9,7 @@ protocol CampsGroupingEndpointProtocol: Equatable, Hashable {
 
 extension CampsGroupingEndpointProtocol {
     var brushfire: String { "https://api.brushfire.com" }
+    var brushfireReport: String { "https://app.brushfire.com/r" }
     var campsGroupingAPI: String { "http://localhost:7071/api" }
     var url: URL { URL(string: path)! }
 }
@@ -41,7 +42,7 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
         case .getCamps(let accessKey):
             "\(brushfire)/events?accessKey=\(accessKey)&inactive=false&archive=false"
         case .getReport(let campSettings):
-            "\(brushfire)/r/\(campSettings.report.reportID)/export"
+            "\(brushfireReport)/\(campSettings.report.reportID)/export"
         case .getCampReports, .setReport:
             "\(campsGroupingAPI)/reports"
         case .getReportFormat(let campSettings), .updateReportFormat(let campSettings):

@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "%@" : {
+
+    },
     "%@ @ %@" : {
       "localizations" : {
         "en" : {
@@ -15,6 +18,9 @@
       }
     },
     "%@ returned no results" : {
+
+    },
+    "%lf" : {
 
     },
     "%lld" : {
@@ -34,6 +40,9 @@
       }
     },
     "Active" : {
+
+    },
+    "Back" : {
 
     },
     "Bad Authentication: %lld" : {
@@ -76,9 +85,6 @@
         }
       }
     },
-    "equivelent to: %lf" : {
-
-    },
     "Error: %lld" : {
 
     },
@@ -94,9 +100,6 @@
     "getting report" : {
 
     },
-    "Handle Directly" : {
-
-    },
     "loading" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -109,6 +112,9 @@
       }
     },
     "loading camps" : {
+
+    },
+    "Loading Report" : {
 
     },
     "Logging into: %@" : {
@@ -139,13 +145,16 @@
     "Retry" : {
 
     },
+    "Save changes" : {
+
+    },
+    "Search" : {
+
+    },
     "Search Campers Needing Grouped" : {
 
     },
     "Search Fields" : {
-
-    },
-    "Search for a camper or group" : {
 
     },
     "Select a Camp" : {
@@ -210,19 +219,16 @@
     "Too Many Requests have been made: %lld" : {
 
     },
+    "Type:" : {
+
+    },
     "Type: %@" : {
 
     },
     "Unknown Error :(" : {
 
     },
-    "Use to Group" : {
-
-    },
     "View Camper Grouping" : {
-
-    },
-    "View In Table" : {
 
     }
   },

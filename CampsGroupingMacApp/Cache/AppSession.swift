@@ -13,6 +13,7 @@ class AppLogin {
     let avatarUrl: String
     let isBrushfireStaff: Bool
     let dateCreated: Date
+    let scope: CampsScope?
 
     init(
         accountId: String,
@@ -24,7 +25,8 @@ class AppLogin {
         isUser: Bool,
         avatarUrl: String,
         isBrushfireStaff: Bool,
-        dateCreated: Date
+        dateCreated: Date,
+        scope: CampsScope
     ) {
         self.accountId = accountId
         self.firstName = firstName
@@ -36,10 +38,12 @@ class AppLogin {
         self.avatarUrl = avatarUrl
         self.isBrushfireStaff = isBrushfireStaff
         self.dateCreated = dateCreated
+        self.scope = scope
     }
 
     static func fromAccount(
-        _ account: CampAccessAccount
+        _ account: CampAccessAccount,
+        scope: CampsScope
     ) -> AppLogin {
         AppLogin(
             accountId: account.accountId,
@@ -51,7 +55,8 @@ class AppLogin {
             isUser: account.isUser,
             avatarUrl: account.avatarUrl,
             isBrushfireStaff: account.isBrushfireStaff,
-            dateCreated: Date()
+            dateCreated: Date(),
+            scope: scope
         )
     }
 
@@ -74,13 +79,15 @@ class AppLogin {
 class CampsStateMemory {
     var camps: [CampInfo]
     var dateCreated: Date
+    let scope: CampsScope?
 
-    init(camps: [CampInfo], dateCreated: Date) {
+    init(camps: [CampInfo], dateCreated: Date, scope: CampsScope) {
         self.camps = camps
         self.dateCreated = dateCreated
+        self.scope = scope
     }
 
-    static func fromCamps(_ camps: [CampInfo]) -> CampsStateMemory {
-        .init(camps: camps, dateCreated: Date())
+    static func fromCamps(_ camps: [CampInfo], scope: CampsScope) -> CampsStateMemory {
+        .init(camps: camps, dateCreated: Date(), scope: scope)
     }
 }

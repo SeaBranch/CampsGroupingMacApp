@@ -17,6 +17,9 @@ struct ContentView: View {
         switch coordinator.state.navigationMode {
         case .signin:
             SignInView()
+                .onAppear {
+                    coordinator.send(event: .didBegin)
+                }
         case .camps:
             CampsView()
         case .report:

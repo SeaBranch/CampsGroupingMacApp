@@ -28,10 +28,10 @@ struct FieldList: View {
             }.searchable(text: $searchText, prompt: "Search Fields")
         }
         .onAppear {
-            reportFields = coordinator.state.camp?.campSettings?.report.reportFieldSettings ?? []
+            reportFields = coordinator.state.currentFields
         }
         .onChange(of: coordinator.state) { oldValue, newValue in
-            reportFields = newValue.camp?.campSettings?.report.reportFieldSettings ?? []
+            reportFields = newValue.currentFields
         }
     }
 
@@ -46,8 +46,15 @@ struct FieldList: View {
                     var newField = fieldRef
                     newField.visable = newValue
                     DispatchQueue.main.async {
-                        coordinator.send(event: .camp(event: .reportEvent(event: .didChangeReportFieldSetting(newField))))
+                        coordinator.send(
+                            event: .camp(
+                                event: .reportEvent(
+                                    event: .didChangeReportFieldSetting(newField)
+                                )
+                            )
+                        )
                     }
+
                     return newField
                 }
 

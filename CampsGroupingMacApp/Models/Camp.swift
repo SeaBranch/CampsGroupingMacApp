@@ -57,7 +57,8 @@ struct Camp: Equatable, Hashable {
                 reportID: reportID,
                 reportFieldSettings: []
             ),
-            campers: []
+            campers: [], 
+            reportSettingsOnRecord: []
         )
 
         campSettings.report.reportID = reportID
@@ -84,6 +85,8 @@ struct CamperSetting: Equatable, Codable, Hashable {
 struct CampSettings: Equatable, Codable, Hashable {
     var report: ReportFormat
     var campers: [CamperSetting]
+
+    var reportSettingsOnRecord: [ReportFieldSetting]
 
     var hasMinimumRequiredSettings: Bool {
         report.hasMinimumRequiredSettings

@@ -7,13 +7,18 @@ struct CampersToBeGroupedView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                if searchQuery.isEmpty {
-                    prioritizedCampers()
-                } else {
-                    filteredCampers(searchQuery: searchQuery)
+            Button("Back") {
+                if let camp = coordinator.state.camp {
+                    coordinator.send(event: .menu(event: .didSelectCamp(camp: camp, scope: camp.scope)))
+                } else if let scope = coordinator.state.campScope {
+                    coordinator.send(event: .menu(event: .didGoBackToCamps(scope: scope)))
                 }
             }
+
+            List {
+                prioritizedCampers()
+            }
+
         }
         .searchable(
             text: $searchQuery,
@@ -23,47 +28,80 @@ struct CampersToBeGroupedView: View {
 
     @ViewBuilder
     func prioritizedCampers() -> some View {
-        if searchQuery.isEmpty {
-            let campers = coordinator.state.camp?.campers ?? []
-            ForEach(
-            campers.prioritizingFlaggedFields()
-            ) { camperRow in
-                camperView(camperRow)
-            }
-        }
-    }
-
-    @ViewBuilder
-    func filteredCampers(searchQuery: String) -> some View {
-        if !searchQuery.isEmpty {
-            ForEach(
-                Search.CamperResult(
-                    query: searchQuery,
-                    camperRows: (coordinator.state.camp?.campers) ?? [],
-                    fullNamesOnly: true
-                )
-                .resultingCampers
-                .map { $0.camper }
-            ) { camperRow in
-                camperView(camperRow)
-            }
+        let campers = coordinator.state.camp?.campers ?? []
+        ForEach(
+            campers.filteredBySearch(query: searchQuery).filter({ camper in
+                camper.currentGroupID == nil
+            })
+        ) { camperRow in
+            camperView(camperRow)
         }
     }
 
     @ViewBuilder
     func camperView(_ camper: Camper) -> some View {
-        VStack {
-            Text(camper.name)
-                .font(.title3)
-            Text(camper.values.crossroadsSite ?? "")
-                .font(.footnote)
-        }.onTapGesture {
-            // TODO: hanle tap
+        let isSelected = coordinator.state.groupingState?.camperCurrentlyBeingGrouped == camper.id
+        let isFlagged = camper.requiresDirectHandling
+
+        HStack {
+            VStack {
+                HStack {
+                    Text(camper.name)
+                        .font(.title3)
+                    Spacer()
+                }
+                let groupingFields = coordinator.state.currentFields
+                    .filter { $0.includeInGrouping }
+                    .map { $0.fieldName }
+
+                let values = camper.values
+                    .filter { 
+                        groupingFields.contains($0.key) &&
+                        !$0.value.rawValue.isEmpty
+                    }
+                    .sorted(by: { e1, e2 in
+                        e1.key < e2.key
+                    })
+                    .map { $0.value }
+
+
+                ForEach(values, id: \.rawValue) { groupingValue in
+                    HStack {
+                        Text(groupingValue.rawValue)
+                            .font(.footnote)
+                        Spacer()
+                    }
+                }
+            }
+
+            Spacer()
+        }
+        .background {
+            Rectangle()
+                .fill(backingColor(isSelected: isSelected, isFlagged: isFlagged))
+                .opacity(isSelected ? 0.5 : 1)
+        }
+        .onTapGesture {
+            coordinator.send(
+                event: .grouping(event: .didSelectCamperToGroup(
+                    camper: camper
+                ))
+            )
+        }
+    }
+
+    func backingColor(isSelected: Bool, isFlagged: Bool) -> Color {
+        if isSelected {
+            Color(enum: .select)
+        } else if isFlagged {
+            Color(enum: .flagged)
+        } else {
+            Color(enum: .plain)
         }
     }
 }
 
-private extension Array where Element == Camper {
+extension Array where Element == Camper {
     func prioritizingFlaggedFields(sortByFieldName: String = "", ascending: Bool = true) -> [Camper] {
         var prioritized = filter { $0.requiresDirectHandling }
             .sortByFieldName(fieldName: sortByFieldName, ascending: ascending)
@@ -72,6 +110,26 @@ private extension Array where Element == Camper {
 
         prioritized.append(contentsOf: additionalRows)
         return prioritized
+    }
+
+    func filteredBySearch(
+        query: String,
+        sortByFieldName: String = "",
+        ascending: Bool = true,
+        exclude: Int? = nil
+    ) -> [Camper] {
+        filter { possible in
+            if possible.name.isInQuery(query) {
+                if let excluded = exclude, possible.id == excluded {
+                    return false
+                }
+
+                return true
+            }
+            
+            return false
+        }
+        .prioritizingFlaggedFields(sortByFieldName: sortByFieldName, ascending: ascending)
     }
 
     func sortByFieldName(fieldName: String, ascending: Bool) -> [Camper] {
@@ -96,5 +154,21 @@ private extension Array where Element == Camper {
         values.append(contentsOf: valuesWithoutField)
 
         return values
+    }
+}
+
+extension String {
+    func isInQuery(_ query: String) -> Bool {
+        if query.isEmpty { return true }
+
+        var subString = self
+        for char in query {
+            if let range = subString.range(of: "\(char)", options: .literal) {
+                subString = "\(subString[range.upperBound...])"
+            } else {
+                return false
+            }
+        }
+        return true
     }
 }

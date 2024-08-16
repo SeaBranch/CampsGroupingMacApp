@@ -31,6 +31,7 @@ struct Camper: Equatable, Identifiable, Hashable {
         
         id = camperID
         name = camperName
+        currentGroupID = fieldValues.currentGroupID
         associatedCamperIDs = settings.campers.first { $0.id == camperID }?.associatedCamperIDs ?? []
         requiresDirectHandling = values.requiresDirectHandling(accordingToSettings: settings)
     }

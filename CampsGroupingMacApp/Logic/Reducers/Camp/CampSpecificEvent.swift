@@ -18,6 +18,11 @@ extension GrouperEvent {
         case didChangeReportFieldSetting(ReportFieldSetting)
         case didChangeSearchQuery(section: ReportFieldSection, query: String)
     }
+
+    enum CampGroupingEvent: Equatable {
+        case didSelectCamperToGroup(camper: Camper)
+        case didToggleCamperRow(camper: Camper, campID: Int)
+    }
 }
 
 enum ReportFieldSection {

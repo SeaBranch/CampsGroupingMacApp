@@ -27,16 +27,21 @@ enum GrouperEventSpace: EventSpace {
         var navigationMode: NavigationMode = .signin
         var camps: [Camp] = []
         var selectedCamp: Int?
+        var groupingState: CamperGroupingState?
     }
 
     enum Event: Equatable {
+        case didBegin
+        case didGetInitialCache(AppLogin?)
         case api(event: APIEvent)
         case signIn(event: SignInFormEvent)
         case menu(event: MenuEvent)
         case camp(event: CampSpecificEvent)
+        case grouping(event: CampGroupingEvent)
     }
 
     enum Action {
+        case getInitialCache
         case signIn(username: String, password: String, scope: CampsScope, networkCall: NetworkCall)
         case getCamps(account: CampAccessAccount, scope: CampsScope, networkCall: NetworkCall)
         case getReports(networkCall: NetworkCall)
@@ -44,12 +49,21 @@ enum GrouperEventSpace: EventSpace {
         case getReportFormatForCamp(campSettings: CampSettings, networkCall: NetworkCall)
         case getCamperSettingsForCamp(camp: Camp, networkCall: NetworkCall)
         case setReportForCamp(reportID: String, camp: Camp, userID: Int, networkCall: NetworkCall)
-        case updateReportFormatForCamp(campSettings: CampSettings, userID: Int, networkCall: NetworkCall)
+        case updateReportFormatForCamp(
+            campSettings: CampSettings,
+            fieldsToUpdate: [ReportFieldSetting],
+            userID: Int,
+            networkCall: NetworkCall
+        )
         case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, userID: Int, networkCall: NetworkCall)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
         switch event {
+        case .didBegin:
+            [.getInitialCache]
+        case .didGetInitialCache(let account):
+            InitialCacheReducer.handle(cache: account, state: &state)
         case .api(let event):
             APIEventReducer.handle(event: event, state: &state)
         case .signIn(let event):
@@ -58,7 +72,63 @@ enum GrouperEventSpace: EventSpace {
             MenuEventReducer.handle(event: event, state: &state)
         case .camp(let event):
             CampSpecificEventReducer.handle(event: event, state: &state)
+        case .grouping(let event):
+            GroupingEventReducer.handle(event: event, state: &state)
         }
+    }
+}
+
+enum InitialCacheReducer {
+    static func handle(
+        cache: AppLogin?,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        guard let currentLogin = cache,
+              Date()
+            .timeIntervalSince(currentLogin.dateCreated) <= TimeInterval(24 * 60 * 60),
+              let scope = currentLogin.scope
+        else {
+            return []
+        }
+
+        let account = currentLogin.account
+
+        state.accessAccount = account
+        state.signInFormState = nil
+        state.campScope = scope
+        state.navigationMode = .camps
+
+        return [state.beginGetCamps(account: account, scope: scope)]
+    }
+}
+
+enum GroupingEventReducer {
+    static func handle(
+        event: GrouperEvent.CampGroupingEvent,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        guard let camp = state.camp?.info.eventNumber else { return [] }
+
+        switch event {
+        case .didSelectCamperToGroup(let camper):
+            var gstate = state.groupingState ?? CamperGroupingState(camp: camp)
+
+            gstate.camperCurrentlyBeingGrouped = camper.id
+
+            state.groupingState = gstate
+
+        case .didToggleCamperRow(let camper, let campID):
+            var gstate = state.groupingState ?? CamperGroupingState(camp: campID)
+
+            if gstate.camperSelections.contains(camper.id) {
+                gstate.camperSelections.remove(camper.id)
+            } else {
+                gstate.camperSelections.insert(camper.id)
+            }
+
+            state.groupingState = gstate
+        }
+        return []
     }
 }
 
@@ -179,12 +249,14 @@ extension GrouperEventSpace.State {
     
     mutating func beginUpdateReportFormatForCamp(
         campSettings: CampSettings,
+        settingsToUpdate: [ReportFieldSetting],
         userID: Int
     ) -> GrouperAction {
         let networkCall: NetworkCall = .updateReportFormat()
         activeFetches.insert(networkCall)
         return .updateReportFormatForCamp(
             campSettings: campSettings,
+            fieldsToUpdate: settingsToUpdate,
             userID: userID,
             networkCall: networkCall
         )
@@ -203,6 +275,21 @@ extension GrouperEventSpace.State {
             userID: userID,
             networkCall: networkCall
         )
+    }
+
+    var currentFields: [ReportFieldSetting] {
+        let changes = camp?.changes ?? []
+        let campSettings = camp?.campSettings?.withChanges(changes)
+        var settings = campSettings?.report.reportFieldSettings ?? []
+        let setFields = settings.map { $0.fieldName }
+        let reportColumns = camp?.report?.csv.columns ?? [:]
+        let keys = reportColumns.keys.map { $0 }
+        for key in keys {
+            if !setFields.contains(key) {
+                settings.append(ReportFieldSetting(fieldName: key))
+            }
+        }
+        return settings
     }
 
     var isPerformingSignInCall: Bool {
@@ -372,4 +459,16 @@ extension GrouperEventSpace.State {
             return nil
         }
     }
+
+    var selectedCamper: Camper? {
+        camp?.campers.first(where: { camper in
+            camper.id == groupingState?.camperCurrentlyBeingGrouped
+        })
+    }
+}
+
+struct CamperGroupingState: Equatable {
+    var camp: Int
+    var camperCurrentlyBeingGrouped: Int?
+    var camperSelections: Set<Int> = []
 }

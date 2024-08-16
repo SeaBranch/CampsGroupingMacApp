@@ -20,11 +20,12 @@ struct ReportFormatChangeDTO: RequestDTO {
 struct UpdateReportFormatData: Equatable, CampGroupingAPISetEndpointModel {
     let endpoint: CampsGroupingEndpoint
     let campSettings: CampSettings
+    let fieldsToUpdate: [ReportFieldSetting]
     let userID: Int
 
     var body: any RequestDTO {
         ReportFormatChangeDTO(
-            fields: campSettings.report.reportFieldSettings.map {
+            fields: fieldsToUpdate.map {
                 ReportFormatChangeDTO.ReportFieldSettingChangeDTO(
                     fieldName: $0.fieldName,
                     fieldType: $0.fieldType.rawValue,
@@ -43,6 +44,7 @@ struct UpdateReportFormatData: Equatable, CampGroupingAPISetEndpointModel {
 extension NetworkActionHandler {
     func handleUpdateReportFormatForCamp(
         campSettings: CampSettings,
+        fieldsToUpdate: [ReportFieldSetting],
         userID: Int,
         networkCall: NetworkCall,
         handleEvent: @escaping (GrouperEventSpace.Event) -> Void
@@ -50,6 +52,7 @@ extension NetworkActionHandler {
         let data = UpdateReportFormatData(
             endpoint: .updateReportFormat(campSettings: campSettings),
             campSettings: campSettings,
+            fieldsToUpdate: fieldsToUpdate,
             userID: userID
         )
         groupingAPILogicController.updateReportFormat(

@@ -23,7 +23,7 @@ class SignInLogicController: SignInLogicControllerProtocol {
     func signIn(email: String, password: String, scope: CampsScope, completion: @escaping (Result<CampAccessAccount, CampsGroupingAPIError>) -> Void) {
         let login = try? modelContainer.mainContext.fetch(FetchDescriptor<AppLogin>())
         if let currentLogin = login?.first {
-            if Date().timeIntervalSince(currentLogin.dateCreated) <= TimeInterval(24 * 60 * 60), currentLogin.email == email {
+            if Date().timeIntervalSince(currentLogin.dateCreated) <= TimeInterval(24 * 60 * 60), currentLogin.email == email, scope == currentLogin.scope {
                 completion(.success(currentLogin.account))
             } else {
                 modelContainer.mainContext.delete(currentLogin)
@@ -41,7 +41,7 @@ class SignInLogicController: SignInLogicControllerProtocol {
         communicator.signIn(body: body, scope: scope) { result in
             switch result {
             case .success(let account):
-                self.modelContainer.mainContext.insert(AppLogin.fromAccount(account))
+                self.modelContainer.mainContext.insert(AppLogin.fromAccount(account, scope: scope))
                 completion(.success(account))
             case .failure(let error):
                 if let decodingError = error as? DecodingError {

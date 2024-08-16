@@ -82,7 +82,8 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
     func getReport(requestData: GetReportData, networkCall: NetworkCall, completion: @escaping (GetReportResult) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                if let csv = try? CSV<Named>(url: URL(string: requestData.endpoint.path)!) {
+                let url = requestData.endpoint.url
+                if let csv = try? CSV<Named>(url: url) {
                     let report  = Report(
                         csv: csv,
                         campID: requestData.campSettings.report.campEventNumber

@@ -5,5 +5,6 @@ extension GrouperEvent {
         case didSignOut
         case didSelectCamp(camp: Camp, scope: CampsScope)
         case didGoBackToCamps(scope: CampsScope)
+        case didSelectSave(NavigationMode)
     }
 }

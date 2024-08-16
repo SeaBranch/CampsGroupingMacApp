@@ -41,6 +41,7 @@ extension APIEventReducer {
             }
 
             settingsToUpdate.report.reportFieldSettings = result
+            settingsToUpdate.reportSettingsOnRecord = result
             updatedCamp.campSettings = settingsToUpdate
 
             state.camps = state.camps.map({ camp in

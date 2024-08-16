@@ -172,7 +172,6 @@ class BrushfireScopeClient {
             }
             print("response headers:")
 
-
             let headers = http.allHeaderFields
             var newRateLimit: RateLimit?
 
