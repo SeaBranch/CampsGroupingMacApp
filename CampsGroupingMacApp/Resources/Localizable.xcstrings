@@ -72,9 +72,6 @@
     "Could not get camper settings" : {
 
     },
-    "Details about selected campers and groups" : {
-
-    },
     "email" : {
       "localizations" : {
         "en" : {
@@ -86,6 +83,9 @@
       }
     },
     "Error: %lld" : {
+
+    },
+    "Filter By" : {
 
     },
     "Forbidden: %lld" : {
@@ -215,6 +215,12 @@
           }
         }
       }
+    },
+    "Sort Accending" : {
+
+    },
+    "Sort Decending" : {
+
     },
     "Too Many Requests have been made: %lld" : {
 

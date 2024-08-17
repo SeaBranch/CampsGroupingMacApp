@@ -8,9 +8,8 @@
 import Combine
 import Foundation
 
-protocol BrushfireCall {
-
-}
+/// common protocol to handle calls in the same array
+protocol BrushfireCall {}
 
 struct VoidCall: BrushfireCall {
     let request: URLRequest
@@ -64,7 +63,7 @@ class BrushfireClient: BrushfireClientProtocol {
         scope: CampsScope,
         call: any BrushfireCall
     ) -> AnyPublisher<RateLimit?, Never> {
-        let client = BrushfireScopeClient.client(for: scope)
+        let client = BrushfireScopeClient.client(for: scope, signInClient: call is SigninCall)
         client.brusfireTask(brushfireCall: call)
         return client.$rateLimit.eraseToAnyPublisher()
     }
@@ -74,12 +73,24 @@ class BrushfireScopeClient {
     private static let campsClient = BrushfireScopeClient(scope: .camps)
     private static let mancampClient = BrushfireScopeClient(scope: .manCamp)
     private static let sandboxClient = BrushfireScopeClient(scope: .sandbox)
+    private static let campsSignInClient = BrushfireScopeClient(
+        scope: .camps,
+        signInClient: true
+    )
+    private static let mancampSignInClient = BrushfireScopeClient(
+        scope: .manCamp,
+        signInClient: true
+    )
+    private static let sandboxSignInClient = BrushfireScopeClient(
+        scope: .sandbox,
+        signInClient: true
+    )
 
-    static func client(for scope: CampsScope) -> BrushfireScopeClient {
+    static func client(for scope: CampsScope, signInClient: Bool) -> BrushfireScopeClient {
         switch scope {
-        case .camps:    .campsClient
-        case .manCamp:  .mancampClient
-        case .sandbox:  .sandboxClient
+        case .camps:    signInClient ? .campsSignInClient : .campsClient
+        case .manCamp:  signInClient ? .mancampSignInClient : .mancampClient
+        case .sandbox:  signInClient ? .sandboxSignInClient : .sandboxClient
         }
     }
 
@@ -89,10 +100,12 @@ class BrushfireScopeClient {
 
     private let urlSession: URLSession
     private var callQueue = [BrushfireCall]()
+    private let isSignInClient: Bool
 
-    private init(scope: CampsScope, urlSession: URLSession = .shared) {
+    private init(scope: CampsScope, urlSession: URLSession = .shared, signInClient: Bool = false) {
         self.scope = scope
         self.urlSession = urlSession
+        self.isSignInClient = signInClient
     }
 
     /// Performs a data task with the request and sends back the success or error

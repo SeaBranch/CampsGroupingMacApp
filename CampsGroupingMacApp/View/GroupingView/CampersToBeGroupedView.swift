@@ -18,7 +18,6 @@ struct CampersToBeGroupedView: View {
             List {
                 prioritizedCampers()
             }
-
         }
         .searchable(
             text: $searchQuery,
@@ -79,7 +78,6 @@ struct CampersToBeGroupedView: View {
         .background {
             Rectangle()
                 .fill(backingColor(isSelected: isSelected, isFlagged: isFlagged))
-                .opacity(isSelected ? 0.5 : 1)
         }
         .onTapGesture {
             coordinator.send(
@@ -130,6 +128,37 @@ extension Array where Element == Camper {
             return false
         }
         .prioritizingFlaggedFields(sortByFieldName: sortByFieldName, ascending: ascending)
+    }
+
+    func filteredByFiltered(_ fieldFilter: FieldFilter) -> [Camper] {
+        filter { possible in
+            switch fieldFilter {
+            case .all(let field):
+                return true
+            case .exact(let expectedValue, let field):
+                return possible.values[field.fieldName]?.rawValue == expectedValue
+            case .bool(let expectedValue, let field):
+                switch possible.values[field.fieldName] {
+                case .bool(let value, _, _, _):
+                    return value == expectedValue
+                default:
+                    return expectedValue == nil
+                }
+            case .search(let query, let field):
+                return possible.values[field.fieldName]?.rawValue.isInQuery(query) == true
+            case .range(let from, let to, let field):
+                switch possible.values[field.fieldName] {
+                case .int(let value, _, _, _):
+                    if let value = value {
+                        return value >= from && value <= to
+                    } else {
+                        return false
+                    }
+                default:
+                    return false
+                }
+            }
+        }
     }
 
     func sortByFieldName(fieldName: String, ascending: Bool) -> [Camper] {

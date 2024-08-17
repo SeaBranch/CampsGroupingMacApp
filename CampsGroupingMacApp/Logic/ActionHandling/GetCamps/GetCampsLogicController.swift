@@ -28,7 +28,9 @@ class GetCampsLogicController: GetCampsLogicControllerProtocol {
         completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
     ) {
         let campsMemoryArray = try? modelContainer.mainContext.fetch(FetchDescriptor<CampsStateMemory>())
-        if let campsMemory = campsMemoryArray?.first {
+        if let campsMemory = campsMemoryArray?.first(where: { campMem in
+            campMem.scope == scope
+        }) {
             if Date().timeIntervalSince(campsMemory.dateCreated) <= TimeInterval(3600) {
                 completion(.success(campsMemory.camps))
             } else {

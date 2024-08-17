@@ -115,7 +115,7 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
             case .int:
                     .int(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .bool:
-                    .bool(value: Bool(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .bool(value: Bool.fromReportString(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .zip:
                     .zip(value: ZipLocation.fromZipString(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .camperID:
@@ -124,11 +124,27 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
                     .groupID(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .crossroadsSite:
                     .crossroadsSite(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
-            default: 
+            case .commaSeparatedOptions:
+                    .commaSeparatedOptions(
+                        values: string.components(separatedBy: ","), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+            default:
                     .empty(fieldName: fieldName)
             }
         } else {
             .empty(fieldName: fieldName)
+        }
+    }
+}
+
+extension Bool {
+    static func fromReportString(_ reportString: String) -> Bool? {
+        switch reportString.lowercased() {
+        case "y", "yes", "yup", "yep", "yeah", "uh huh", "true", "t":
+            true
+        case "n", "no", "nope", "nah", "neh", "uh uh", "nuh uh", "false", "f":
+            false
+        default:
+            Bool(reportString)
         }
     }
 }

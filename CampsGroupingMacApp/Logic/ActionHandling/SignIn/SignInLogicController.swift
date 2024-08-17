@@ -22,8 +22,8 @@ class SignInLogicController: SignInLogicControllerProtocol {
     @MainActor
     func signIn(email: String, password: String, scope: CampsScope, completion: @escaping (Result<CampAccessAccount, CampsGroupingAPIError>) -> Void) {
         let login = try? modelContainer.mainContext.fetch(FetchDescriptor<AppLogin>())
-        if let currentLogin = login?.first {
-            if Date().timeIntervalSince(currentLogin.dateCreated) <= TimeInterval(24 * 60 * 60), currentLogin.email == email, scope == currentLogin.scope {
+        if let currentLogin = login?.first(where: { login in login.email == email && login.scope == scope }) {
+            if Date().timeIntervalSince(currentLogin.dateCreated) <= TimeInterval(24 * 60 * 60) {
                 completion(.success(currentLogin.account))
             } else {
                 modelContainer.mainContext.delete(currentLogin)

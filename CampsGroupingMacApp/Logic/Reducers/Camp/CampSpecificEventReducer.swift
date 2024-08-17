@@ -17,8 +17,6 @@ enum CampSpecificEventReducer {
             DidSelectManageReportReducer.handle(camp: camp, state: &state)
         case .didSelectViewGrouping(camp: let camp):
             DidSelectViewGroupingReducer.handle(camp: camp, state: &state)
-        case .campersEvent(event: let event):
-            CampersEventReducer.handle(event: event, state: &state)
         case .reportEvent(event: let event):
             ReportEventReducer.handle(event: event, state: &state)
         }
@@ -46,44 +44,6 @@ enum DidSelectViewGroupingReducer {
     ) -> [GrouperAction] {
         state.navigationMode = .grouping
         return []
-    }
-}
-
-enum CampersEventReducer {
-    static func handle(
-        event: GrouperEvent.CamperGroupingEvent,
-        state: inout GrouperState
-    ) -> [GrouperAction] {
-        switch event {
-        case .didChangeCamperSetting(let camperSetting):
-            didChangeCamperSetting(
-                setting: camperSetting,
-                state: &state
-            )
-        case .didChangeSearchQuery(let section, let query):
-            didChangeSearchQuery(section: section, query: query, state: &state)
-        }
-    }
-
-    private static func didChangeCamperSetting(
-        setting: CamperSetting,
-        state: inout GrouperState
-    ) -> [GrouperAction] {
-        guard let selectedCamp = state.selectedCamp else {
-            return []
-        }
-
-        let change = CampChange.camperChange(setting)
-        state.camps = state.camps.applyChange(change, toCampNumber: selectedCamp)
-        return []
-    }
-
-    private static func didChangeSearchQuery(
-        section: GroupingSection,
-        query: String,
-        state: inout GrouperState
-    ) -> [GrouperAction] {
-        []
     }
 }
 
