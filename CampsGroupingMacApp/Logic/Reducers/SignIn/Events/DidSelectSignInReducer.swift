@@ -9,8 +9,15 @@ extension SignInFormEventReducer {
             fetchID: UUID,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            state.activeSignIn = fetchID
-            return [.signIn(username: email, password: password, scope: scope, fetchID: fetchID)]
+            state.errors = state.errors.filter({ error in
+                if case .signIn = error {
+                    false
+                } else {
+                    true
+                }
+            })
+
+            return [state.beginSignIn(username: email, password: password, scope: scope)]
         }
     }
 }

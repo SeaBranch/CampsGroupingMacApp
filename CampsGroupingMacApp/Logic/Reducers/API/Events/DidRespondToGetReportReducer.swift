@@ -4,23 +4,25 @@ extension APIEventReducer {
     enum DidRespondToGetReportReducer {
         static func handleEvent(
             result: Result<Report, CampsGroupingAPIError>,
-            camp: Camp,
-            fetchID: UUID,
+            campSettings: CampSettings,
+            networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
+            state.activeFetches.remove(networkCall)
+
             switch result {
             case .success(let report):
-                didGetReport(
+                return didGetReport(
                     report: report,
-                    camp: camp,
-                    fetchID: fetchID,
+                    campSettings: campSettings,
+                    networkCall: networkCall,
                     state: &state
                 )
             case .failure(let error):
-                didFailToGetReport(
+                return didFailToGetReport(
                     error: error,
-                    camp: camp,
-                    fetchID: fetchID,
+                    campSettings: campSettings,
+                    networkCall: networkCall,
                     state: &state
                 )
             }
@@ -28,22 +30,52 @@ extension APIEventReducer {
 
         static func didGetReport(
             report: Report,
-            camp: Camp,
-            fetchID: UUID,
+            campSettings: CampSettings,
+            networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            // TODO: handle report
-            []
+            guard var newCamp = state.camps.first(where: { camp in
+                camp.info.eventNumber == campSettings.report.campEventNumber
+            }) else {
+                return []
+            }
+
+            newCamp.report = report
+            state.errors = state.errors.filter { error in
+                if case .campReport = error {
+                    false
+                } else {
+                    true
+                }
+            }
+            state.camps = state.camps.map {
+                if $0.info.eventNumber == newCamp.info.eventNumber {
+                    newCamp
+                } else {
+                    $0
+                }
+            }
+
+            return []
         }
 
         static func didFailToGetReport(
             error: CampsGroupingAPIError,
-            camp: Camp,
-            fetchID: UUID,
+            campSettings: CampSettings,
+            networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            // TODO: handle error
-            []
+            state.errors = state.errors.filter { error in
+                if case .campReport = error {
+                    false
+                } else {
+                    true
+                }
+            }
+
+            state.errors.insert(.campReport(error: error, networkCall: networkCall))
+
+            return []
         }
     }
 }

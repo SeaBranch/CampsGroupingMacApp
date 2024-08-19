@@ -11,86 +11,104 @@ struct Camper: Equatable, Identifiable, Hashable {
     let id: Int
     let name: String
     var currentGroupID: Int?
+    var groupSettingStatus: CamperAssignmentStatus?
     var associatedCamperIDs: [Int]
     var requiresDirectHandling: Bool
-}
+    var values: [String: ReportFieldValue]
 
-struct CamperRow: Equatable, Identifiable, Hashable {
-    var id: Int { camper.id }
-
-    let camper: Camper
-    let row: ReportRow
-
-    static func arrayFromReportAndData(_ report: Report, campers: [Camper]) -> [CamperRow] {
-        report.rows.compactMap { row in
-            var camperRow: CamperRow?
-            if let camperID = row.camperID, let name = row.fullName {
-                var existingCamper = campers.first { $0.id == camperID }
-
-                var requiresDirectHandling = false
-
-                for field in report.fields where field.handleDirectly {
-                    if !(row[field.fieldName]??.rawValue ?? "").isEmpty {
-                        requiresDirectHandling = true
-                    }
-                }
-
-                existingCamper?.requiresDirectHandling = requiresDirectHandling
-
-                let camper = existingCamper ?? Camper(
-                    id: camperID, 
-                    name: name,
-                    currentGroupID: row.existingGroupID,
-                    associatedCamperIDs: [], // TODO: -> get other campers from existing groups
-                    requiresDirectHandling: requiresDirectHandling
-                )
-
-                camperRow = CamperRow(camper: camper, row: row)
+    init?(row: ReportRow, settings: CampSettings) {
+        var fieldValues = [String: ReportFieldValue]()
+        settings.report.reportFieldSettings.forEach {
+            if let value = row.value(forField: $0) {
+                fieldValues[$0.fieldName] = value
             }
-
-            return camperRow
         }
+        values = fieldValues
+        guard let camperID = fieldValues.camperID,
+              let camperName = fieldValues.camperName
+        else {
+            return nil
+        }
+        
+        let match = settings.campers.first(where: { $0.camperID == camperID })
+
+        id = camperID
+        name = camperName
+        currentGroupID = match?.groupID ?? fieldValues.currentGroupID
+        groupSettingStatus = match?.status ?? ((fieldValues.currentGroupID != nil) ? .uploaded : nil)
+        associatedCamperIDs = settings.campers
+            .first { $0.camperID == camperID }?
+            .associatedCampers ?? []
+        requiresDirectHandling = values.requiresDirectHandling(
+            accordingToSettings: settings
+        )
     }
 }
 
-extension ReportRow {
+extension Dictionary where Key == String, Value == ReportFieldValue {
     var camperID: Int? {
-        for value in self.values {
-            if case .camperID(let camperIdInt, _) = value {
-                return camperIdInt
+        var id: Int?
+        values.forEach {
+            if case .camperID(let value, _, _, true) = $0 {
+                id = value
             }
         }
-
-        return nil
+        return id
     }
 
-    var existingGroupID: Int? {
-        for value in self.values {
-            if case .groupID(let groupIdInt, _) = value {
-                return groupIdInt
+    var camperName: String? {
+        var name: String?
+        values.forEach {
+            if case .fullName(let rawValue, _, true) = $0 {
+                name = rawValue
             }
         }
-
-        return nil
+        return name
     }
 
-    var fullName: String? {
-        for value in self.values {
-            if case .fullName(let name) = value {
-                return name
+    var currentGroupID: Int? {
+        var group: Int?
+
+        values.forEach {
+            if case .groupID(let value, _, _, true) = $0 {
+                group = value
             }
         }
 
-        return nil
+        return group
+    }
+
+    var email: String? {
+        var emailString: String?
+
+        values.forEach {
+            if case .email(let rawValue, _, true) = $0 {
+                emailString = rawValue
+            }
+        }
+
+        return emailString
+    }
+
+    func requiresDirectHandling(
+        accordingToSettings settings: CampSettings
+    ) -> Bool {
+        settings.report.reportFieldSettings.map { setting in
+            if setting.handleDirectly, let value = self[setting.fieldName] {
+                !value.rawValue.isEmpty
+            } else {
+                false
+            }
+        }.contains(true)
     }
 
     var crossroadsSite: String? {
-        for value in self.values {
-            if case .crossroadsSite(let crossroadsSite) = value {
-                return crossroadsSite
+        var site: String?
+        values.forEach {
+            if case .crossroadsSite(let rawValue, _ , true) = $0 {
+                site = rawValue
             }
         }
-
-        return nil
+        return site
     }
 }

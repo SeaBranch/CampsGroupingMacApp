@@ -5,59 +5,57 @@ extension APIEventReducer {
         static func handleEvent(
             result: Result<CampAccessAccount, CampsGroupingAPIError>,
             scope: CampsScope,
-            fetchID: UUID,
+            networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
-            switch result {
+            guard state.activeFetches.contains(networkCall) else {
+                return []
+            }
+            
+            state.activeFetches.remove(networkCall)
+
+            return switch result {
             case .success(let account):
                 didSignIn(
                     account: account,
                     scope: scope,
-                    fetchID: fetchID,
+                    networkCall: networkCall,
                     state: &state
                 )
             case .failure(let error):
                 didFailSignIn(
                     error: error,
                     scope: scope,
-                    fetchID: fetchID,
+                    networkCall: networkCall,
                     state: &state
                 )
             }
         }
-    }
 
-    static func didSignIn(
-        account: CampAccessAccount,
-        scope: CampsScope,
-        fetchID: UUID,
-        state: inout GrouperState
-    ) -> [GrouperAction] {
-        if state.activeSignIn == fetchID {
-            state.activeSignIn = nil
-            state.activeCampsFetch = fetchID
+        private static func didSignIn(
+            account: CampAccessAccount,
+            scope: CampsScope,
+            networkCall: NetworkCall,
+            state: inout GrouperState
+        ) -> [GrouperAction] {
             state.accessAccount = account
             state.signInFormState = nil
-            state.navigationMode = .camps(scope: scope)
+            state.campScope = scope
+            state.navigationMode = .camps
 
-            return [.getCamps(account: account, scope: scope, fetchID: fetchID)]
+            return [state.beginGetCamps(account: account, scope: scope)]
         }
 
-        return []
-    }
-
-    static func didFailSignIn(
-        error: CampsGroupingAPIError,
-        scope: CampsScope,
-        fetchID: UUID,
-        state: inout GrouperState
-    ) -> [GrouperAction] {
-        if state.activeSignIn == fetchID {
-            state.activeSignIn = nil
+        private static func didFailSignIn(
+            error: CampsGroupingAPIError,
+            scope: CampsScope,
+            networkCall: NetworkCall,
+            state: inout GrouperState
+        ) -> [GrouperAction] {
             state.accessAccount = nil
-            state.activeSignInError = error
-        }
+            state.errors.insert(.signIn(error: error, networkCall: networkCall))
 
-        return []
+            return []
+        }
     }
 }

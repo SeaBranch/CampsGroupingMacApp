@@ -10,35 +10,37 @@ import SwiftData
 
 @main
 struct CampsGroupingMacAppApp: App {
-    var coordinator: EventCoordinator<GrouperEventSpace> {
+    func coordinator(withModel container: ModelContainer) -> EventCoordinator<GrouperEventSpace> {
         EventCoordinator<GrouperEventSpace>(
             state: GrouperEventSpace.State(),
             actionHandlers: [
-                NetworkActionHandler()
+                NetworkActionHandler(modelContainer: container)
             ]
         )
     }
 
-//    var sharedModelContainer: ModelContainer = {
-//        let schema = Schema([
-//            Item.self,
-//        ])
-//        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-//
-//        do {
-//            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-//        } catch {
-//            fatalError("Could not create ModelContainer: \(error)")
-//        }
-//    }()
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            AppLogin.self,
+            CampsStateMemory.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
 
     var body: some Scene {
-        let coordinator = self.coordinator
+        let modelContainer = sharedModelContainer
+        let coordinator = self.coordinator(withModel: modelContainer)
 
         WindowGroup {
             ContentView()
         }
-//        .modelContainer(sharedModelContainer)
+        .modelContainer(sharedModelContainer)
         .environmentObject(coordinator)
         .environmentObject(SignInViewModel(coordinator: coordinator))
     }

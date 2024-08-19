@@ -10,7 +10,7 @@ import SwiftUI
 struct FieldList: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
-    @State var reportFields: [ReportField] = []
+    @State var reportFields: [ReportFieldSetting] = []
     @State var searchText = ""
 
     var body: some View {
@@ -28,14 +28,14 @@ struct FieldList: View {
             }.searchable(text: $searchText, prompt: "Search Fields")
         }
         .onAppear {
-            reportFields = coordinator.state.currentReport?.fields ?? []
+            reportFields = coordinator.state.currentFields
         }
         .onChange(of: coordinator.state) { oldValue, newValue in
-            reportFields = newValue.currentReport?.fields ?? []
+            reportFields = newValue.currentFields
         }
     }
 
-    func enableBinding(for field: ReportField) -> Binding<Bool> {
+    func enableBinding(for field: ReportFieldSetting) -> Binding<Bool> {
         Binding {
             reportFields.first { fieldRef in
                 fieldRef.fieldName == field.fieldName
@@ -48,10 +48,13 @@ struct FieldList: View {
                     DispatchQueue.main.async {
                         coordinator.send(
                             event: .camp(
-                                event: .didChangeField(newField)
+                                event: .reportEvent(
+                                    event: .didChangeReportFieldSetting(newField)
+                                )
                             )
                         )
                     }
+
                     return newField
                 }
 
@@ -60,7 +63,7 @@ struct FieldList: View {
         }
     }
 
-    func isInSearchFilter(field: ReportField) -> Bool {
+    func isInSearchFilter(field: ReportFieldSetting) -> Bool {
         guard !searchText.isEmpty else { return true }
         var index: String.Index?
         for char in searchText {

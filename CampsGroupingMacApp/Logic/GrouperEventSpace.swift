@@ -1,10 +1,3 @@
-//
-//  GrouperEventSpace.swift
-//  CampsGroupingMacApp
-//
-//  Created by Nathan Sjoquist on 5/30/24.
-//
-
 import Foundation
 
 typealias GrouperState = GrouperEventSpace.State
@@ -17,108 +10,80 @@ typealias CampSpecificEvent = GrouperEvent.CampSpecificEvent
 
 enum GrouperEventSpace: EventSpace {
     struct State: Equatable {
-        var accessAccount: CampAccessAccount?
-        var activeSignIn: UUID?
-        var activeSignInError: CampsGroupingAPIError?
+        var hasLaunched: Bool = false
         var signInFormState: SignInFormState? = SignInFormState()
+        var accessAccount: CampAccessAccount?
+        var campScope: CampsScope?
+
+        var activeFetches: Set<NetworkCall> = []
+        var errors: Set<NetworkError> = []
+
         var navigationMode: NavigationMode = .signin
-
-        var activeCampsFetch: UUID?
-        var campsResult: Result<[Camp], CampsGroupingAPIError>?
-        var selectedCamp: Camp?
-
-        var fieldTypeFieldBeingChanged: ReportField?
-
-        var currentReport: Report?
-        var campers: [CamperRow] = []
-
-
-        var scope: CampsScope? {
-            switch navigationMode {
-            case .signin:                       nil
-            case .camps(let scope):             scope
-            case .report(_, _, let scope):      scope
-            case .grouping(_, _, let scope):    scope
-            }
-        }
-
-        var camp: Camp? {
-            switch navigationMode {
-            case .signin:                       nil
-            case .camps:                        nil
-            case .report(_, let camp, _):      camp
-            case .grouping(_, let camp, _):    camp
-            }
-        }
-
-        var isAuthenticated: Bool {
-            accessAccount != nil
-        }
-
-        var selectedReportID: ReportID? {
-            selectedCamp?.reportID
-        }
-
-        var camps: [Camp] {
-            switch campsResult {
-            case .success(let camps): camps
-            case .failure: []
-            case nil: []
-            }
-        }
+        var camps: [Camp] = []
+        var selectedCamp: Int?
+        var groupingState: CamperGroupingState?
     }
 
     enum Event: Equatable {
+        case didBegin
+        case didGetInitialCache(AppLogin?)
         case api(event: APIEvent)
         case signIn(event: SignInFormEvent)
         case menu(event: MenuEvent)
         case camp(event: CampSpecificEvent)
+        case grouping(event: CamperGroupingEvent)
     }
 
     enum Action {
-        case signIn(username: String, password: String, scope: CampsScope, fetchID: UUID)
-        case getCamps(account: CampAccessAccount, scope: CampsScope, fetchID: UUID)
-        case updateReportFormatWithField(Report, ReportField)
-        case getCampReport(Camp, CampsScope)
-        case getReportFormatForCamp(Camp, Report)
+        case getInitialCache
+        case signIn(
+            username: String,
+            password: String,
+            scope: CampsScope,
+            networkCall: NetworkCall
+        )
+        case getCamps(
+            account: CampAccessAccount,
+            scope: CampsScope,
+            networkCall: NetworkCall
+        )
+        case getGroupsForCamp(
+            camp: Camp,
+            scope: CampsScope,
+            networkCall: NetworkCall
+        )
+        case getReports(networkCall: NetworkCall)
+        case getReportForCamp(campSettings: CampSettings, networkCall: NetworkCall)
+        case getReportFormatForCamp(campSettings: CampSettings, networkCall: NetworkCall)
+        case getCamperSettingsForCamp(camp: Camp, networkCall: NetworkCall)
+        case setReportForCamp(reportID: String, camp: Camp, userID: Int, networkCall: NetworkCall)
+        case updateReportFormatForCamp(
+            campSettings: CampSettings,
+            fieldsToUpdate: [ReportFieldSetting],
+            userID: Int,
+            networkCall: NetworkCall
+        )
+        case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, camperChanges: [CamperSetting], userID: Int, networkCall: NetworkCall)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
         switch event {
+        case .didBegin:
+            let hasLaunched = state.hasLaunched
+            state.hasLaunched = true
+            return hasLaunched ? [] : [.getInitialCache]
+        case .didGetInitialCache(let account):
+            return InitialCacheReducer.handle(cache: account, state: &state)
         case .api(let event):
-            APIEventReducer.handle(event: event, state: &state)
+            return APIEventReducer.handle(event: event, state: &state)
         case .signIn(let event):
-            SignInFormEventReducer.handle(event: event, state: &state)
+            return SignInFormEventReducer.handle(event: event, state: &state)
         case .menu(let event):
-            MenuEventReducer.handle(event: event, state: &state)
+            return MenuEventReducer.handle(event: event, state: &state)
         case .camp(let event):
-            CampSpecificEventReducer.handle(event: event, state: &state)
+            return CampSpecificEventReducer.handle(event: event, state: &state)
+        case .grouping(let event):
+            return GroupingEventReducer.handle(event: event, state: &state)
         }
     }
 }
-
-// MARK: Leaf States
-
-struct SignInFormState: Equatable {
-    private enum Constant {
-        static let minPasswordLength = 1
-        static let emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-    }
-
-    var email: String = ""
-    var password: String = ""
-    var scope: CampsScope = .camps
-
-    var isValidFormData: Bool {
-        isValidEmail && isValidPassword
-    }
-
-    var isValidEmail: Bool {
-        (try? Constant.emailRegex.wholeMatch(in: email) != nil) ?? false
-    }
-
-    var isValidPassword: Bool {
-        password.count >= Constant.minPasswordLength
-    }
-}
-

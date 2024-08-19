@@ -1,7 +1,42 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ @ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ @ %2$@"
+          }
+        }
+      }
+    },
     "%@ returned no results" : {
+
+    },
+    "%@:\n\t%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@:\n\t%2$@"
+          }
+        }
+      }
+    },
+    "%lf" : {
+
+    },
+    "%lld" : {
+
+    },
+    "∆: %lf" : {
 
     },
     "< %@" : {
@@ -17,6 +52,12 @@
         }
       }
     },
+    "Active" : {
+
+    },
+    "Back" : {
+
+    },
     "Bad Authentication: %lld" : {
 
     },
@@ -26,10 +67,22 @@
     "Begin Grouping" : {
 
     },
+    "Change Report ID" : {
+
+    },
+    "Configure Report Fields" : {
+
+    },
     "Could Not Decode Data" : {
 
     },
-    "Details about selected campers and groups" : {
+    "Could not get camp report" : {
+
+    },
+    "Could not get camp report format" : {
+
+    },
+    "Could not get camper settings" : {
 
     },
     "email" : {
@@ -42,16 +95,47 @@
         }
       }
     },
-    "equivelent to: %lf" : {
+    "Enter Filter Query" : {
+
+    },
+    "Error: %lld" : {
+
+    },
+    "Filter By" : {
+
+    },
+    "Filter:" : {
 
     },
     "Forbidden: %lld" : {
 
     },
-    "Grouping" : {
+    "getting camp report format" : {
 
     },
-    "Handle Directly" : {
+    "getting camper assignments" : {
+
+    },
+    "getting report" : {
+
+    },
+    "Group Campers in %lld" : {
+
+    },
+    "group: %lld (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "group: %1$lld (%2$@)"
+          }
+        }
+      }
+    },
+    "hide comparison" : {
+
+    },
+    "hide details" : {
 
     },
     "loading" : {
@@ -65,13 +149,19 @@
         }
       }
     },
+    "loading camps" : {
+
+    },
+    "Loading Report" : {
+
+    },
     "Logging into: %@" : {
 
     },
-    "Manage Report" : {
+    "No Access Found: %lld" : {
 
     },
-    "No Access Found: %lld" : {
+    "No camps found in %@" : {
 
     },
     "No Report Found" : {
@@ -87,16 +177,31 @@
         }
       }
     },
+    "Report ID" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Save changes" : {
+
+    },
+    "Search" : {
+
+    },
     "Search Campers Needing Grouped" : {
 
     },
     "Search Fields" : {
 
     },
-    "Search for a camper or group" : {
+    "Select a Camp" : {
 
     },
     "Select a Camps Login Type" : {
+
+    },
+    "Select From Options" : {
 
     },
     "selectACampsCategory" : {
@@ -110,6 +215,18 @@
       }
     },
     "Service Error: %lld" : {
+
+    },
+    "Set Report ID" : {
+
+    },
+    "setting report id" : {
+
+    },
+    "show comparison" : {
+
+    },
+    "show details" : {
 
     },
     "Sign Out" : {
@@ -146,7 +263,16 @@
         }
       }
     },
+    "Sort Accending" : {
+
+    },
+    "Sort Decending" : {
+
+    },
     "Too Many Requests have been made: %lld" : {
+
+    },
+    "Type:" : {
 
     },
     "Type: %@" : {
@@ -155,10 +281,7 @@
     "Unknown Error :(" : {
 
     },
-    "Use to Group" : {
-
-    },
-    "View In Table" : {
+    "View Camper Grouping" : {
 
     }
   },

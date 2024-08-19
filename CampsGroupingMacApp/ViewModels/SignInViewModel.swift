@@ -9,11 +9,11 @@ import Combine
 import SwiftUI
 
 struct SignInViewModelState: Equatable {
-    var error: CampsGroupingAPIError?
+    var error: NetworkError?
     var isLoading: Bool
     var formState: SignInFormState
 
-    init(error: CampsGroupingAPIError? = nil, isLoading: Bool = false, formState: SignInFormState = SignInFormState()) {
+    init(error: NetworkError? = nil, isLoading: Bool = false, formState: SignInFormState = SignInFormState()) {
         self.error = error
         self.isLoading = isLoading
         self.formState = formState
@@ -21,8 +21,14 @@ struct SignInViewModelState: Equatable {
 
     init(state: GrouperEventSpace.State) {
         self.init(
-            error: state.activeSignInError,
-            isLoading: state.activeSignIn != nil,
+            error: state.errors.first(where: { error in
+                if case .signIn(let error, let networkCall) = error {
+                    true
+                } else {
+                    false
+                }
+            }),
+            isLoading: state.isPerformingSignInCall,
             formState: state.signInFormState ?? SignInFormState()
         )
     }

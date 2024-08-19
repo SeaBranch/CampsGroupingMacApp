@@ -1,24 +1,52 @@
 import Foundation
+import SwiftData
 
 protocol GetCampsLogicControllerProtocol {
     func getCamps(
         account: CampAccessAccount,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], CampsGroupingAPIError>) -> Void
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
     )
 }
 
 class GetCampsLogicController: GetCampsLogicControllerProtocol {
+    let modelContainer: ModelContainer
     let communicator: GetCampsCommunicatorProtocol
 
-    init(communicator: GetCampsCommunicatorProtocol = GetCampsCommunicator()) {
+    init(
+        modelContainer: ModelContainer,
+        communicator: GetCampsCommunicatorProtocol = GetCampsCommunicator()
+    ) {
+        self.modelContainer = modelContainer
         self.communicator = communicator
     }
 
+    @MainActor
     func getCamps(
         account: CampAccessAccount,
         scope: CampsScope,
-        completion: @escaping (Result<[Camp], CampsGroupingAPIError>) -> Void
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
+    ) {
+        let campsMemoryArray = try? modelContainer.mainContext.fetch(FetchDescriptor<CampsStateMemory>())
+        if let campsMemory = campsMemoryArray?.first(where: { campMem in
+            campMem.scope == scope
+        }) {
+            if Date().timeIntervalSince(campsMemory.dateCreated) <= TimeInterval(3600) {
+                completion(.success(campsMemory.camps))
+            } else {
+                modelContainer.mainContext.delete(campsMemory)
+                fetchCamps(account: account, scope: scope, completion: completion)
+            }
+        } else {
+            fetchCamps(account: account, scope: scope, completion: completion)
+        }
+    }
+
+    @MainActor
+    private func fetchCamps(
+        account: CampAccessAccount,
+        scope: CampsScope,
+        completion: @escaping (Result<[CampInfo], CampsGroupingAPIError>) -> Void
     ) {
         let accessKey = account.accessKey
         communicator.getCamps(accessKey: accessKey, scope: scope) { result in

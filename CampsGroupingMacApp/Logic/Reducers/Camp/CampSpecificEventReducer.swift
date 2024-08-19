@@ -13,51 +13,58 @@ enum CampSpecificEventReducer {
         state: inout GrouperState
     ) -> [GrouperAction] {
         switch event {
-        case .didSelectManageReport(let camp, let scope):
-            return [.getCampReport(camp, scope)]
-        case .didGetReportForCamp(let report, let camp, let scope):
-            state.currentReport = report
-            state.navigationMode = .report(report: report, camp: camp, scope: scope)
+        case .didSelectManageReport(camp: let camp):
+            DidSelectManageReportReducer.handle(camp: camp, state: &state)
+        case .didSelectViewGrouping(camp: let camp):
+            DidSelectViewGroupingReducer.handle(camp: camp, state: &state)
+        case .reportEvent(event: let event):
+            ReportEventReducer.handle(event: event, state: &state)
+        }
+    }
+}
 
-            return [.getReportFormatForCamp(camp, report)]
-        case .didSelectViewGrouping(let camp, let scope, let fetchID):
-            return DidSelectViewGroupingReducer.handleEvent(
-                camp: camp,
-                fetchID: fetchID,
-                state: &state
-            )
+enum DidSelectManageReportReducer {
+    static func handle(
+        camp: Camp,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        guard let campSettings = camp.campSettings else {
+            return []
+        }
 
-        case .didChangeField(let field):
-            guard let report = state.currentReport else { return [] }
-            return [.updateReportFormatWithField(report, field)]
+        state.navigationMode = .report
+        return [state.beginGetReportForCamp(campSettings: campSettings)]
+    }
+}
 
-        case .didUpdateReport(let report):
-            state.currentReport = report
+enum DidSelectViewGroupingReducer {
+    static func handle(
+        camp: Camp,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        state.navigationMode = .grouping
+        return []
+    }
+}
+
+enum ReportEventReducer {
+    static func handle(
+        event: GrouperEvent.ReportFormattingEvent,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        switch event {
+        case .didChangeReportIdentifier(let string):
             
             return []
-        case .didSelectFieldTypeButtonForField(let field):
-            state.fieldTypeFieldBeingChanged = field
-            return []
+        case .didChangeReportFieldSetting(let setting):
+            guard let selectedCamp = state.selectedCamp else {
+                return []
+            }
 
-        case .didSelectBeginGrouping(let campers, let camp, let scope):
-            state.campers = campers
-            state.navigationMode = .grouping(
-                campers: campers,
-                camp: camp,
-                scope: scope
-            )
-
-            return [] // TODO: sync report settings
-
-        case .didSelectCamperRow(let camper, let section):
+            let change = CampChange.formatChange(setting)
+            state.camps = state.camps.applyChange(change, toCampNumber: selectedCamp)
             return []
-        case .didSelectFilterOptions(let section):
-            return []
-        case .didChangeFilterOptions(let newOptions):
-            return []
-        case .didSelectCompareMode(let compareMode):
-            return []
-        case .didSelectGroupRow(let groupID, let section):
+        case .didChangeSearchQuery(let section, let query):
             return []
         }
     }

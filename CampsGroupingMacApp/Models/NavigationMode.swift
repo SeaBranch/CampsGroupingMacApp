@@ -8,8 +8,8 @@
 import Foundation
 
 enum NavigationMode: Equatable {
-    case signin
-    case camps(scope: CampsScope)
-    case report(report: Report?, camp: Camp, scope: CampsScope)
-    case grouping(campers: [CamperRow], camp: Camp, scope: CampsScope)
+    case signin // signing in
+    case camps // selecting camps and adding reports to camps
+    case report // edit report formats
+    case grouping // grouping campers in a camp
 }
