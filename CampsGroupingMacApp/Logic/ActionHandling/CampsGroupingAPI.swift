@@ -27,6 +27,7 @@ extension RequestDTO {
 enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
     case authenticate
     case getCamps(accessKey: String)
+    case getGroups(camp: Camp)
     case getCampReports
     case getReport(campSettings: CampSettings)
     case getReportFormat(campSettings: CampSettings)
@@ -41,6 +42,8 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
             "\(brushfire)/accounts/auth"
         case .getCamps(let accessKey):
             "\(brushfire)/events?accessKey=\(accessKey)&inactive=false&archive=false"
+        case .getGroups(let camp):
+            "\(brushfire)/events/\(camp.info.eventNumber)/groups"
         case .getReport(let campSettings):
             "\(brushfireReport)/\(campSettings.report.reportID)/export"
         case .getCampReports, .setReport:
@@ -48,18 +51,18 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
         case .getReportFormat(let campSettings), .updateReportFormat(let campSettings):
             "\(campsGroupingAPI)/reportFormat/\(campSettings.report.reportID)"
         case .getCamperSettings(let camp), .setCamperAssigments(_, let camp):
-            "\(campsGroupingAPI)/campers/\(camp.info.eventNumber)"
+            "\(campsGroupingAPI)/groupingPlan/\(camp.info.eventNumber)"
         }
     }
 
     var domain: String {
         switch self {
         case .authenticate:
-            "\(brushfire)/accounts/auth"
-        case .getCamps:
+            "\(brushfire)/accounts"
+        case .getCamps, .getGroups:
             "\(brushfire)/events"
         case .getReport:
-            "\(brushfire)/r"
+            brushfireReport
         case .getCampReports, .setReport:
             "\(campsGroupingAPI)/reports"
         case .getReportFormat, .updateReportFormat:

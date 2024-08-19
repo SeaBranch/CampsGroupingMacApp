@@ -34,6 +34,12 @@ extension GrouperEventSpace.State {
         return .getCamps(account: account, scope: scope, networkCall: networkCall)
     }
 
+    mutating func beginGetGroupsForCamp(camp: Camp, scope: CampsScope) -> GrouperAction {
+        let networkCall: NetworkCall = .groups()
+        activeFetches.insert(networkCall)
+        return .getGroupsForCamp(camp: camp, scope: scope, networkCall: networkCall)
+    }
+
     mutating func beginGetReports() -> GrouperAction {
         let networkCall: NetworkCall = .campReports()
         activeFetches.insert(networkCall)
@@ -91,13 +97,15 @@ extension GrouperEventSpace.State {
     mutating func beginSetCamperAssigmentsForCamp(
         camp: Camp,
         campSettings: CampSettings,
+        camperChanges: [CamperSetting],
         userID: Int
     ) -> GrouperAction {
         let networkCall: NetworkCall = .setCamperAssigments()
         activeFetches.insert(networkCall)
         return .setCamperAssigmentsForCamp(
-            camp: camp,
+            camp: camp, 
             campSettings: campSettings,
+            camperChanges: camperChanges,
             userID: userID,
             networkCall: networkCall
         )
@@ -289,6 +297,20 @@ extension GrouperEventSpace.State {
     var selectedCamper: Camper? {
         camp?.campers.first(where: { camper in
             camper.id == groupingState?.camperCurrentlyBeingGrouped
+        })
+    }
+
+    mutating
+    func applyCamperSettings(for campID: Int, settings: [CamperSetting]) {
+        camps = camps.map({ camp in
+            if camp.info.eventNumber == campID {
+                var updated = camp
+                updated.campSettings?.campers = settings
+
+                return updated
+            } else {
+                return camp
+            }
         })
     }
 }

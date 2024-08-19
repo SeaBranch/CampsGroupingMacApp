@@ -12,6 +12,12 @@ protocol CampGroupingAPISetEndpointModel: CampGroupingAPIEndpointModel {
     var body: any RequestDTO { get }
 }
 
+protocol CampGroupingAPIUpdateEndpointModel: CampGroupingAPIEndpointModel {
+    associatedtype D: Codable
+
+    var body: any RequestDTO { get }
+}
+
 protocol CampGroupingAPICommunicatorProtocol {
     func get<E: CampGroupingAPIGetEndpointModel>(
         requestData: E,
@@ -21,6 +27,11 @@ protocol CampGroupingAPICommunicatorProtocol {
     func set<E: CampGroupingAPISetEndpointModel>(
         requestData: E,
         completion: @escaping (Result<Void, NSError>) -> Void
+    )
+
+    func update<E: CampGroupingAPIUpdateEndpointModel>(
+        requestData: E,
+        completion: @escaping (Result<E.D, NSError>) -> Void
     )
 }
 
@@ -53,6 +64,19 @@ class CampGroupingAPICommunicator: CampGroupingAPICommunicatorProtocol {
         var request = URLRequest(endpoint: requestData.endpoint)
         request.httpBody = requestData.body.data
         urlSession.passFailTask(
+            request: request,
+            domain: requestData.endpoint.domain,
+            completion: completion
+        )
+    }
+
+    func update<E: CampGroupingAPIUpdateEndpointModel>(
+        requestData: E,
+        completion: @escaping (Result<E.D, NSError>) -> Void
+    ) {
+        var request = URLRequest(endpoint: requestData.endpoint)
+        request.httpBody = requestData.body.data
+        urlSession.decodableTask(
             request: request,
             domain: requestData.endpoint.domain,
             completion: completion

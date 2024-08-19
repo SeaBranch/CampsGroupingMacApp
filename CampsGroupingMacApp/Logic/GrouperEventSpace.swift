@@ -47,6 +47,11 @@ enum GrouperEventSpace: EventSpace {
             scope: CampsScope,
             networkCall: NetworkCall
         )
+        case getGroupsForCamp(
+            camp: Camp,
+            scope: CampsScope,
+            networkCall: NetworkCall
+        )
         case getReports(networkCall: NetworkCall)
         case getReportForCamp(campSettings: CampSettings, networkCall: NetworkCall)
         case getReportFormatForCamp(campSettings: CampSettings, networkCall: NetworkCall)
@@ -58,7 +63,7 @@ enum GrouperEventSpace: EventSpace {
             userID: Int,
             networkCall: NetworkCall
         )
-        case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, userID: Int, networkCall: NetworkCall)
+        case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, camperChanges: [CamperSetting], userID: Int, networkCall: NetworkCall)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {

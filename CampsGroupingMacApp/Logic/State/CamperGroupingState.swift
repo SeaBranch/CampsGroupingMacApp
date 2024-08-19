@@ -20,25 +20,11 @@ enum FieldFilter: Equatable {
     case bool(expectedValue: Bool?, field: ReportFieldSetting)
     case search(query: String, field: ReportFieldSetting)
     case range(from: Int, to: Int, field: ReportFieldSetting)
+    case contains(options: [String], field: ReportFieldSetting)
 
     static func fromString(filterString: String, field: ReportFieldSetting) -> FieldFilter {
         guard !filterString.isEmpty else {
             return .all(field: field)
-        }
-
-        switch field.fieldType {
-        case .zip, .camperID, .groupID, .crossroadsSite, .empty:
-            return .exact(expectedValue: filterString, field: field)
-        case .bool:
-            let boolValue: Bool? = switch filterString.lowercased() {
-            case "true", "t": true
-            case "false", "f": false
-            default: nil
-            }
-
-            return .bool(expectedValue: boolValue, field: field)
-        default:
-            break
         }
 
         if filterString.prefix(1) == "=" {
@@ -46,6 +32,22 @@ enum FieldFilter: Equatable {
                 expectedValue: String(filterString.suffix(filterString.count - 1)),
                 field: field
             )
+        }
+
+        if filterString.prefix(1) == "|" {
+            let options = String(filterString.suffix(filterString.count - 1))
+                .components(separatedBy: "|")
+            return .contains(options: options, field: field)
+        }
+
+        switch field.fieldType {
+        case .zip, .camperID, .groupID, .crossroadsSite, .empty:
+            return .exact(expectedValue: filterString, field: field)
+        case .bool:
+            let boolValue = Bool.fromReportString(filterString)
+            return .bool(expectedValue: boolValue, field: field)
+        default:
+            break
         }
 
         switch field.fieldType {

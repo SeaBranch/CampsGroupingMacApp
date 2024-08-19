@@ -79,6 +79,21 @@ struct CamperAndGroupSearchView: View {
         if let focus = selection {
             filteredArray = filteredArray.filteredByFiltered(focus.filter)
             filteredArray = filteredArray.sorted { c1, c2 in
+                var c1Val = c1.values[focus.field.fieldName]?.rawValue
+                var c2Val = c2.values[focus.field.fieldName]?.rawValue
+
+                if focus.field.fieldType == .groupID {
+                    let cid1 = c1.currentGroupID
+                    let cid2 = c2.currentGroupID
+
+                    switch focus.sortOrder {
+                    case .forward:
+                        return (cid1 ?? .max) < (cid2 ?? .max)
+                    case .reverse:
+                        return (cid1 ?? 0) > (cid2 ?? 0)
+                    }
+                }
+
                 switch focus.sortOrder {
                 case .forward:
                     var val1 = c1.values[focus.field.fieldName]?.rawValue
@@ -113,9 +128,19 @@ struct CamperAndGroupSearchView: View {
 
                 Spacer()
 
-                if let dist = camperElement.distance {
+                if let dist = camperElement.distance, camperElement.field.includeInGrouping {
                     Text("\(dist)")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color(enum: .positiveDetail))
+                } else if camperElement.field.fieldType == .groupID,
+                          let group = camperElement.camper.currentGroupID,
+                          let status = camperElement.camper.groupSettingStatus {
+                    Text("group: \(group) (\(status.rawValue))")
+                        .foregroundStyle(
+                            status == .edited 
+                            ? Color(enum: .warningDetail)
+                            : Color(enum: .positiveDetail)
+                        )
+
                 }
             }
 

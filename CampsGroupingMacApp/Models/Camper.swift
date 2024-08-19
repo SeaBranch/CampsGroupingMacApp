@@ -11,6 +11,7 @@ struct Camper: Equatable, Identifiable, Hashable {
     let id: Int
     let name: String
     var currentGroupID: Int?
+    var groupSettingStatus: CamperAssignmentStatus?
     var associatedCamperIDs: [Int]
     var requiresDirectHandling: Bool
     var values: [String: ReportFieldValue]
@@ -29,12 +30,15 @@ struct Camper: Equatable, Identifiable, Hashable {
             return nil
         }
         
+        let match = settings.campers.first(where: { $0.camperID == camperID })
+
         id = camperID
         name = camperName
-        currentGroupID = fieldValues.currentGroupID
+        currentGroupID = match?.groupID ?? fieldValues.currentGroupID
+        groupSettingStatus = match?.status ?? ((fieldValues.currentGroupID != nil) ? .uploaded : nil)
         associatedCamperIDs = settings.campers
-            .first { $0.id == camperID }?
-            .associatedCamperIDs ?? []
+            .first { $0.camperID == camperID }?
+            .associatedCampers ?? []
         requiresDirectHandling = values.requiresDirectHandling(
             accordingToSettings: settings
         )
@@ -72,6 +76,18 @@ extension Dictionary where Key == String, Value == ReportFieldValue {
         }
 
         return group
+    }
+
+    var email: String? {
+        var emailString: String?
+
+        values.forEach {
+            if case .email(let rawValue, _, true) = $0 {
+                emailString = rawValue
+            }
+        }
+
+        return emailString
     }
 
     func requiresDirectHandling(

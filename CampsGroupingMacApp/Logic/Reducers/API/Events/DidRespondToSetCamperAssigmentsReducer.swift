@@ -4,14 +4,15 @@ extension APIEventReducer {
     enum DidRespondToSetCamperAssigmentsReducer {
         static func handleEvent(
             result: SetCamperAssigmentsResult,
-            requestData: SetCamperAssigmentsData,
+            requestData: UpdateCamperAssigmentsData,
             networkCall: NetworkCall,
             state: inout GrouperState
         ) -> [GrouperAction] {
             state.activeFetches.remove(networkCall)
             switch result {
-            case .success:
-                return [state.beginGetCamperSettingsForCamp(camp: requestData.camp)]
+            case .success(let camperSettings):
+                state.applyCamperSettings(for: requestData.camp.info.eventNumber, settings: camperSettings)
+                return []
             case .failure(let error):
                 state.errors = state.errors.filter { error in
                     if case .updateCampers = error {

@@ -52,6 +52,15 @@ enum GroupingEventReducer {
             selection.filter = FieldFilter.fromString(filterString: filterText, field: selection.field)
             gState.activeSelection = selection
             state.groupingState = gState
+        case .didSetFilterOptionsForReportFieldSetting(let filterOptions):
+            guard let camp = state.camp,
+                  var gState = state.groupingState,
+                  var selection = gState.activeSelection
+            else { return [] }
+
+            selection.filter = .contains(options: filterOptions, field: selection.field)
+            gState.activeSelection = selection
+            state.groupingState = gState
         case .didSelectFieldSort(sortOrder: let sortOrder):
             guard let camp = state.camp,
                   var gState = state.groupingState,
@@ -61,7 +70,34 @@ enum GroupingEventReducer {
             selection.sortOrder = sortOrder
             gState.activeSelection = selection
             state.groupingState = gState
+
+        case .didAskToGroupCampers(let campers, let groupID):
+            guard let camp = state.camp,
+                  let campSettings = camp.campSettings,
+                  let userID = state.accessAccount?.accountNumber
+            else { return [] }
+            let camperChanges = campers.filter({ $0.currentGroupID != groupID }).map { camper in
+                CamperSetting(
+                    camperID: camper.id,
+                    groupID: groupID,
+                    associatedCampers: camper.associatedCamperIDs,
+                    status: .edited,
+                    notes: "directly assigned"
+                )
+            }
+
+            if camperChanges.isEmpty { return [] }
+
+            return [
+                state.beginSetCamperAssigmentsForCamp(
+                    camp: camp,
+                    campSettings: campSettings,
+                    camperChanges: camperChanges,
+                    userID: userID
+                )
+            ]
         }
+
         return []
     }
 

@@ -6,13 +6,15 @@ struct Camp: Equatable, Hashable {
     var report: Report?
     var campSettings: CampSettings?
     var changes: [CampChange]
+    var groupsRecord: [CampGroupDTO]
 
     init(
         info: CampInfo,
         scope: CampsScope,
         report: Report? = nil,
         campSettings: CampSettings? = nil,
-        changes: [CampChange] = []
+        changes: [CampChange] = [],
+        groupsRecord: [CampGroupDTO]
     ) {
         self.info = info
         self.scope = scope
@@ -30,6 +32,12 @@ struct Camp: Equatable, Hashable {
 
         return report.csv.rows.compactMap { row in
             Camper(row: row, settings: settings)
+        }
+    }
+
+    var groups: [CampGroup] {
+        groupsRecord.map { dto in
+            CampGroup.init(dto: dto, campers: campers)
         }
     }
 
@@ -76,10 +84,11 @@ enum CampChange: Equatable, Hashable {
 }
 
 struct CamperSetting: Equatable, Codable, Hashable {
-    let id: Int
-    var currentGroupID: Int?
-    var associatedCamperIDs: [Int]
-    var exceptionsHandled: Bool
+    let camperID: Int
+    let groupID: Int?
+    let associatedCampers: [Int]
+    let status: CamperAssignmentStatus
+    let notes: String
 }
 
 struct CampSettings: Equatable, Codable, Hashable {
@@ -105,6 +114,26 @@ struct CampSettings: Equatable, Codable, Hashable {
             }
         }
         return settings
+    }
+
+    var camperChanges: [CamperAssigmentDTO] {
+        campers.map {
+            var associatedCampers = ""
+            $0.associatedCampers.forEach { associatedID in
+                if associatedCampers.isEmpty {
+                    associatedCampers += "\(associatedID)"
+                } else {
+                    associatedCampers += ",\(associatedID)"
+                }
+            }
+            return CamperAssigmentDTO(
+                camperID: "\($0.camperID)",
+                groupID: "\($0.groupID)",
+                associatedCampers: associatedCampers,
+                status: $0.status.rawValue,
+                notes: $0.notes
+            )
+        }
     }
 }
 
@@ -166,21 +195,21 @@ extension Array where Element == CampChange {
 
 extension Array where Element == CamperSetting {
     func arrayWithSetting(_ setting: CamperSetting) -> [CamperSetting] {
-        var settings = self.filter { $0.id != setting.id }
+        var settings = self.filter { $0.camperID != setting.camperID }
         settings.append(setting)
         return settings.sortedByID
     }
 
     var sortedByID: [CamperSetting] {
         sorted(by: { setting1, setting2 in
-            setting1.id < setting2.id
+            setting1.camperID < setting2.camperID
         })
     }
 
     func applyingChange(_ change: CampChange?) -> [CamperSetting] {
         switch change {
         case .camperChange(let camperSetting):
-            var updated = filter { $0.id != camperSetting.id }
+            var updated = filter { $0.camperID != camperSetting.camperID }
             updated.append(camperSetting)
             return updated
         default:

@@ -4,6 +4,9 @@ enum ColorEnum: String {
     case plain = "CellBackingPlain"
     case select = "CellBackingSelect"
     case flagged = "CellBackingFlagged"
+    case positiveDetail = "PositiveDetail"
+    case negativeDetail = "NegativeDetail"
+    case warningDetail = "WarningDetail"
 }
 
 extension Color {

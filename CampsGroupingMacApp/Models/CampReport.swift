@@ -107,32 +107,140 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
         if let string = rawValue {
             switch fieldType {
             case .string:
-                    .string(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .string(
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
+            case .email:
+                    .email(
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .fullName:
-                    .fullName(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .fullName(
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .partOfName:
-                    .partOfName(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .partOfName(
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .int:
-                    .int(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .int(
+                        value: Int(string),
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .bool:
-                    .bool(value: Bool.fromReportString(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .bool(
+                        value: Bool.fromReportString(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .zip:
-                    .zip(value: ZipLocation.fromZipString(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .zip(
+                        value: ZipLocation.fromZipString(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .camperID:
-                    .camperID(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .camperID(
+                        value: Int(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .groupID:
-                    .groupID(value: Int(string), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .groupID(
+                        value: Int(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .crossroadsSite:
-                    .crossroadsSite(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                    .crossroadsSite(
+                        rawValue: string, 
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .commaSeparatedOptions:
                     .commaSeparatedOptions(
-                        values: string.components(separatedBy: ","), rawValue: string, fieldName: fieldName, primary: isRegistrantData)
+                        values: string.components(separatedBy: string.commaSeparator),
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             default:
                     .empty(fieldName: fieldName)
             }
         } else {
             .empty(fieldName: fieldName)
         }
+    }
+
+    func optionsForCampers(_ campers: [Camper]) -> [String] {
+        var setOfOptions = Set<String>()
+        for camper in campers {
+            switch self.fieldType {
+            case .string:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .email:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .int:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .bool:
+                setOfOptions.insert("True")
+                setOfOptions.insert("False")
+            case .zip:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .fullName:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .partOfName:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .camperID:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .groupID:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .crossroadsSite:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .commaSeparatedOptions:
+                if case .commaSeparatedOptions(let options, _, _, _) = camper.values[fieldName] {
+                    for option in options {
+                        setOfOptions.insert(option)
+                    }
+                }
+            case .empty:
+                break
+            }
+        }
+
+        return Array(setOfOptions).sorted()
     }
 }
 
@@ -149,8 +257,35 @@ extension Bool {
     }
 }
 
+extension String {
+    var sanitized: String {
+        self
+            .replacingOccurrences(of: "?",                  with: "{questionmark}")
+            .replacingOccurrences(of: "#",                  with: "{poundsign}")
+            .replacingOccurrences(of: "/",                  with: "{forwardslash}")
+            .replacingOccurrences(of: "\\",                 with: "{backwardslash}")
+    }
+
+    var desanitized: String {
+        self
+            .replacingOccurrences(of: "{questionmark}",     with: "?")
+            .replacingOccurrences(of: "{poundsign}",        with: "#")
+            .replacingOccurrences(of: "{forwardslash}",     with: "/")
+            .replacingOccurrences(of: "{backwardslash}",    with: "\\")
+    }
+
+    var commaSeparator: String {
+        if range(of: ", ") == nil {
+            ","
+        } else {
+            ", "
+        }
+    }
+}
+
 enum ReportFieldValue: Equatable, Hashable {
     case string(rawValue: String, fieldName: String, primary: Bool)
+    case email(rawValue: String, fieldName: String, primary: Bool)
     case fullName(rawValue: String, fieldName: String, primary: Bool)
     case partOfName(rawValue: String, fieldName: String, primary: Bool)
     case int(value: Int?, rawValue: String, fieldName: String, primary: Bool)
@@ -166,6 +301,11 @@ enum ReportFieldValue: Equatable, Hashable {
         switch self {
         case .string(let stringL, _, _):
             if case .string(let stringR, _, _) = other {
+                return (stringL == stringR ? 0 : 1) * equivalance
+            }
+
+        case .email(let stringL, _, _):
+            if case .email(let stringR, _, _) = other {
                 return (stringL == stringR ? 0 : 1) * equivalance
             }
 
@@ -196,6 +336,17 @@ enum ReportFieldValue: Equatable, Hashable {
                let otherLocation = otherZip?.location {
                 return (location.distance(from: otherLocation) / metersInAMile) * equivalance
             }
+        case .commaSeparatedOptions(let valuesL, _, _, _):
+            if case .commaSeparatedOptions(let valuesR, _, _, _) = other, !valuesL.isEmpty {
+                var matchesFound = false
+                for valueL in valuesL {
+                    if valuesR.contains(valueL) {
+                        matchesFound = true
+                    }
+                }
+
+                return matchesFound ? 0 : equivalance
+            }
 
         default:
             return nil
@@ -207,6 +358,7 @@ enum ReportFieldValue: Equatable, Hashable {
     var rawValue: String {
         switch self {
         case .string(let string, _, _):                     string
+        case .email(let string, _, _):                      string
         case .fullName(let string, _, _):                   string
         case .partOfName(let string, _, _):                 string
         case .int(_, let string, _, _):                     string
@@ -232,6 +384,7 @@ enum ReportFieldType: String, Equatable, CaseIterable, Identifiable, Codable {
          partOfName,
          camperID,
          groupID,
+         email,
          crossroadsSite,
          commaSeparatedOptions,
          empty
@@ -246,6 +399,7 @@ enum ReportFieldType: String, Equatable, CaseIterable, Identifiable, Codable {
         case .partOfName: "Part of Name"
         case .camperID: "Camper ID"
         case .groupID: "Group ID"
+        case .email: "Email"
         case .crossroadsSite: "Crossroads Site"
         case .commaSeparatedOptions: "Comma Separated Options"
         case .empty: "Empty"

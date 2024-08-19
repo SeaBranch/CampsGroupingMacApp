@@ -32,8 +32,8 @@ protocol GroupingAPILogicControllerProtocol {
         networkCall: NetworkCall,
         completion: @escaping (UpdateReportFormatResult) -> Void
     )
-    func setCamperAssigments(
-        requestData: SetCamperAssigmentsData,
+    func updateCamperAssigments(
+        requestData: UpdateCamperAssigmentsData,
         networkCall: NetworkCall,
         completion: @escaping (SetCamperAssigmentsResult) -> Void
     )
@@ -121,7 +121,7 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
                         success.data.fieldSettings.map(
                             { dto in
                                 ReportFieldSetting(
-                                    fieldName: dto.fieldName,
+                                    fieldName: dto.fieldName.desanitized,
                                     fieldType: ReportFieldType(rawValue: dto.fieldType)
                                     ?? .string,
                                     visable: dto.visable,
@@ -157,28 +157,24 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
             case .success(let success):
                 completion(
                     .success(
-                        success.data.compactMap { dto in
-                            guard let camperID = Int(dto.camperID) else { return nil }
+                        success.data.assignments.compactMap { dto -> CamperSetting? in
+                            guard let camperID: Int = Int(dto.camperID) else { return nil }
 
-                            let associatedArray: [String] = dto.associations?
+                            let associatedArray: [String] = dto.associatedCampers
                                 .components(separatedBy: ",")
-                            ?? []
 
                             let associatedCamperIDs = associatedArray.compactMap { stringID in
                                 Int(stringID)
                             }
 
-                            let group: Int? = if let value = dto.groupID {
-                                Int(value)
-                            } else {
-                                nil
-                            }
+                            let group: Int? = Int(dto.groupID)
 
                             return CamperSetting(
-                                id: camperID,
-                                currentGroupID: group,
-                                associatedCamperIDs: associatedCamperIDs,
-                                exceptionsHandled: dto.handled ?? false
+                                camperID: camperID,
+                                groupID: group,
+                                associatedCampers: associatedCamperIDs,
+                                status: dto.status,
+                                notes: dto.notes
                             )
                         }
                     )
@@ -211,12 +207,34 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
         }
     }
     
-    func setCamperAssigments(requestData: SetCamperAssigmentsData, networkCall: NetworkCall, completion: @escaping (SetCamperAssigmentsResult) -> Void) {
-        communicator.set(requestData: requestData) { result in
+    func updateCamperAssigments(requestData: UpdateCamperAssigmentsData, networkCall: NetworkCall, completion: @escaping (SetCamperAssigmentsResult) -> Void) {
+        communicator.update(requestData: requestData) { result in
             switch result {
-            case .success:
-                completion(.success(true))
-            case .failure(let failure):
+            case .success(let result):
+                completion(
+                    .success(
+                        result.data.assignments.compactMap { dto -> CamperSetting? in
+                            guard let camperID: Int = Int(dto.camperID) else { return nil }
+
+                            let associatedArray: [String] = dto.associatedCampers
+                                .components(separatedBy: ",")
+
+                            let associatedCamperIDs = associatedArray.compactMap { stringID in
+                                Int(stringID)
+                            }
+
+                            let group: Int? = Int(dto.groupID)
+
+                            return CamperSetting(
+                                camperID: camperID,
+                                groupID: group,
+                                associatedCampers: associatedCamperIDs,
+                                status: dto.status,
+                                notes: dto.notes
+                            )
+                        }
+                    )
+                )            case .failure(let failure):
                 completion(.failure(.fromNSError(failure, endpoint: requestData.endpoint)))
             }
         }

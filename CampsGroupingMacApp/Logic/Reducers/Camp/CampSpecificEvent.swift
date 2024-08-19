@@ -13,8 +13,10 @@ extension GrouperEvent {
         case didSelectField(field: ReportFieldSetting)
         case didSelectFieldSort(sortOrder: SortOrder)
         case didSetFilterForReportFieldSetting(filterText: String)
+        case didSetFilterOptionsForReportFieldSetting(filterOptions: [String])
         case didSelectCamperToGroup(camper: Camper)
         case didToggleCamperRow(camper: Camper, campID: Int)
+        case didAskToGroupCampers(campers: [Camper], groupID: Int)
     }
 
     enum ReportFormattingEvent: Equatable {

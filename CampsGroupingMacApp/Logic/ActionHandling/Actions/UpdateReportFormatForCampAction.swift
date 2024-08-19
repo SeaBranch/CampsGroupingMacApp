@@ -27,7 +27,7 @@ struct UpdateReportFormatData: Equatable, CampGroupingAPISetEndpointModel {
         ReportFormatChangeDTO(
             fields: fieldsToUpdate.map {
                 ReportFormatChangeDTO.ReportFieldSettingChangeDTO(
-                    fieldName: $0.fieldName,
+                    fieldName: $0.fieldName.sanitized,
                     fieldType: $0.fieldType.rawValue,
                     visable: $0.visable,
                     primary: $0.isRegistrantData,

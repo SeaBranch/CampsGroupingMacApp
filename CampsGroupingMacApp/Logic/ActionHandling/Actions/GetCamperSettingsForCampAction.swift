@@ -10,21 +10,30 @@ struct GetCamperSettingsData: Equatable, CampGroupingAPIGetEndpointModel {
 }
 
 struct GetCamperSettingsDTO: Codable {
-    let data: [CamperSettingDTO]
+    let data: GroupingPlanDTO
     let metadata: MetaData
-
-    struct CamperSettingDTO: Codable {
-        let camperID: String
-        let groupID: String?
-        let associations: String?
-        let handled: Bool?
-        let autoGrouped: Bool?
-        let updatedBy: String?
-    }
 
     struct MetaData: Codable {
         let author: String
     }
+}
+
+struct GroupingPlanDTO: Codable {
+    let eventID: String
+    let assignments: [GroupingPlanCamperAssignmentDTO]
+
+    struct GroupingPlanCamperAssignmentDTO: Codable {
+        let camperID: String
+        let groupID: String
+        let associatedCampers: String
+        let status: CamperAssignmentStatus
+        let notes: String
+        let updatedBy: String
+    }
+}
+
+enum CamperAssignmentStatus: String, Codable {
+    case edited, uploaded
 }
 
 extension NetworkActionHandler {

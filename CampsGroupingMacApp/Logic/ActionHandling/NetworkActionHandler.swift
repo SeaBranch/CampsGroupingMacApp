@@ -80,12 +80,14 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
         case .setCamperAssigmentsForCamp(
             let camp,
             let campSettings,
+            let camperChanges,
             let userID,
             let networkCall
         ):
             handleSetCamperAssigmentsForCamp(
                 camp: camp,
-                campSettings: campSettings,
+                campSettings: campSettings, 
+                camperChanges: camperChanges,
                 userID: userID,
                 networkCall: networkCall,
                 handleEvent: handleEvent

@@ -20,10 +20,23 @@
     "%@ returned no results" : {
 
     },
+    "%@:\n\t%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@:\n\t%2$@"
+          }
+        }
+      }
+    },
     "%lf" : {
 
     },
     "%lld" : {
+
+    },
+    "∆: %lf" : {
 
     },
     "< %@" : {
@@ -82,10 +95,16 @@
         }
       }
     },
+    "Enter Filter Query" : {
+
+    },
     "Error: %lld" : {
 
     },
     "Filter By" : {
+
+    },
+    "Filter:" : {
 
     },
     "Forbidden: %lld" : {
@@ -98,6 +117,25 @@
 
     },
     "getting report" : {
+
+    },
+    "Group Campers in %lld" : {
+
+    },
+    "group: %lld (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "group: %1$lld (%2$@)"
+          }
+        }
+      }
+    },
+    "hide comparison" : {
+
+    },
+    "hide details" : {
 
     },
     "loading" : {
@@ -163,6 +201,9 @@
     "Select a Camps Login Type" : {
 
     },
+    "Select From Options" : {
+
+    },
     "selectACampsCategory" : {
       "localizations" : {
         "en" : {
@@ -180,6 +221,12 @@
 
     },
     "setting report id" : {
+
+    },
+    "show comparison" : {
+
+    },
+    "show details" : {
 
     },
     "Sign Out" : {

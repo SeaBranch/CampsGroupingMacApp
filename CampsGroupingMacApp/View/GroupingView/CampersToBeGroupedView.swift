@@ -15,8 +15,10 @@ struct CampersToBeGroupedView: View {
                 }
             }
 
-            List {
-                prioritizedCampers()
+            ScrollView {
+                VStack {
+                    prioritizedCampers()
+                }
             }
         }
         .searchable(
@@ -50,7 +52,7 @@ struct CampersToBeGroupedView: View {
                     Spacer()
                 }
                 let groupingFields = coordinator.state.currentFields
-                    .filter { $0.includeInGrouping }
+                    .filter { $0.showInTable }
                     .map { $0.fieldName }
 
                 let values = camper.values
@@ -155,6 +157,38 @@ extension Array where Element == Camper {
                         return false
                     }
                 default:
+                    return false
+                }
+            case .contains(options: let options, field: let field):
+                let possibleValue = possible.values[field.fieldName]
+                switch possibleValue {
+                case .bool(let value, _, _, _):
+                    for option in options {
+                        if let optionBool = Bool.fromReportString(option), optionBool == value {
+                            return true
+                        }
+                    }
+                    return false
+                case .commaSeparatedOptions(let values, _, _, _):
+                    for option in options {
+                        if values.contains(option) {
+                            return true
+                        }
+                    }
+                    return false
+                case .string(let rawValueString, _, _):
+                    for option in options {
+                        if rawValueString.range(of: option) != nil {
+                            return true
+                        }
+                    }
+                    return false
+                default:
+                    for option in options {
+                        if possibleValue?.rawValue == option {
+                            return true
+                        }
+                    }
                     return false
                 }
             }

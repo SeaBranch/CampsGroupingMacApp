@@ -14,7 +14,8 @@ extension MenuEventReducer {
                 [
                     state.beginGetReportForCamp(campSettings: settings),
                     state.beginGetReportFormatForCamp(campSettings: settings),
-                    state.beginGetCamperSettingsForCamp(camp: camp)
+                    state.beginGetCamperSettingsForCamp(camp: camp),
+                    state.
                 ]
             } else {
                 []
