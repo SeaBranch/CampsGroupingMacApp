@@ -22,7 +22,8 @@ struct CampsGroupingMacAppApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             AppLogin.self,
-            CampsStateMemory.self
+            CampsStateMemory.self,
+            CampGroupsStateMemory.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

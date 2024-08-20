@@ -47,6 +47,14 @@ extension APIEventReducer {
                 return []
             case .setCamperAssigments:
                 return []
+            case .groups:
+                if let camp = state.camp {
+                    let scope = camp.scope
+
+                    return [state.beginGetGroupsForCamp(camp: camp, scope: scope)]
+                } else {
+                    return []
+                }
             }
         }
     }

@@ -1,10 +1,3 @@
-//
-//  SignInCommunicator.swift
-//  CampsGroupingMacApp
-//
-//  Created by Nathan Sjoquist on 6/26/24.
-//
-
 import Foundation
 
 private let endpoint = CampsGroupingEndpoint.authenticate
@@ -33,39 +26,15 @@ class SignInCommunicator: SignInCommunicatorProtocol {
                 completion: completion
             )
         )
+    }
+}
 
-//        urlSession.dataTask(with: request) { data, response, error in
-//            if let error = error as? NSError {
-//                completion(.failure(error))
-//                return
-//            }
-//            let httpResponse = response as? HTTPURLResponse
-//            print("headers: [\n\(httpResponse?.allHeaderFields)")
-//            print("]")
-//
-//            guard let httpResponse = httpResponse
-//            else {
-//                let code = 503
-//                completion(.failure(NSError(domain: endpoint.path, code: code)))
-//
-//                return
-//            }
-//
-//            guard (200...299).contains(httpResponse.statusCode) else {
-//                let nsError = (error as NSError) ?? NSError(domain: endpoint.path, code: code)
-//            }
-//
-//            do {
-//                if let data = data {
-//                    let responseObject = try JSONDecoder()
-//                        .decode(CampAccessAccount.self, from: data)
-//                    completion(.success(responseObject))
-//                } else {
-//                    completion(.failure(NSError(domain: endpoint.path, code: 404)))
-//                }
-//            } catch {
-//                completion(.failure(error))
-//            }
-//        }.resume()
+struct SigninCall: BrushfireCall {
+    let request: URLRequest
+    let domain: String
+    let completion: (Result<CampAccessAccount, NSError>) -> Void
+
+    var decodableCall: BrushfireDecodableCall<CampAccessAccount> {
+        .init(request: request, domain: domain, completion: completion)
     }
 }

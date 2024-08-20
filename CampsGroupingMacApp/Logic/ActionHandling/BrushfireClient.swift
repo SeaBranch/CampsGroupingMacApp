@@ -17,26 +17,6 @@ struct VoidCall: BrushfireCall {
     let completion: (Result<Void, NSError>) -> Void
 }
 
-struct SigninCall: BrushfireCall {
-    let request: URLRequest
-    let domain: String
-    let completion: (Result<CampAccessAccount, NSError>) -> Void
-
-    var decodableCall: BrushfireDecodableCall<CampAccessAccount> {
-        .init(request: request, domain: domain, completion: completion)
-    }
-}
-
-struct CampsCall: BrushfireCall {
-    let request: URLRequest
-    let domain: String
-    let completion: (Result<[CampInfo], NSError>) -> Void
-
-    var decodableCall: BrushfireDecodableCall<[CampInfo]> {
-        .init(request: request, domain: domain, completion: completion)
-    }
-}
-
 struct BrushfireDecodableCall<T> {
     let request: URLRequest
     let domain: String
@@ -96,6 +76,15 @@ class BrushfireScopeClient {
 
     private let scope: CampsScope
 
+    var name: String {
+        var name =  "\(scope)"
+        if isSignInClient {
+            name += "_AUTH"
+        }
+
+        return name
+    }
+
     @Published private(set) var rateLimit: RateLimit?
 
     private let urlSession: URLSession
@@ -141,6 +130,10 @@ class BrushfireScopeClient {
                 performDecodableTask(call: decodableCall.decodableCall)
             }
 
+            if let decodableCall = nextCall as? CampGroupsCall {
+                performDecodableTask(call: decodableCall.decodableCall)
+            }
+
             if let passFailCall = nextCall as? VoidCall {
                 performPassFailTask(call: passFailCall)
             }
@@ -150,9 +143,11 @@ class BrushfireScopeClient {
     private func performPassFailTask(
         call: VoidCall
     ) {
-        let nextCallWindow = rateLimit?.nextCallWindow ?? 0
+        let nextCallWindow = rateLimit?.nextCallWindow ?? 6
         print("waiting \(nextCallWindow) untill calling \(call.domain)")
+
         DispatchQueue.network.asyncAfter(deadline: .now() + nextCallWindow) {
+            print("calling \(call.domain)")
             self.urlSession.passFailTask(
                 request: call.request,
                 domain: call.domain,
@@ -165,9 +160,10 @@ class BrushfireScopeClient {
     func performDecodableTask<T: Codable>(
         call: BrushfireDecodableCall<T>
     ) {
-        let nextCallWindow = rateLimit?.nextCallWindow ?? 0
+        let nextCallWindow = rateLimit?.nextCallWindow ?? 6
         print("waiting \(nextCallWindow) untill calling \(call.domain)")
         DispatchQueue.network.asyncAfter(deadline: .now() + nextCallWindow) {
+            print("calling \(call.domain)")
             self.urlSession.decodableTask(
                 request: call.request,
                 domain: call.domain,
@@ -212,6 +208,7 @@ class BrushfireScopeClient {
             if let newRateLimit = newRateLimit {
                 self.rateLimit = newRateLimit
                 print(newRateLimit)
+                newRateLimit.updateMessageForScopeName(self.name)
             }
 
             self.performNextCall()
@@ -252,14 +249,23 @@ struct RateLimit: Equatable {
     }
 
     var secondsTillReset: TimeInterval {
-        return rateLimitReset.timeIntervalSince(Date())
+        let seconds = rateLimitReset.timeIntervalSince(Date())
+        print("􁌴 there are \(seconds) seconds between \(Date()) and \(rateLimitReset)")
+        print("     you should wait around 6 or \(seconds/Double(max(rateLimitRemaining, 1))) seconds")
+        return seconds
     }
 
     var nextCallWindow: TimeInterval {
         if rateLimitRemaining > 0 {
-            secondsTillReset / Double(rateLimitRemaining)
+            secondsTillReset / Double(max(rateLimitRemaining, 1))
         } else {
             secondsTillReset
+        }
+    }
+
+    func updateMessageForScopeName(_ name: String) {
+        DispatchQueue.main.async {
+            GLOBAL_MESSAGES["\(name) RateLimit"] = "\(rateLimitRemaining)/600 reset: \(secondsTillReset)"
         }
     }
 }

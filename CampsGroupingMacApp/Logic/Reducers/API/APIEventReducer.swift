@@ -73,6 +73,14 @@ enum APIEventReducer {
                 networkCall: networkCall,
                 state: &state
             )
+        case .didRespondToGetGroups(let result, let camp, let scope, let networkCall):
+            DidRespondToGetGroupsReducer.handleEvent(
+                result: result,
+                camp: camp,
+                scope: scope,
+                networkCall: networkCall,
+                state: &state
+            )
         }
     }
 }

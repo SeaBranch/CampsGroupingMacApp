@@ -16,8 +16,8 @@ extension GrouperEvent {
             networkCall: NetworkCall
         )
         case didRespondToGetGroups(
-            result: Result<[CampGroup], CampsGroupingAPIError>,
-            account: CampAccessAccount,
+            result: Result<[CampGroupDTO], CampsGroupingAPIError>,
+            camp: Camp,
             scope: CampsScope,
             networkCall: NetworkCall
         )

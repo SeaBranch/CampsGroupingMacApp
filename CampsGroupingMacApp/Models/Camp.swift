@@ -21,6 +21,7 @@ struct Camp: Equatable, Hashable {
         self.report = report
         self.campSettings = campSettings
         self.changes = changes
+        self.groupsRecord = groupsRecord
     }
 
     var campers: [Camper] {

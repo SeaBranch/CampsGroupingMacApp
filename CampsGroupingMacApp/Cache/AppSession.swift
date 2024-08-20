@@ -73,6 +73,10 @@ class AppLogin {
             isBrushfireStaff: isBrushfireStaff
         )
     }
+
+    var isStale: Bool {
+        dateCreated.timeIntervalSinceNow > (24 * 60 * 60)
+    }
 }
 
 @Model
@@ -89,5 +93,33 @@ class CampsStateMemory {
 
     static func fromCamps(_ camps: [CampInfo], scope: CampsScope) -> CampsStateMemory {
         .init(camps: camps, dateCreated: Date(), scope: scope)
+    }
+
+    var isStale: Bool {
+        dateCreated.timeIntervalSinceNow > (24 * 60 * 60)
+    }
+}
+
+@Model
+class CampGroupsStateMemory {
+    var groups: [CampGroupDTO]
+    var dateCreated: Date
+    let scope: CampsScope
+    let camp: Int
+
+    init(
+        groups: [CampGroupDTO],
+        dateCreated: Date = Date(),
+        scope: CampsScope,
+        camp: Int
+    ) {
+        self.groups = groups
+        self.dateCreated = dateCreated
+        self.scope = scope
+        self.camp = camp
+    }
+
+    var isStale: Bool {
+        dateCreated.timeIntervalSinceNow > 60
     }
 }

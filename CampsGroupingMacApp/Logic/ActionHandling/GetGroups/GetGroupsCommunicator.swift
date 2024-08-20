@@ -1,14 +1,14 @@
 import Foundation
 
-protocol GetCampsCommunicatorProtocol {
-    func getCamps(
-        accessKey: String,
+protocol GetGroupsCommunicatorProtocol {
+    func getGroups(
+        camp: Camp,
         scope: CampsScope,
-        completion: @escaping (Result<[CampInfo], NSError>) -> Void
+        completion: @escaping (Result<[CampGroupDTO], NSError>) -> Void
     )
 }
 
-class GetCampsCommunicator: GetCampsCommunicatorProtocol {
+class GetGroupsCommunicator: GetGroupsCommunicatorProtocol {
     let client: BrushfireClientProtocol
 
     init(
@@ -17,12 +17,12 @@ class GetCampsCommunicator: GetCampsCommunicatorProtocol {
         self.client = client
     }
 
-    func getCamps(
-        accessKey: String,
+    func getGroups(
+        camp: Camp,
         scope: CampsScope,
-        completion: @escaping (Result<[CampInfo], NSError>) -> Void
+        completion: @escaping (Result<[CampGroupDTO], NSError>) -> Void
     ) {
-        let endpoint = CampsGroupingEndpoint.getCamps(accessKey: accessKey)
+        let endpoint = CampsGroupingEndpoint.getGroups(camp: camp)
 
         var request = URLRequest(
             endpoint: endpoint,
@@ -31,7 +31,7 @@ class GetCampsCommunicator: GetCampsCommunicatorProtocol {
 
         _ = client.networkTask(
             scope: scope,
-            call: CampsCall(
+            call: CampGroupsCall(
                 request: request,
                 domain: endpoint.domain,
                 completion: completion
@@ -40,12 +40,12 @@ class GetCampsCommunicator: GetCampsCommunicatorProtocol {
     }
 }
 
-struct CampsCall: BrushfireCall {
+struct CampGroupsCall: BrushfireCall {
     let request: URLRequest
     let domain: String
-    let completion: (Result<[CampInfo], NSError>) -> Void
+    let completion: (Result<[CampGroupDTO], NSError>) -> Void
 
-    var decodableCall: BrushfireDecodableCall<[CampInfo]> {
+    var decodableCall: BrushfireDecodableCall<[CampGroupDTO]> {
         .init(request: request, domain: domain, completion: completion)
     }
 }

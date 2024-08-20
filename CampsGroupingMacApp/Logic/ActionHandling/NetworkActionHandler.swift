@@ -9,6 +9,7 @@ extension DispatchQueue {
 class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
     var signInLogicController: SignInLogicControllerProtocol
     var getCampsLogicController: GetCampsLogicControllerProtocol
+    var getGroupsLogicController: GetGroupsLogicControllerProtocol
     var groupingAPILogicController: GroupingAPILogicControllerProtocol
     let modelContainer: ModelContainer
 
@@ -18,6 +19,7 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
         self.modelContainer = modelContainer
         self.signInLogicController = SignInLogicController(modelContainer: modelContainer)
         self.getCampsLogicController = GetCampsLogicController(modelContainer: modelContainer)
+        self.getGroupsLogicController = GetGroupsLogicController(modelContainer: modelContainer)
         self.groupingAPILogicController = GroupingAPILogicController()
     }
 
@@ -96,6 +98,13 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
             DispatchQueue.main.async {
                 self.getCache(handleEvent: handleEvent)
             }
+        case .getGroupsForCamp(camp: let camp, scope: let scope, networkCall: let networkCall):
+            handleGetGroups(
+                camp: camp,
+                scope: scope,
+                networkCall: networkCall,
+                handleEvent: handleEvent
+            )
         }
     }
 

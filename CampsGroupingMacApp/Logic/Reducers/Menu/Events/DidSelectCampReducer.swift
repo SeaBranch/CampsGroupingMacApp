@@ -15,10 +15,13 @@ extension MenuEventReducer {
                     state.beginGetReportForCamp(campSettings: settings),
                     state.beginGetReportFormatForCamp(campSettings: settings),
                     state.beginGetCamperSettingsForCamp(camp: camp),
-                    state.
+                    state.beginGetGroupsForCamp(camp: camp, scope: scope)
                 ]
             } else {
-                []
+                [
+                    state.beginGetCamperSettingsForCamp(camp: camp),
+                    state.beginGetGroupsForCamp(camp: camp, scope: scope)
+                ]
             }
         }
     }

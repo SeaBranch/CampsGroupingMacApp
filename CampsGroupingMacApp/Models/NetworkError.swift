@@ -3,6 +3,7 @@ import Foundation
 enum NetworkError: Error, Equatable, Hashable {
     case signIn(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case camps(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case groups(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case campReports(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case campReport(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case campReportFormat(error: CampsGroupingAPIError, networkCall: NetworkCall)

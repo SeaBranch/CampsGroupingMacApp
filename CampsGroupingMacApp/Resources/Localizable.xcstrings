@@ -67,6 +67,9 @@
     "Begin Grouping" : {
 
     },
+    "Campers:" : {
+
+    },
     "Change Report ID" : {
 
     },
@@ -132,6 +135,9 @@
         }
       }
     },
+    "Groups in %@" : {
+
+    },
     "hide comparison" : {
 
     },
@@ -150,6 +156,9 @@
       }
     },
     "loading camps" : {
+
+    },
+    "Loading Groups..." : {
 
     },
     "Loading Report" : {
@@ -282,6 +291,9 @@
 
     },
     "View Camper Grouping" : {
+
+    },
+    "View only groups with leaders" : {
 
     }
   },

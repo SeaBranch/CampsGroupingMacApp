@@ -59,8 +59,10 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
         switch self {
         case .authenticate:
             "\(brushfire)/accounts"
-        case .getCamps, .getGroups:
+        case .getCamps:
             "\(brushfire)/events"
+        case .getGroups:
+            "\(brushfire)/events/event_number/groups"
         case .getReport:
             brushfireReport
         case .getCampReports, .setReport:

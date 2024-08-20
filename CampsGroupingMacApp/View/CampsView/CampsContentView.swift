@@ -70,6 +70,8 @@ struct CampsContentView: View {
                 }
             }
 
+            CampGroupDetailsView(camp: camp)
+
             Spacer()
             footer(campInfo: camp.info)
         }
@@ -118,5 +120,96 @@ struct CampsContentView: View {
         if campInfo.isActive {
             Text("Active").foregroundColor(.green)
         }
+    }
+}
+
+struct CampGroupDetailsView: View {
+    @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
+
+    @State var camp: Camp
+    @State var filterForCaptains = false
+
+    var body: some View {
+        if camp.groups.isEmpty && coordinator.state.activeFetches.contains(where: { call in
+            if case .groups(let uUID) = call {
+                true
+            } else {
+                false
+            }
+        }) {
+            ProgressView {
+                Text("Loading Groups...").font(.largeTitle)
+            }
+        } else {
+            VStack {
+                VSeparator(color: .primary)
+                HStack {
+                    Text("Groups in \(camp.info.title)").font(.largeTitle)
+                    Spacer()
+                }.padding()
+
+                HStack {
+                    Toggle("View only groups with leaders", isOn: $filterForCaptains)
+                    Spacer()
+                }.padding()
+                VSeparator(color: .secondary)
+                ScrollView {
+                    VStack {
+                        ForEach(filteredGroups, id: \.groupID) { group in
+                            groupPannel(group: group).padding()
+                        }
+                    }.padding()
+                }
+            }
+        }
+    }
+
+    var filteredGroups: [CampGroup] {
+        if filterForCaptains {
+            camp.groups.filter { $0.type == .tripCaptain }
+        } else {
+            camp.groups
+        }
+    }
+
+    @ViewBuilder func groupPannel(group: CampGroup) -> some View {
+        VStack {
+            Text(group.groupName + ": " + "\(group.groupID)").font(.title)
+            Text("number of campers: " + "\(group.attendeeCount)")
+            Spacer().frame(height: 8)
+            Text("Campers:")
+            VSeparator(color: .secondary)
+            ForEach(campers(forIDs: group.campers), id: \.id) { camper in
+                HStack {
+                    Text(camper.name)
+                    Spacer()
+                }
+            }
+        }
+        .background {
+            RoundedRectangle(cornerRadius: 8).fill(Color(enum: .plain))
+        }
+    }
+
+    func campers(forIDs camperIDs: [Int]) -> [Camper] {
+        camp.campers.filter { camper in
+            camperIDs.contains(camper.id)
+        }
+    }
+}
+
+struct VSeparator: View {
+    @State var color: Color
+
+    var body: some View {
+        Rectangle().fill(color).frame(height: 1)
+    }
+}
+
+struct HSeparator: View {
+    @State var color: Color
+
+    var body: some View {
+        Rectangle().fill(color).frame(width: 1)
     }
 }
