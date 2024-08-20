@@ -1,9 +1,25 @@
 import Foundation
 
+struct CamperAssignment: Equatable {
+    let camper: Camper
+    let group: GroupIdentification
+}
+
+struct GroupIdentification: Equatable, Hashable, Codable {
+    let groupNumber: Int
+    let groupId: String
+}
+
 struct CamperGroupingState: Equatable {
     var camp: Int
     var camperCurrentlyBeingGrouped: Int?
     var camperSelections: Set<Int> = []
+    var pendingAssignments: [CamperAssignment] = []
+    var groupingMode: GroupingMode = .manual
+
+    var assigneeFilter: FieldFilter?
+    var groupFilter: FieldFilter?
+    var equivelencies: [String: Double] = [:]
 
     var activeSelection: CamperGroupingFocus?
 }
@@ -41,7 +57,7 @@ enum FieldFilter: Equatable {
         }
 
         switch field.fieldType {
-        case .zip, .camperID, .groupID, .crossroadsSite, .empty:
+        case .zip, .camperNumber, .groupNumber, .crossroadsSite, .empty:
             return .exact(expectedValue: filterString, field: field)
         case .bool:
             let boolValue = Bool.fromReportString(filterString)

@@ -16,7 +16,14 @@ extension GrouperEvent {
         case didSetFilterOptionsForReportFieldSetting(filterOptions: [String])
         case didSelectCamperToGroup(camper: Camper)
         case didToggleCamperRow(camper: Camper, campID: Int)
-        case didAskToGroupCampers(campers: [Camper], groupID: Int)
+        case didAskToGroupCampers(campers: [Camper], groupID: GroupIdentification)
+        // auto grouping
+        case didToggleGroupingMode
+        case didTapAutoGroupRemainingCampers(assigneeFilter: FieldFilter?, groupFilter: FieldFilter?, equivelencies: [String: Double])
+        case didTapAcceptAutoGrouping(grouping: [CamperAssignment])
+
+        case didGenerateAutoGrouping(assigneeFilter: FieldFilter?, groupFilter: FieldFilter?, equivelencies: [String: Double], grouping: [CamperAssignment])
+        case requestUploadGroupAssignments
     }
 
     enum ReportFormattingEvent: Equatable {
@@ -32,4 +39,8 @@ enum ReportFieldSection {
 
 enum GroupingSection {
     case camper, compare, detail
+}
+
+enum GroupingMode: Equatable {
+    case manual, automatic
 }

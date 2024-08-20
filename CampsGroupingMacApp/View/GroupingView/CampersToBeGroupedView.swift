@@ -32,7 +32,7 @@ struct CampersToBeGroupedView: View {
         let campers = coordinator.state.camp?.campers ?? []
         ForEach(
             campers.filteredBySearch(query: searchQuery).filter({ camper in
-                camper.currentGroupID == nil
+                camper.currentGroupNumber == nil
             })
         ) { camperRow in
             camperView(camperRow)

@@ -86,10 +86,25 @@ enum CampChange: Equatable, Hashable {
 
 struct CamperSetting: Equatable, Codable, Hashable {
     let camperID: Int
-    let groupID: Int?
+    let attendeeID: String
+    let groupNumber: Int?
+    let groupID: String?
     let associatedCampers: [Int]
     let status: CamperAssignmentStatus
     let notes: String
+
+    var group: GroupIdentification? {
+        guard let groupId = groupID,
+              let groupNum = groupNumber 
+        else {
+            return nil
+        }
+
+        return GroupIdentification(
+            groupNumber: groupNum,
+            groupId: groupId
+        )
+    }
 }
 
 struct CampSettings: Equatable, Codable, Hashable {
@@ -129,7 +144,7 @@ struct CampSettings: Equatable, Codable, Hashable {
             }
             return CamperAssigmentDTO(
                 camperID: "\($0.camperID)",
-                groupID: "\($0.groupID)",
+                groupID: "\($0.groupNumber)",
                 associatedCampers: associatedCampers,
                 status: $0.status.rawValue,
                 notes: $0.notes

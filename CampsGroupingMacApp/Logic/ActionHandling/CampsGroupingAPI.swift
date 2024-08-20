@@ -35,6 +35,8 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
     case setReport(reportID: String, camp: Camp)
     case updateReportFormat(campSettings: CampSettings)
     case setCamperAssigments(campSettings: CampSettings, camp: Camp)
+    case uploadCamperGroup(camper: Camper)
+    case markCamperAssigmentUpload(camp: Camp)
 
     var path: String {
         switch self {
@@ -50,8 +52,12 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
             "\(campsGroupingAPI)/reports"
         case .getReportFormat(let campSettings), .updateReportFormat(let campSettings):
             "\(campsGroupingAPI)/reportFormat/\(campSettings.report.reportID)"
-        case .getCamperSettings(let camp), .setCamperAssigments(_, let camp):
+        case .getCamperSettings(let camp), 
+                .setCamperAssigments(_, let camp),
+                .markCamperAssigmentUpload(let camp):
             "\(campsGroupingAPI)/groupingPlan/\(camp.info.eventNumber)"
+        case .uploadCamperGroup(let camper):
+            "\(brushfireReport)/attendees/\(camper.id)/group"
         }
     }
 
@@ -69,8 +75,10 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
             "\(campsGroupingAPI)/reports"
         case .getReportFormat, .updateReportFormat:
             "\(campsGroupingAPI)/reportFormat"
-        case .getCamperSettings, .setCamperAssigments:
+        case .getCamperSettings, .setCamperAssigments, .markCamperAssigmentUpload:
             "\(campsGroupingAPI)/campers"
+        case .uploadCamperGroup:
+            "\(brushfireReport)/attendees/camper_number/group"
         }
     }
 

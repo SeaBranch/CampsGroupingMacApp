@@ -11,4 +11,6 @@ enum NetworkError: Error, Equatable, Hashable {
     case updateCampers(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case setReport(error: CampsGroupingAPIError, networkCall: NetworkCall)
     case updateReportFormat(error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case uploadGroupAssignment(camper: Int, group: Int, error: CampsGroupingAPIError, networkCall: NetworkCall)
+    case markAssignmentAsUploaded(camper: Int, group: Int, error: CampsGroupingAPIError, networkCall: NetworkCall)
 }

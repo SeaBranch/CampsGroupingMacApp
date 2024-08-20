@@ -64,6 +64,10 @@ enum GrouperEventSpace: EventSpace {
             networkCall: NetworkCall
         )
         case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, camperChanges: [CamperSetting], userID: Int, networkCall: NetworkCall)
+        // auto grouping
+        case generateAutoGrouping(assigneeFilters: [FilterStep], groupFilters: [FilterStep], equivelencies: [String: Double])
+        case uploadGroupAssignment(camper: Camper, groupID: GroupIdentification, account: CampAccessAccount, networkCall: NetworkCall)
+        case markAssignmentAsUploaded(camper: Camper, groupID: GroupIdentification, camp: Camp, networkCall: NetworkCall)
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
@@ -87,3 +91,13 @@ enum GrouperEventSpace: EventSpace {
         }
     }
 }
+
+struct FilterStep: Equatable {
+    let step: FilterStepType
+    let filter: FieldFilter
+}
+
+enum FilterStepType: Equatable {
+    case AND, OR
+}
+

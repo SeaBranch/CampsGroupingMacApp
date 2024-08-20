@@ -167,11 +167,11 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
                                 Int(stringID)
                             }
 
-                            let group: Int? = Int(dto.groupID)
-
                             return CamperSetting(
                                 camperID: camperID,
-                                groupID: group,
+                                attendeeID: dto.attendeeID,
+                                groupNumber: dto.groupNumber,
+                                groupID: dto.groupID,
                                 associatedCampers: associatedCamperIDs,
                                 status: dto.status,
                                 notes: dto.notes
@@ -223,18 +223,19 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
                                 Int(stringID)
                             }
 
-                            let group: Int? = Int(dto.groupID)
-
                             return CamperSetting(
                                 camperID: camperID,
-                                groupID: group,
+                                attendeeID: dto.attendeeID,
+                                groupNumber: dto.groupNumber,
+                                groupID: dto.groupID,
                                 associatedCampers: associatedCamperIDs,
                                 status: dto.status,
                                 notes: dto.notes
                             )
                         }
                     )
-                )            case .failure(let failure):
+                )            
+            case .failure(let failure):
                 completion(.failure(.fromNSError(failure, endpoint: requestData.endpoint)))
             }
         }

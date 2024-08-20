@@ -26,14 +26,29 @@ struct ReportFormat: Equatable, Codable, Hashable {
         reportFieldSettings.contains { setting in
             setting.fieldType == .camperID &&
             setting.isRegistrantData &&
-            setting.visable &&
-            setting.showInTable
+            setting.visable
         }
     }
 
     var hasCamperGroupIdSetting: Bool {
         reportFieldSettings.contains { setting in
             setting.fieldType == .groupID &&
+            setting.isRegistrantData &&
+            setting.visable
+        }
+    }
+
+    var hasCamperNumberSetting: Bool {
+        reportFieldSettings.contains { setting in
+            setting.fieldType == .camperNumber &&
+            setting.isRegistrantData &&
+            setting.visable
+        }
+    }
+
+    var hasCamperGroupNumberSetting: Bool {
+        reportFieldSettings.contains { setting in
+            setting.fieldType == .groupNumber &&
             setting.isRegistrantData &&
             setting.visable &&
             setting.showInTable
@@ -151,20 +166,24 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
                         fieldName: fieldName,
                         primary: isRegistrantData
                     )
+            case .camperNumber:
+                    .camperNumber(
+                        value: Int(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
+            case .groupNumber:
+                    .groupNumber(
+                        value: Int(string), 
+                        rawValue: string,
+                        fieldName: fieldName,
+                        primary: isRegistrantData
+                    )
             case .camperID:
-                    .camperID(
-                        value: Int(string), 
-                        rawValue: string,
-                        fieldName: fieldName,
-                        primary: isRegistrantData
-                    )
+                    .camperID(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .groupID:
-                    .groupID(
-                        value: Int(string), 
-                        rawValue: string,
-                        fieldName: fieldName,
-                        primary: isRegistrantData
-                    )
+                    .groupID(rawValue: string, fieldName: fieldName, primary: isRegistrantData)
             case .crossroadsSite:
                     .crossroadsSite(
                         rawValue: string, 
@@ -217,11 +236,11 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
                 if let value = camper.values[fieldName] {
                     setOfOptions.insert(value.rawValue)
                 }
-            case .camperID:
+            case .camperNumber:
                 if let value = camper.values[fieldName] {
                     setOfOptions.insert(value.rawValue)
                 }
-            case .groupID:
+            case .groupNumber:
                 if let value = camper.values[fieldName] {
                     setOfOptions.insert(value.rawValue)
                 }
@@ -237,6 +256,14 @@ struct ReportFieldSetting: Equatable, Identifiable, Codable, Hashable {
                 }
             case .empty:
                 break
+            case .camperID:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
+            case .groupID:
+                if let value = camper.values[fieldName] {
+                    setOfOptions.insert(value.rawValue)
+                }
             }
         }
 
@@ -291,8 +318,10 @@ enum ReportFieldValue: Equatable, Hashable {
     case int(value: Int?, rawValue: String, fieldName: String, primary: Bool)
     case bool(value: Bool?, rawValue: String, fieldName: String, primary: Bool)
     case zip(value: ZipLocation?, rawValue: String, fieldName: String, primary: Bool)
-    case camperID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
-    case groupID(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case camperNumber(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case groupNumber(value: Int?, rawValue: String, fieldName: String, primary: Bool)
+    case camperID(rawValue: String, fieldName: String, primary: Bool)
+    case groupID(rawValue: String, fieldName: String, primary: Bool)
     case crossroadsSite(rawValue: String, fieldName: String, primary: Bool)
     case commaSeparatedOptions(values: [String], rawValue: String, fieldName: String, primary: Bool)
     case empty(fieldName: String)
@@ -364,11 +393,13 @@ enum ReportFieldValue: Equatable, Hashable {
         case .int(_, let string, _, _):                     string
         case .bool(_, let string, _, _):                    string
         case .zip(_, let string, _, _):                     string
-        case .camperID(_, let string, _, _):                string
-        case .groupID(_, let string, _, _):                 string
+        case .camperNumber(_, let string, _, _):            string
+        case .groupNumber(_, let string, _, _):             string
         case .crossroadsSite(let string, _, _):             string
         case .commaSeparatedOptions(_, let string, _, _):   string
         case .empty:                                        ""
+        case .camperID(let string, _, _):                   string
+        case .groupID(let string, _, _):                    string
         }
     }
 }
@@ -382,6 +413,8 @@ enum ReportFieldType: String, Equatable, CaseIterable, Identifiable, Codable {
          zip,
          fullName,
          partOfName,
+         camperNumber,
+         groupNumber,
          camperID,
          groupID,
          email,
@@ -397,6 +430,8 @@ enum ReportFieldType: String, Equatable, CaseIterable, Identifiable, Codable {
         case .zip: "Zip"
         case .fullName: "Full Name"
         case .partOfName: "Part of Name"
+        case .camperNumber: "Camper Number"
+        case .groupNumber: "Group Number"
         case .camperID: "Camper ID"
         case .groupID: "Group ID"
         case .email: "Email"

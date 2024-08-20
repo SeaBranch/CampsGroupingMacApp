@@ -5,7 +5,7 @@ extension MenuEventReducer {
         static func handleEvent(
             state: inout GrouperState
         ) -> [GrouperAction] {
-            state = GrouperState()
+            state = GrouperState(hasLaunched: true)
             return []
         }
     }

@@ -56,6 +56,16 @@ extension GrouperEvent {
             requestData: UpdateCamperAssigmentsData,
             networkCall: NetworkCall
         )
+        case didRespondToUploadCamperGrouping(
+            result: UploadGroupAssignmentResult,
+            requestData: UploadGroupAssignmentData,
+            networkCall: NetworkCall
+        )
+        case didRespondToMarkAssignmentAsUploaded(
+            result: MarkUploadedResult,
+            requestData: MarkUploadedData,
+            networkCall: NetworkCall
+        )
     }
 }
 

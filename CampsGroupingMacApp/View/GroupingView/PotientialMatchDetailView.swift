@@ -69,7 +69,7 @@ struct PotientialMatchDetailView: View {
                 }
                 Rectangle().fill(.primary).frame(height: 1)
                 
-                let groupIDs = Set(campers.compactMap({ $0.currentGroupID })).sorted()
+                let groupIDs = Set(campers.compactMap({ $0.currentGroupNumber })).sorted()
                 if !groupIDs.isEmpty {
                     ForEach(groupIDs, id: \.self) { groupID in
                         Button("Group Campers in \(groupID)") {

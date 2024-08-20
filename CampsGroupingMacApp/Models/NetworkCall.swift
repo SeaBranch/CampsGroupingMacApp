@@ -11,4 +11,6 @@ enum NetworkCall: Equatable, Hashable {
     case setReport(UUID = UUID())
     case updateReportFormat(UUID = UUID())
     case setCamperAssigments(UUID = UUID())
+    case uploadGroupAssignment(UUID = UUID())
+    case markAssignmentAsUploaded(UUID = UUID())
 }

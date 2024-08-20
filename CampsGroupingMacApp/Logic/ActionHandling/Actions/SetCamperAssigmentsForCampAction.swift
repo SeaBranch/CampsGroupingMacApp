@@ -24,9 +24,9 @@ struct UpdateCamperAssigmentsData: Equatable, CampGroupingAPIUpdateEndpointModel
                 }
                 return CamperAssigmentDTO(
                     camperID: "\(setting.camperID)",
-                    groupID: setting.groupID.map({
-                        "\($0)"
-                    }) ?? "",
+                    attendeeID: setting.attendeeID,
+                    groupID: setting.groupID ?? "",
+                    groupNumber: setting.groupNumber ?? 0,
                     associatedCampers: associatedCampers,
                     status: setting.status.rawValue,
                     notes: setting.notes
@@ -45,7 +45,9 @@ struct UpdateCamperAssigmentsDTO: RequestDTO {
 /// type given in a set grouping plan request body
 struct CamperAssigmentDTO: Codable {
     let camperID: String
+    let attendeeID: String
     let groupID: String
+    let groupNumber: Int
     let associatedCampers: String
     let status: String
     let notes: String

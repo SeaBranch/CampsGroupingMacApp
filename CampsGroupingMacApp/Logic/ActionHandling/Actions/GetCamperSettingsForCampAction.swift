@@ -24,7 +24,9 @@ struct GroupingPlanDTO: Codable {
 
     struct GroupingPlanCamperAssignmentDTO: Codable {
         let camperID: String
+        let attendeeID: String
         let groupID: String
+        let groupNumber: Int
         let associatedCampers: String
         let status: CamperAssignmentStatus
         let notes: String

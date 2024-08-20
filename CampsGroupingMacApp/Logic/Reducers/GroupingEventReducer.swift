@@ -76,10 +76,17 @@ enum GroupingEventReducer {
                   let campSettings = camp.campSettings,
                   let userID = state.accessAccount?.accountNumber
             else { return [] }
-            let camperChanges = campers.filter({ $0.currentGroupID != groupID }).map { camper in
+            
+            let filteredCampers: [Camper] = campers.filter { camper in
+                camper.currentGroup != groupID
+            }
+
+            let camperChanges = filteredCampers.map { camper in
                 CamperSetting(
                     camperID: camper.id,
-                    groupID: groupID,
+                    attendeeID: camper.attendeeID,
+                    groupNumber: camper.currentGroup?.groupNumber,
+                    groupID: camper.currentGroup?.groupId,
                     associatedCampers: camper.associatedCamperIDs,
                     status: .edited,
                     notes: "directly assigned"
@@ -94,6 +101,74 @@ enum GroupingEventReducer {
                     campSettings: campSettings,
                     camperChanges: camperChanges,
                     userID: userID
+                )
+            ]
+        case .didGenerateAutoGrouping(assigneeFilter: let assigneeFilter, groupFilter: let groupFilter, equivelencies: let equivelencies, grouping: let grouping):
+            state.groupingState?.pendingAssignments = grouping
+        case .requestUploadGroupAssignments:
+            if let campers = state.camp?.campers.filter({
+                $0.currentGroup != nil
+                && $0.groupSettingStatus == .edited
+            }) {
+                var actions = [GrouperAction]()
+                campers.forEach { camper in
+                    if let group = camper.currentGroup,
+                       let account = state.accessAccount {
+                        actions.append(
+                            state.beginUploadGroupAssignment(
+                                camper: camper,
+                                groupID: group,
+                                account: account
+                            )
+                        )
+                    }
+                }
+            }
+        case .didToggleGroupingMode:
+            if let camp = state.selectedCamp {
+                var gstate = state.groupingState ?? CamperGroupingState(camp: camp)
+                gstate.groupingMode = switch gstate.groupingMode {
+                case .manual:       .automatic
+                case .automatic:    .manual
+                }
+                state.groupingState = gstate
+            }
+        case .didTapAutoGroupRemainingCampers(
+            assigneeFilter: let assigneeFilter,
+            groupFilter: let groupFilter,
+            equivelencies: let equivelencies
+        ):
+            return [
+                .generateAutoGrouping(
+                    assigneeFilter: assigneeFilter,
+                    groupFilter: groupFilter,
+                    equivelencies: equivelencies
+                )
+            ]
+        case .didTapAcceptAutoGrouping(grouping: let grouping):
+            guard let camp = state.camp,
+                  let settings = camp.campSettings,
+                  let account = state.accessAccount
+            else { return [] }
+
+            let changes = grouping.map { camperAssignment in
+                CamperSetting(
+                    camperID: camperAssignment.camper.id,
+                    attendeeID: camperAssignment.camper.attendeeID,
+                    groupNumber: camperAssignment.group.groupNumber,
+                    groupID: camperAssignment.group.groupId,
+                    associatedCampers: camperAssignment.camper.associatedCamperIDs,
+                    status: .edited,
+                    notes: "Auto Grouped"
+                )
+            }
+
+            return [
+                state.beginSetCamperAssigmentsForCamp(
+                    camp: camp,
+                    campSettings: settings,
+                    camperChanges: changes,
+                    userID: account.accountNumber
                 )
             ]
         }

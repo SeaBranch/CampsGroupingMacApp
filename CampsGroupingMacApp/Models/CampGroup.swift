@@ -71,7 +71,7 @@ struct CampGroup: Equatable, Hashable {
         self.communityName = dto.communityName
 
         self.groupLeader = campers.first { $0.values.email == dto.email }?.id
-        self.campers = campers.filter({ $0.currentGroupID == dto.groupNumber }).map({ $0.id })
+        self.campers = campers.filter({ $0.currentGroupNumber == dto.groupNumber }).map({ $0.id })
     }
 }
 

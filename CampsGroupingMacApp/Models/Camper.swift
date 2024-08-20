@@ -9,8 +9,9 @@ import Foundation
 
 struct Camper: Equatable, Identifiable, Hashable {
     let id: Int
+    let attendeeID: String
     let name: String
-    var currentGroupID: Int?
+    var currentGroup: GroupIdentification?
     var groupSettingStatus: CamperAssignmentStatus?
     var associatedCamperIDs: [Int]
     var requiresDirectHandling: Bool
@@ -24,18 +25,23 @@ struct Camper: Equatable, Identifiable, Hashable {
             }
         }
         values = fieldValues
-        guard let camperID = fieldValues.camperID,
-              let camperName = fieldValues.camperName
+        guard let camperID = fieldValues.camperNumber,
+              let camperName = fieldValues.camperName,
+              let attendeeID = fieldValues.attendeeID
         else {
             return nil
         }
-        
+
         let match = settings.campers.first(where: { $0.camperID == camperID })
 
         id = camperID
+        self.attendeeID = attendeeID
         name = camperName
-        currentGroupID = match?.groupID ?? fieldValues.currentGroupID
-        groupSettingStatus = match?.status ?? ((fieldValues.currentGroupID != nil) ? .uploaded : nil)
+        
+        currentGroup = match?.group
+        ?? fieldValues.currentGroup
+        
+        groupSettingStatus = match?.status ?? ((fieldValues.currentGroupNumber != nil) ? .uploaded : nil)
         associatedCamperIDs = settings.campers
             .first { $0.camperID == camperID }?
             .associatedCampers ?? []
@@ -46,10 +52,20 @@ struct Camper: Equatable, Identifiable, Hashable {
 }
 
 extension Dictionary where Key == String, Value == ReportFieldValue {
-    var camperID: Int? {
+    var camperNumber: Int? {
         var id: Int?
         values.forEach {
-            if case .camperID(let value, _, _, true) = $0 {
+            if case .camperNumber(let value, _, _, true) = $0 {
+                id = value
+            }
+        }
+        return id
+    }
+
+    var attendeeID: String? {
+        var id: String?
+        values.forEach {
+            if case .camperID(let value, _, true) = $0 {
                 id = value
             }
         }
@@ -66,17 +82,41 @@ extension Dictionary where Key == String, Value == ReportFieldValue {
         return name
     }
 
-    var currentGroupID: Int? {
+    var currentGroup: GroupIdentification? {
+        if let gID = currentGroupID, let gNum = currentGroupNumber {
+            return GroupIdentification(
+                groupNumber: gNum,
+                groupId: gID
+            )
+        } else {
+            return nil
+        }
+    }
+
+    var currentGroupNumber: Int? {
         var group: Int?
 
         values.forEach {
-            if case .groupID(let value, _, _, true) = $0 {
+            if case .groupNumber(let value, _, _, true) = $0 {
                 group = value
             }
         }
 
         return group
     }
+
+    var currentGroupID: String? {
+        var group: String?
+
+        values.forEach {
+            if case .groupID(let value, _, true) = $0 {
+                group = value
+            }
+        }
+
+        return group
+    }
+
 
     var email: String? {
         var emailString: String?

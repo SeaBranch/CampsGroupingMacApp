@@ -82,9 +82,9 @@ struct CamperAndGroupSearchView: View {
                 var c1Val = c1.values[focus.field.fieldName]?.rawValue
                 var c2Val = c2.values[focus.field.fieldName]?.rawValue
 
-                if focus.field.fieldType == .groupID {
-                    let cid1 = c1.currentGroupID
-                    let cid2 = c2.currentGroupID
+                if focus.field.fieldType == .groupNumber {
+                    let cid1 = c1.currentGroupNumber
+                    let cid2 = c2.currentGroupNumber
 
                     switch focus.sortOrder {
                     case .forward:
@@ -131,8 +131,8 @@ struct CamperAndGroupSearchView: View {
                 if let dist = camperElement.distance, camperElement.field.includeInGrouping {
                     Text("\(dist)")
                         .foregroundStyle(Color(enum: .positiveDetail))
-                } else if camperElement.field.fieldType == .groupID,
-                          let group = camperElement.camper.currentGroupID,
+                } else if camperElement.field.fieldType == .groupNumber,
+                          let group = camperElement.camper.currentGroupNumber,
                           let status = camperElement.camper.groupSettingStatus {
                     Text("group: \(group) (\(status.rawValue))")
                         .foregroundStyle(

@@ -105,6 +105,12 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
                 networkCall: networkCall,
                 handleEvent: handleEvent
             )
+        case .generateAutoGrouping(assigneeFilter: let assigneeFilter, groupFilter: let groupFilter, equivelencies: let equivelencies):
+            break
+        case .uploadGroupAssignment(camper: let camper, groupID: let groupID, account: let account, networkCall: let networkCall):
+            break
+        case .markAssignmentAsUploaded(camper: let camper, groupID: let groupID, camp: let camp, networkCall: let networkCall):
+            break
         }
     }
 
