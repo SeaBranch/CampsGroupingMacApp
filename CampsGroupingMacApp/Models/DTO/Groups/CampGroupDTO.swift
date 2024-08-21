@@ -39,6 +39,10 @@ struct CampGroupDTO: Codable, Equatable, Hashable {
     var groupType: CampGroupTypeDTO? {
         CampGroupTypeDTO(rawValue: typeName)
     }
+
+    var groupID: GroupIdentification {
+        GroupIdentification(groupNumber: groupNumber, groupId: id)
+    }
 }
 
 enum CampGroupTypeDTO: String, Codable, Equatable, Hashable {

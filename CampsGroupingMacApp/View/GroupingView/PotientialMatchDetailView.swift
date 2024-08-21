@@ -69,7 +69,10 @@ struct PotientialMatchDetailView: View {
                 }
                 Rectangle().fill(.primary).frame(height: 1)
                 
-                let groupIDs = Set(campers.compactMap({ $0.currentGroupNumber })).sorted()
+                let groupIDs = Set(campers.compactMap({ $0.currentGroup })).sorted { id1, id2 in
+                    id1.groupNumber < id2.groupNumber
+                }
+
                 if !groupIDs.isEmpty {
                     ForEach(groupIDs, id: \.self) { groupID in
                         Button("Group Campers in \(groupID)") {
@@ -85,7 +88,7 @@ struct PotientialMatchDetailView: View {
         }
     }
 
-    func groupCampers(_ campers: [Camper], inGroup groupID: Int) {
+    func groupCampers(_ campers: [Camper], inGroup groupID: GroupIdentification) {
         coordinator.send(
             event: .grouping(
                 event: .didAskToGroupCampers(
@@ -150,6 +153,39 @@ extension Array where Element == Camper {
         results["AVGTOTAL"] = totalResult
 
         return results
+    }
+
+    func maxAverageValuesDiff(
+        from primaryCamper: Camper,
+        inFields fieldNames: [String],
+        with equivelencies: [String: Double]
+    ) -> Double {
+        let primaryValues = primaryCamper.values(for: fieldNames)
+        let otherValueSets = map { camper in
+            camper.values(for: fieldNames)
+        }
+
+        guard otherValueSets.count > 0 else {
+            return 0
+        }
+
+        var results: [Double] = []
+
+        for fieldName in fieldNames {
+            var total: Double = 0
+            let prime = primaryValues[fieldName] ?? .empty(fieldName: fieldName)
+            otherValueSets.forEach { values in
+                let value = values[fieldName] ?? .empty(fieldName: fieldName)
+                let diff = value.difference(from: prime, with: equivelencies[fieldName] ?? 1)
+                if let diffFound = diff {
+                    total += diffFound
+                }
+            }
+
+            results.append(total)
+        }
+
+        return results.max() ?? 0
     }
 }
 

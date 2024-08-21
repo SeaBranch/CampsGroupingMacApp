@@ -7,6 +7,7 @@ struct Camp: Equatable, Hashable {
     var campSettings: CampSettings?
     var changes: [CampChange]
     var groupsRecord: [CampGroupDTO]
+    var equivelencies: [String: Double]
 
     init(
         info: CampInfo,
@@ -14,6 +15,7 @@ struct Camp: Equatable, Hashable {
         report: Report? = nil,
         campSettings: CampSettings? = nil,
         changes: [CampChange] = [],
+        equivelencies: [String: Double] = [:],
         groupsRecord: [CampGroupDTO]
     ) {
         self.info = info
@@ -21,6 +23,7 @@ struct Camp: Equatable, Hashable {
         self.report = report
         self.campSettings = campSettings
         self.changes = changes
+        self.equivelencies = equivelencies
         self.groupsRecord = groupsRecord
     }
 
@@ -37,8 +40,42 @@ struct Camp: Equatable, Hashable {
     }
 
     var groups: [CampGroup] {
+        groups(withGroupingFields: groupingFields, andEquivelencies: equivelencies)
+    }
+
+    var currentFields: [ReportFieldSetting] {
+        let campSettings = campSettings?.withChanges(changes)
+        var settings = campSettings?.report.reportFieldSettings ?? []
+        let setFields = settings.map { $0.fieldName }
+        let reportColumns = report?.csv.columns ?? [:]
+        let keys = reportColumns.keys.map { $0 }
+        for key in keys {
+            if !setFields.contains(key) {
+                settings.append(ReportFieldSetting(fieldName: key))
+            }
+        }
+        return settings
+    }
+
+    var groupingFields: [String] {
+        currentFields.filter {
+            $0.includeInGrouping &&
+            !($0.isRegistrantData && $0.fieldType == .fullName)
+        }
+        .map { $0.fieldName }
+    }
+
+    private func groups(
+        withGroupingFields fields: [String],
+        andEquivelencies equivelencies: [String: Double]
+    ) -> [CampGroup] {
         groupsRecord.map { dto in
-            CampGroup.init(dto: dto, campers: campers)
+            CampGroup(
+                dto: dto,
+                campersArray: campers,
+                groupingFields: fields,
+                equivelences: equivelencies
+            )
         }
     }
 
@@ -144,7 +181,9 @@ struct CampSettings: Equatable, Codable, Hashable {
             }
             return CamperAssigmentDTO(
                 camperID: "\($0.camperID)",
-                groupID: "\($0.groupNumber)",
+                attendeeID: $0.attendeeID,
+                groupID: $0.groupID ?? "",
+                groupNumber: $0.groupNumber ?? 0,
                 associatedCampers: associatedCampers,
                 status: $0.status.rawValue,
                 notes: $0.notes

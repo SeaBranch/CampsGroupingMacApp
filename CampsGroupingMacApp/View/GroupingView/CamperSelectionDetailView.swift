@@ -49,6 +49,44 @@ struct CamperSelectionDetailView: View {
                 }
             }
             .padding()
+        } else {
+            VStack(spacing: 2) {
+                Text("Auto Group")
+                ForEach(coordinator.state.camp?.groupingFields ?? [], id: \.self) { fieldName in
+                    HStack {
+                        Text(fieldName + ":")
+                        Spacer()
+                        TextField("equivelence", text: Binding<String>(get: {
+                            "\(coordinator.state.camp?.equivelencies[fieldName] ?? 0))"
+                        }, set: { newValue in
+                            if let value = Double(newValue) {
+                                coordinator.send(
+                                    event: .grouping(
+                                        event: .setEquivelence(
+                                            equivelence: value,
+                                            fieldName: fieldName
+                                        )
+                                    )
+                                )
+                            }
+                        }))
+                    }
+                }
+
+                Button("Auto Group") {
+                    coordinator.send(event: .grouping(event: .didTapAutoGroupRemainingCampers))
+                }
+
+                Button("Confirm Auto Grouping") {
+                    coordinator.send(event: .grouping(event: .didTapAcceptAutoGrouping))
+                }
+                .disabled(coordinator.state.groupingState?.pendingAssignments.isEmpty ?? true)
+
+                Button("Commit Group Assignments") {
+                    coordinator.send(event: .grouping(event: .requestUploadGroupAssignments))
+                }
+                .disabled(!(coordinator.state.camp?.campSettings?.campers.map { $0.status }.contains(.edited) ?? false))
+            }
         }
     }
 }

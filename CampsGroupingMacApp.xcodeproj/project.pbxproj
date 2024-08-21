@@ -115,6 +115,7 @@
 		6DFDBA9F2C74050200D8DE0F /* GetGroupsLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFDBA9E2C74050200D8DE0F /* GetGroupsLogicController.swift */; };
 		6DFDBAA12C74051800D8DE0F /* GetGroupsCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFDBAA02C74051800D8DE0F /* GetGroupsCommunicator.swift */; };
 		6DFDBAA32C740B9600D8DE0F /* DidRespondToGetGroupsReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFDBAA22C740B9600D8DE0F /* DidRespondToGetGroupsReducer.swift */; };
+		7A04425A2C7657C40069D9EB /* AutoGrouper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0442592C7657C40069D9EB /* AutoGrouper.swift */; };
 		7A4DE3562C5A839C00BAFADD /* Camp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A4DE3552C5A839C00BAFADD /* Camp.swift */; };
 /* End PBXBuildFile section */
 
@@ -247,6 +248,7 @@
 		6DFDBA9E2C74050200D8DE0F /* GetGroupsLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupsLogicController.swift; sourceTree = "<group>"; };
 		6DFDBAA02C74051800D8DE0F /* GetGroupsCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupsCommunicator.swift; sourceTree = "<group>"; };
 		6DFDBAA22C740B9600D8DE0F /* DidRespondToGetGroupsReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidRespondToGetGroupsReducer.swift; sourceTree = "<group>"; };
+		7A0442592C7657C40069D9EB /* AutoGrouper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoGrouper.swift; sourceTree = "<group>"; };
 		7A4DE3552C5A839C00BAFADD /* Camp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -561,6 +563,7 @@
 				6DFDBA9D2C7404E600D8DE0F /* GetGroups */,
 				6D7AAB022C2B77BB0093291F /* CampsGroupingAPI.swift */,
 				6D254F982C0EAD7600684B62 /* NetworkActionHandler.swift */,
+				7A0442592C7657C40069D9EB /* AutoGrouper.swift */,
 				6D9CC1C52C6CF01E00D0809B /* BrushfireClient.swift */,
 				6D9CC1972C65A88900D0809B /* Actions */,
 				6D7AAAFF2C2B71D70093291F /* SignIn */,
@@ -869,6 +872,7 @@
 				6D7AAB142C46B24D0093291F /* NavigationMode.swift in Sources */,
 				6DFDBA892C6F8CA500D8DE0F /* InitialCacheReducer.swift in Sources */,
 				6D7AAB032C2B77BB0093291F /* CampsGroupingAPI.swift in Sources */,
+				7A04425A2C7657C40069D9EB /* AutoGrouper.swift in Sources */,
 				6DFDBA972C72F0B200D8DE0F /* CampGroup.swift in Sources */,
 				6D7AAAD22C2B693F0093291F /* DidSelectCampReducer.swift in Sources */,
 				6DFDBA8B2C6F8CD400D8DE0F /* GroupingEventReducer.swift in Sources */,

@@ -8,8 +8,7 @@
 import Foundation
 
 struct CampGroup: Equatable, Hashable {
-    let idString: String
-    let groupID: Int
+    let groupID: GroupIdentification
     let groupName: String
     let email: String
     let attendeeTypeId: String
@@ -22,11 +21,13 @@ struct CampGroup: Equatable, Hashable {
     let communityName: String?
 
     var groupLeader: Int?
-    var campers: [Int]
+    var campers: [Camper]
+
+    var averageDelta: Double
+    var maxAverageDelta: Double
 
     init(
-        idString: String,
-        groupID: Int,
+        groupID: GroupIdentification,
         groupName: String,
         email: String,
         attendeeTypeId: String,
@@ -38,9 +39,10 @@ struct CampGroup: Equatable, Hashable {
         communityPartition: String?,
         communityName: String?,
         groupLeader: Int,
-        campers: [Int]
+        campers: [Camper],
+        averageDelta: Double,
+        maxAverageDelta: Double
     ) {
-        self.idString = idString
         self.groupID = groupID
         self.groupName = groupName
         self.email = email
@@ -54,11 +56,12 @@ struct CampGroup: Equatable, Hashable {
         self.communityName = communityName
         self.groupLeader = groupLeader
         self.campers = campers
+        self.averageDelta = averageDelta
+        self.maxAverageDelta = maxAverageDelta
     }
 
-    init(dto: CampGroupDTO, campers: [Camper]) {
-        self.idString = dto.id
-        self.groupID = dto.groupNumber
+    init(dto: CampGroupDTO, campersArray: [Camper], groupingFields: [String], equivelences: [String: Double]) {
+        self.groupID = dto.groupID
         self.groupName = dto.name
         self.email = dto.email
         self.attendeeTypeId = dto.attendeeTypeId
@@ -70,8 +73,56 @@ struct CampGroup: Equatable, Hashable {
         self.communityPartition = dto.communityPartition
         self.communityName = dto.communityName
 
-        self.groupLeader = campers.first { $0.values.email == dto.email }?.id
-        self.campers = campers.filter({ $0.currentGroupNumber == dto.groupNumber }).map({ $0.id })
+        self.groupLeader = campersArray.first { $0.values.email == dto.email }?.id
+
+        let campersToInsert = campersArray.filter { camperObj in
+            camperObj.currentGroup?.groupNumber == dto.groupNumber
+        }
+
+        self.campers = campersToInsert
+
+        let avgDeltas: [Double] = campersToInsert.compactMap { primaryCamper in
+            campersToInsert
+                .filter { $0.id != primaryCamper.id }
+                .averageValuesDiff(
+                    from: primaryCamper,
+                    inFields: groupingFields,
+                    with: equivelences
+                )["AVGTOTAL"] ?? nil
+        }
+        
+        averageDelta = avgDeltas.average ?? 0
+        maxAverageDelta = avgDeltas.max() ?? 0
+    }
+
+    func averagedDifference(
+        fromCamper camper: Camper,
+        groupingFields: [String],
+        equivelences: [String: Double]
+    ) -> Double {
+        (
+            campers
+                .filter { $0.id != camper.id }
+                .averageValuesDiff(
+                    from: camper,
+                    inFields: groupingFields,
+                    with: equivelences
+                )["AVGTOTAL"] ?? nil
+        ) ?? 0
+    }
+
+    func maxAveragedDifference(
+        fromCamper camper: Camper,
+        groupingFields: [String],
+        equivelences: [String: Double]
+    ) -> Double {
+        campers
+            .filter { $0.id != camper.id }
+            .maxAverageValuesDiff(
+                from: camper,
+                inFields: groupingFields,
+                with: equivelences
+            )
     }
 }
 
@@ -87,5 +138,23 @@ enum CampGroupType: String, Equatable, Hashable {
         case nil:
             self = .other
         }
+    }
+}
+
+extension Array where Element == Double {
+    var average: Double? {
+        guard count > 0 else { return nil }
+
+        return self.total ?? 0 / Double(count)
+    }
+
+    var total: Double? {
+        guard count > 0 else { return nil }
+        
+        var total: Double = 0
+        for value in self {
+            total += value
+        }
+        return total
     }
 }

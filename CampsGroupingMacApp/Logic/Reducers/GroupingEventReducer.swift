@@ -171,6 +171,16 @@ enum GroupingEventReducer {
                     userID: account.accountNumber
                 )
             ]
+        case .setEquivelence(let equivelence, let fieldName):
+            state.camps = state.camps.map({ camp in
+                if camp.info.eventNumber == state.camp?.info.eventNumber {
+                    var updated = camp
+                    updated.equivelencies[fieldName] = equivelence
+                    return updated
+                } else {
+                    return camp
+                }
+            })
         }
 
         return []

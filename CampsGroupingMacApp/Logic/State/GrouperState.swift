@@ -143,18 +143,7 @@ extension GrouperEventSpace.State {
     }
 
     var currentFields: [ReportFieldSetting] {
-        let changes = camp?.changes ?? []
-        let campSettings = camp?.campSettings?.withChanges(changes)
-        var settings = campSettings?.report.reportFieldSettings ?? []
-        let setFields = settings.map { $0.fieldName }
-        let reportColumns = camp?.report?.csv.columns ?? [:]
-        let keys = reportColumns.keys.map { $0 }
-        for key in keys {
-            if !setFields.contains(key) {
-                settings.append(ReportFieldSetting(fieldName: key))
-            }
-        }
-        return settings
+        camp?.currentFields ?? []
     }
 
     var isPerformingSignInCall: Bool {

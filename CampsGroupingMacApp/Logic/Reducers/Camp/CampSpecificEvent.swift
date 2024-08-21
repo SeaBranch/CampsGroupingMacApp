@@ -19,11 +19,19 @@ extension GrouperEvent {
         case didAskToGroupCampers(campers: [Camper], groupID: GroupIdentification)
         // auto grouping
         case didToggleGroupingMode
-        case didTapAutoGroupRemainingCampers(assigneeFilter: FieldFilter?, groupFilter: FieldFilter?, equivelencies: [String: Double])
-        case didTapAcceptAutoGrouping(grouping: [CamperAssignment])
+        case didTapAutoGroupRemainingCampers
+        case didTapAcceptAutoGrouping
 
-        case didGenerateAutoGrouping(assigneeFilter: FieldFilter?, groupFilter: FieldFilter?, equivelencies: [String: Double], grouping: [CamperAssignment])
+        case didGenerateAutoGrouping(
+            assigneeFilters: [FilterStep],
+            groupMemeberFilter: [FilterStep],
+            equivelencies: [String: Double],
+            grouping: [CamperAssignment]
+        )
+        
         case requestUploadGroupAssignments
+
+        case setEquivelence(equivelence: Double, fieldName: String)
     }
 
     enum ReportFormattingEvent: Equatable {

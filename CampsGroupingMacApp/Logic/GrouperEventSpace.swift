@@ -65,7 +65,15 @@ enum GrouperEventSpace: EventSpace {
         )
         case setCamperAssigmentsForCamp(camp: Camp, campSettings: CampSettings, camperChanges: [CamperSetting], userID: Int, networkCall: NetworkCall)
         // auto grouping
-        case generateAutoGrouping(assigneeFilters: [FilterStep], groupFilters: [FilterStep], equivelencies: [String: Double])
+        case generateAutoGrouping(
+            state: GrouperState,
+            assigneeFilters: [FilterStep],
+            groupFilters: [FilterStep],
+            equivelencies: [String: Double],
+            sizeMin: Int,
+            sizeCap: Int
+        )
+
         case uploadGroupAssignment(camper: Camper, groupID: GroupIdentification, account: CampAccessAccount, networkCall: NetworkCall)
         case markAssignmentAsUploaded(camper: Camper, groupID: GroupIdentification, camp: Camp, networkCall: NetworkCall)
     }
