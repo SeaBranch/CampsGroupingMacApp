@@ -81,6 +81,10 @@ enum APIEventReducer {
                 networkCall: networkCall,
                 state: &state
             )
+        case .didRespondToUploadCamperGrouping(result: let result, requestData: let requestData, networkCall: let networkCall):
+            []
+        case .didRespondToMarkAssignmentAsUploaded(result: let result, requestData: let requestData, networkCall: let networkCall):
+            []
         }
     }
 }

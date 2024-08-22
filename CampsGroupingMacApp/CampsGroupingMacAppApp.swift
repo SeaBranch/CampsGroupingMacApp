@@ -14,7 +14,8 @@ struct CampsGroupingMacAppApp: App {
         EventCoordinator<GrouperEventSpace>(
             state: GrouperEventSpace.State(),
             actionHandlers: [
-                NetworkActionHandler(modelContainer: container)
+                NetworkActionHandler(modelContainer: container),
+                AutoGrouper()
             ]
         )
     }

@@ -20,7 +20,7 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
            let campers = state.camp?.campers,
            let groups = state.camp?.groups,
            let fields = state.camp?.groupingFields {
-            DispatchQueue.processing.async {
+            DispatchQueue.main.async {
                 let assignments = self.autoGroupings(
                     for: campers,
                     in: groups,
@@ -54,53 +54,97 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
         minSize: Int,
         sizeCap: Int
     ) -> [CamperAssignment] {
-        let filteredGroups = groups.filter { group in
+        let groupsToUse = groups.filter { group in
             group.attendeeCount < minSize
+            // && group.type == .tripCaptain // TODO: handle this later
         }
 
-        var existingAssignments: [CamperAssignment] = []
+        var filteredGroups = groupsToUse
 
-        for camper in campers {
-            if let grouping = autoGrouping(
-                for: camper,
-                in: filteredGroups.map({ $0.withAssignments(existingAssignments) }),
-                usingFields: fields,
-                assigneeFilters: assigneeFilters,
-                groupMemberFilters: groupMemberFilters,
-                equivelencies: equivelencies,
-                minSize: minSize,
-                sizeCap: sizeCap
-            ) {
-                existingAssignments.append(grouping)
+        var existingAssignments: [CamperAssignment] = []
+        var campersLeftToGroup = campersLeftToGroup(
+            for: campers,
+            in: groups,
+            existingAssignments: existingAssignments
+        )
+
+        while !campersLeftToGroup.isEmpty {
+            for group in groupsToUse {
+                // add camper that is closest to group and their groupmates
+                existingAssignments.append(
+                    contentsOf: autoGrouping(
+                        for: group,
+                        with: campersLeftToGroup,
+                        camperGroups: groups,
+                        usingFields: fields,
+                        assigneeFilters: assigneeFilters,
+                        groupMemberFilters: groupMemberFilters,
+                        equivelencies: equivelencies,
+                        minSize: minSize,
+                        sizeCap: sizeCap
+                    )
+                )
+
+                filteredGroups = groupsToUse.filter { group in
+                    group.withAssignments(existingAssignments).campers.count < sizeCap
+                }
+
+                var extraCap = 1
+                while filteredGroups.isEmpty {
+                    filteredGroups = groupsToUse.filter { group in
+                        group.withAssignments(existingAssignments).campers.count < (sizeCap + extraCap)
+//                        &&
+//                        group.type == .tripCaptain
+                    }
+                    extraCap += 1
+                }
+
+                campersLeftToGroup = self.campersLeftToGroup(
+                    for: campers,
+                    in: groups,
+                    existingAssignments: existingAssignments
+                )
             }
         }
 
         return existingAssignments
     }
 
-    func autoGrouping(
-        for camper: Camper,
+    private func campersLeftToGroup(
+        for campers: [Camper],
         in groups: [CampGroup],
+        existingAssignments: [CamperAssignment]
+    ) -> [Camper] {
+        campers.filter({ camper in
+            let cGroup = groups.first(where: { $0.groupID == camper.currentGroup })
+//            if cGroup?.type == .tripCaptain { return false }
+            if cGroup != nil { return false }
+            if existingAssignments
+                .map({ $0.camper.id })
+                .contains(camper.id) {
+                return false
+            }
+            return !camper.requiresDirectHandling
+        })
+    }
+
+    func autoGrouping(
+        for group: CampGroup,
+        with campers: [Camper],
+        camperGroups: [CampGroup],
         usingFields fields: [String],
         assigneeFilters: [FilterStep],
         groupMemberFilters: [FilterStep],
         equivelencies: [String: Double],
         minSize: Int,
         sizeCap: Int
-    ) -> CamperAssignment? {
-        var filteredGroups = groups.filter { group in
-            group.campers.count < sizeCap
-        }
-
-        var addedCap = 1
-        while filteredGroups.count < max(3, groups.count / 10) {
-            filteredGroups = groups.filter { group in
-                group.campers.count < sizeCap
-            }
-            addedCap += 1
-        }
-
-        return filteredGroups.map { group in
+    ) -> [CamperAssignment] {
+        let camper = campers.filter({ camper in
+//            let cGroup = camperGroups.first(where: { $0.groupID == camper.currentGroup })
+//            if cGroup?.type == .tripCaptain { return false }
+//            if (cGroup?.campers ?? []).count + group.campers.count > sizeCap { return false }
+            return !camper.requiresDirectHandling && camper.currentGroup == nil
+        }).map { camper in
             let diff = group.averagedDifference(
                 fromCamper: camper,
                 groupingFields: fields,
@@ -118,6 +162,16 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
                 assignment: CamperAssignment(camper: camper, group: group.groupID)
             )
         }.bestAverageDiff
+        var assignments = [camper].compactMap { $0 }
+
+        // TODO: handle non trip captain groups here
+//        if let assigned = camper, let cGroup = camperGroups.first(where: { $0.groupID == assigned.camper.currentGroup }) {
+//            for otherCamper in cGroup.campers {
+//                assignments.append(CamperAssignment(camper: otherCamper, group: assigned.group))
+//            }
+//        }
+
+        return assignments
     }
 }
 

@@ -55,6 +55,10 @@ extension APIEventReducer {
                 } else {
                     return []
                 }
+            case .uploadGroupAssignment:
+                return []
+            case .markAssignmentAsUploaded:
+                return []
             }
         }
     }

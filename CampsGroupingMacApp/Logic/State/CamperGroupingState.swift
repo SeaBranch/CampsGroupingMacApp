@@ -17,8 +17,8 @@ struct CamperGroupingState: Equatable {
     var pendingAssignments: [CamperAssignment] = []
     var groupingMode: GroupingMode = .manual
 
-    var assigneeFilter: FieldFilter?
-    var groupFilter: FieldFilter?
+    var assigneeFilters: [FilterStep] = []
+    var groupMemberFilters: [FilterStep] = []
     var equivelencies: [String: Double] = [:]
 
     var activeSelection: CamperGroupingFocus?

@@ -4,6 +4,7 @@ enum ColorEnum: String {
     case plain = "CellBackingPlain"
     case select = "CellBackingSelect"
     case flagged = "CellBackingFlagged"
+    case actionDetail = "ActionDetail"
     case positiveDetail = "PositiveDetail"
     case negativeDetail = "NegativeDetail"
     case warningDetail = "WarningDetail"

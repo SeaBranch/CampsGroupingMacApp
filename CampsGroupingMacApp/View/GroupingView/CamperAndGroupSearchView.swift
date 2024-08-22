@@ -1,4 +1,5 @@
 import SwiftUI
+import ApplicationServices
 
 struct CamperAndGroupSearchView: View {
     @EnvironmentObject var coordinator: EventCoordinator<GrouperEventSpace>
@@ -79,12 +80,17 @@ struct CamperAndGroupSearchView: View {
         if let focus = selection {
             filteredArray = filteredArray.filteredByFiltered(focus.filter)
             filteredArray = filteredArray.sorted { c1, c2 in
+                var c1Value = c1.values[focus.field.fieldName]
+                var c2Value = c2.values[focus.field.fieldName]
+
                 var c1Val = c1.values[focus.field.fieldName]?.rawValue
                 var c2Val = c2.values[focus.field.fieldName]?.rawValue
 
                 if focus.field.fieldType == .groupNumber {
-                    let cid1 = c1.currentGroupNumber
-                    let cid2 = c2.currentGroupNumber
+                    let camper1Pending = coordinator.state.groupingState?.pendingAssignments.first { $0.camper.id == c1.id }
+                    let camper2Pending = coordinator.state.groupingState?.pendingAssignments.first { $0.camper.id == c2.id }
+                    let cid1 = camper1Pending?.group.groupNumber ?? c1.currentGroup?.groupNumber
+                    let cid2 = camper2Pending?.group.groupNumber ?? c2.currentGroup?.groupNumber
 
                     switch focus.sortOrder {
                     case .forward:
@@ -118,29 +124,65 @@ struct CamperAndGroupSearchView: View {
         return filteredArray
     }
 
+    func pendingGroupForCamperElement(element: CamperRowDataElement) -> CamperAssignment? {
+        guard element.field.fieldType == .groupNumber else { return nil }
+        let match = coordinator.state.groupingState?.pendingAssignments.first {
+            $0.camper.id == element.camper.id
+        }
+        return match
+    }
+
     @ViewBuilder
     func camperView(_ camperElement: CamperRowDataElement) -> some View {
         let isSelected = coordinator.state.groupingState?.camperSelections
             .contains(camperElement.camper.id) ?? false
         VStack {
             HStack {
+#if os(macOS)
+                if !camperElement.value.rawValue.isEmpty {
+                    Button("􀉁") {
+                        camperElement.value.rawValue.copy()
+                    }
+                    .buttonStyle(.plain)
+                }
+#endif
                 Text(camperElement.value.rawValue)
 
                 Spacer()
+
+                let assignment = coordinator.state.groupingState?.pendingAssignments.first(where: { a in
+                    a.camper.id == camperElement.camper.id
+                })
+
+                let hasAssignment = assignment != nil
 
                 if let dist = camperElement.distance, camperElement.field.includeInGrouping {
                     Text("\(dist)")
                         .foregroundStyle(Color(enum: .positiveDetail))
                 } else if camperElement.field.fieldType == .groupNumber,
-                          let group = camperElement.camper.currentGroupNumber,
-                          let status = camperElement.camper.groupSettingStatus {
-                    Text("group: \(group) (\(status.rawValue))")
-                        .foregroundStyle(
-                            status == .edited 
-                            ? Color(enum: .warningDetail)
-                            : Color(enum: .positiveDetail)
-                        )
+                          camperElement.field.isRegistrantData {
 
+                    let group = assignment?.group.groupNumber
+                      ?? camperElement.camper.currentGroup?.groupNumber
+                    let status = camperElement.camper.groupSettingStatus ?? .uploaded
+                    
+                    let statusMessage = hasAssignment
+                    ? "Pending..."
+                    : "\(status.rawValue)"
+
+                    let color = if hasAssignment {
+                        Color(enum: .actionDetail)
+                    } else if status == .edited {
+                        Color(enum: .warningDetail)
+                    } else {
+                        Color(enum: .positiveDetail)
+                    }
+
+                    if let group = group {
+                        Text("group: \(group) (\(statusMessage))")
+                            .fontWeight(.bold)
+                            .foregroundStyle(color)
+                    }
                 }
             }
 
@@ -205,5 +247,17 @@ extension Array where Element == CamperRowDataElement {
         }
 
         return elements
+    }
+}
+
+extension String {
+    func copy() {
+        #if os(macOS)
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(self, forType: .string)
+        #else
+        UIPasteboard.general.string = self
+        #endif
     }
 }

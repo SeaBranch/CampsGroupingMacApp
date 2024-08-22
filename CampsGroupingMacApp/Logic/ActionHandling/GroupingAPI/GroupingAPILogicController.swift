@@ -158,7 +158,8 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
                 completion(
                     .success(
                         success.data.assignments.compactMap { dto -> CamperSetting? in
-                            guard let camperID: Int = Int(dto.camperID) else { return nil }
+                            guard let camperID: Int = Int(dto.camperID)
+                            else { return nil }
 
                             let associatedArray: [String] = dto.associatedCampers
                                 .components(separatedBy: ",")

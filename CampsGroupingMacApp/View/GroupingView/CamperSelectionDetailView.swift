@@ -57,7 +57,7 @@ struct CamperSelectionDetailView: View {
                         Text(fieldName + ":")
                         Spacer()
                         TextField("equivelence", text: Binding<String>(get: {
-                            "\(coordinator.state.camp?.equivelencies[fieldName] ?? 0))"
+                            "\(coordinator.state.camp?.equivelencies[fieldName] ?? 0)"
                         }, set: { newValue in
                             if let value = Double(newValue) {
                                 coordinator.send(
@@ -86,6 +86,12 @@ struct CamperSelectionDetailView: View {
                     coordinator.send(event: .grouping(event: .requestUploadGroupAssignments))
                 }
                 .disabled(!(coordinator.state.camp?.campSettings?.campers.map { $0.status }.contains(.edited) ?? false))
+
+                VSeparator(color: .primary)
+                ForEach(coordinator.state.groupingState?.pendingAssignments ?? [], id: \.camper.id) { assignment in
+                    Text("\(assignment.camper.name) -> \(assignment.group.groupNumber)")
+                }
+                VSeparator(color: .primary)
             }
         }
     }

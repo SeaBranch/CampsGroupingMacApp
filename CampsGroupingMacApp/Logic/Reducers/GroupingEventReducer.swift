@@ -103,8 +103,12 @@ enum GroupingEventReducer {
                     userID: userID
                 )
             ]
-        case .didGenerateAutoGrouping(assigneeFilter: let assigneeFilter, groupFilter: let groupFilter, equivelencies: let equivelencies, grouping: let grouping):
-            state.groupingState?.pendingAssignments = grouping
+        case .didGenerateAutoGrouping(let assigneeFilters, let groupMemeberFilter, let equivelencies, let grouping):
+            if let camp = state.selectedCamp {
+                var gstate = state.groupingState ?? CamperGroupingState(camp: camp)
+                gstate.pendingAssignments = grouping
+                state.groupingState = gstate
+            }
         case .requestUploadGroupAssignments:
             if let campers = state.camp?.campers.filter({
                 $0.currentGroup != nil
@@ -133,22 +137,23 @@ enum GroupingEventReducer {
                 }
                 state.groupingState = gstate
             }
-        case .didTapAutoGroupRemainingCampers(
-            assigneeFilter: let assigneeFilter,
-            groupFilter: let groupFilter,
-            equivelencies: let equivelencies
-        ):
+        case .didTapAutoGroupRemainingCampers:
+            state.groupingState?.pendingAssignments = []
             return [
                 .generateAutoGrouping(
-                    assigneeFilter: assigneeFilter,
-                    groupFilter: groupFilter,
-                    equivelencies: equivelencies
+                    state: state,
+                    assigneeFilters: state.groupingState?.assigneeFilters ?? [],
+                    groupFilters: state.groupingState?.groupMemberFilters ?? [],
+                    equivelencies: state.camp?.equivelencies ?? [:],
+                    sizeMin: 6,
+                    sizeCap: 12
                 )
             ]
-        case .didTapAcceptAutoGrouping(grouping: let grouping):
+        case .didTapAcceptAutoGrouping:
             guard let camp = state.camp,
                   let settings = camp.campSettings,
-                  let account = state.accessAccount
+                  let account = state.accessAccount,
+                  let grouping = state.groupingState?.pendingAssignments
             else { return [] }
 
             let changes = grouping.map { camperAssignment in
@@ -162,6 +167,8 @@ enum GroupingEventReducer {
                     notes: "Auto Grouped"
                 )
             }
+
+            state.groupingState?.pendingAssignments = []
 
             return [
                 state.beginSetCamperAssigmentsForCamp(

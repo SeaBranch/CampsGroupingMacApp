@@ -179,7 +179,7 @@ struct CampGroupDetailsView: View {
             Spacer().frame(height: 8)
             Text("Campers:")
             VSeparator(color: .secondary)
-            ForEach(campers(forIDs: group.campers), id: \.id) { camper in
+            ForEach(group.campers, id: \.id) { camper in
                 HStack {
                     Text(camper.name)
                     Spacer()

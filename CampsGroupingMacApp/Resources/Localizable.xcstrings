@@ -7,6 +7,16 @@
     "%@" : {
 
     },
+    "%@ -> %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ -> %2$lld"
+          }
+        }
+      }
+    },
     "%@ @ %@" : {
       "localizations" : {
         "en" : {
@@ -36,6 +46,16 @@
     "%lld" : {
 
     },
+    "%lld -> %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld -> %2$lld"
+          }
+        }
+      }
+    },
     "∆: %lf" : {
 
     },
@@ -53,6 +73,9 @@
       }
     },
     "Active" : {
+
+    },
+    "Auto Group" : {
 
     },
     "Back" : {
@@ -73,7 +96,13 @@
     "Change Report ID" : {
 
     },
+    "Commit Group Assignments" : {
+
+    },
     "Configure Report Fields" : {
+
+    },
+    "Confirm Auto Grouping" : {
 
     },
     "Could Not Decode Data" : {
@@ -99,6 +128,9 @@
       }
     },
     "Enter Filter Query" : {
+
+    },
+    "equivelence" : {
 
     },
     "Error: %lld" : {
@@ -294,6 +326,9 @@
 
     },
     "View only groups with leaders" : {
+
+    },
+    "􀉁" : {
 
     }
   },

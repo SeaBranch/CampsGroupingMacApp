@@ -73,26 +73,30 @@ extension GrouperEventSpace.State {
     var errorStatusMessages: [String] {
         errors.map { error in
             switch error {
-            case .signIn(let error, let networkCall):
+            case .signIn(let error, _):
                 "􀀳 Signin error: \(error.status)"
-            case .camps(let error, let networkCall):
+            case .camps(let error, _):
                 "􀀳 Get Cmps error: \(error.status)"
-            case .groups(let error, let networkCall):
+            case .groups(let error, _):
                 "􀀳 Get Groups error: \(error.status)"
-            case .campReports(let error, let networkCall):
+            case .campReports(let error, _):
                 "􀀳 Get Camp Reports error: \(error.status)"
-            case .campReport(let error, let networkCall):
+            case .campReport(let error, _):
                 "􀀳 Get Camp Report error: \(error.status)"
-            case .campReportFormat(let error, let networkCall):
+            case .campReportFormat(let error, _):
                 "􀀳 Get Camp Report Format error: \(error.status)"
-            case .camperSettings(let error, let networkCall):
+            case .camperSettings(let error, _):
                 "􀀳 Get Camper Settings error: \(error.status)"
-            case .updateCampers(let error, let networkCall):
+            case .updateCampers(let error, _):
                 "􀀳 Update Campers error: \(error.status)"
-            case .setReport(let error, let networkCall):
+            case .setReport(let error, _):
                 "􀀳 Set Report error: \(error.status)"
-            case .updateReportFormat(let error, let networkCall):
+            case .updateReportFormat(let error, _):
                 "􀀳 Update Report Format error: \(error.status)"
+            case .uploadGroupAssignment(let camper, let group, let error, _):
+                "􀀳 Upload Group Assignment of \(camper) into \(group) error: \(error.status)"
+            case .markAssignmentAsUploaded(let camper, let group, let error, _):
+                "􀀳 Mark Group Assignment of \(camper) into \(group) error: \(error.status)"
             }
         }
     }
@@ -100,26 +104,30 @@ extension GrouperEventSpace.State {
     var fetchStatusMessages: [String] {
         activeFetches.map { networkCall in
             switch networkCall {
-            case .signIn(let uUID):
+            case .signIn:
                 "􀖇 signIn loading"
-            case .camps(let uUID):
+            case .camps:
                 "􀖇 camps loading"
-            case .groups(let uUID):
+            case .groups:
                 "􀖇 groups loading"
-            case .campReports(let uUID):
+            case .campReports:
                 "􀖇 campReports loading"
-            case .campReport(let uUID):
+            case .campReport:
                 "􀖇 campReport loading"
-            case .campReportFormat(let uUID):
+            case .campReportFormat:
                 "􀖇 campReportFormat loading"
-            case .camperSettings(let uUID):
+            case .camperSettings:
                 "􀖇 camperSettings loading"
-            case .setReport(let uUID):
+            case .setReport:
                 "􀖇 setReport loading"
-            case .updateReportFormat(let uUID):
+            case .updateReportFormat:
                 "􀖇 updateReportFormat loading"
-            case .setCamperAssigments(let uUID):
+            case .setCamperAssigments:
                 "􀖇 setCamperAssigments loading"
+            case .uploadGroupAssignment(_):
+                "􀖇 uploadGroupAssignment loading"
+            case .markAssignmentAsUploaded(_):
+                "􀖇 markAssignmentAsUploaded loading"
             }
         }
     }

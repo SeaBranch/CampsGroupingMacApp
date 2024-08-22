@@ -201,7 +201,7 @@ struct MarkUploadedData: Equatable, CampGroupingAPIUpdateEndpointModel {
     typealias D = GetCamperSettingsDTO
 
     let camper: Camper
-    let groupNumber: Int
+    let groupID: GroupIdentification
     let account: CampAccessAccount
     let camp: Camp
     let campSettings: CampSettings
@@ -222,7 +222,9 @@ struct MarkUploadedData: Equatable, CampGroupingAPIUpdateEndpointModel {
             changes: [
                 CamperAssigmentDTO(
                     camperID: "\(camper.id)",
-                    groupID: "\(groupNumber)",
+                    attendeeID: camper.attendeeID,
+                    groupID: groupID.groupId,
+                    groupNumber: groupID.groupNumber,
                     associatedCampers: associatedCampers,
                     status: CamperAssignmentStatus.uploaded.rawValue,
                     notes: notes
