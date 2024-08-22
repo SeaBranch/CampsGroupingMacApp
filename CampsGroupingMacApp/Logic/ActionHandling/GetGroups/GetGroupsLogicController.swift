@@ -54,7 +54,8 @@ class GetGroupsLogicController: GetGroupsLogicControllerProtocol {
             switch result {
             case .success(let groups):
                 var groupsUsed = groups
-                if groups.isEmpty {
+                #if DEBUG
+                if groups.isEmpty && scope == .sandbox {
                     groupsUsed = [
                         CampGroupDTO(
                             id: "80ff7802-9d03-45cb-aba2-3a3a325bee81",
@@ -86,6 +87,8 @@ class GetGroupsLogicController: GetGroupsLogicControllerProtocol {
                         )
                     ]
                 }
+                #endif
+
                 self.modelContainer.mainContext.insert(
                     CampGroupsStateMemory(
                         groups: groupsUsed,

@@ -24,7 +24,7 @@ class GetGroupsCommunicator: GetGroupsCommunicatorProtocol {
     ) {
         let endpoint = CampsGroupingEndpoint.getGroups(camp: camp)
 
-        var request = URLRequest(
+        let request = URLRequest(
             endpoint: endpoint,
             scope: scope
         )

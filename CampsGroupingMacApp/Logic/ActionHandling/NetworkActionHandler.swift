@@ -10,6 +10,7 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
     var signInLogicController: SignInLogicControllerProtocol
     var getCampsLogicController: GetCampsLogicControllerProtocol
     var getGroupsLogicController: GetGroupsLogicControllerProtocol
+    var uploadGroupingLogicController: UploadGroupingLogicControllerProtocol
     var groupingAPILogicController: GroupingAPILogicControllerProtocol
     let modelContainer: ModelContainer
 
@@ -20,6 +21,7 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
         self.signInLogicController = SignInLogicController(modelContainer: modelContainer)
         self.getCampsLogicController = GetCampsLogicController(modelContainer: modelContainer)
         self.getGroupsLogicController = GetGroupsLogicController(modelContainer: modelContainer)
+        self.uploadGroupingLogicController = UploadGroupingLogicController()
         self.groupingAPILogicController = GroupingAPILogicController()
     }
 
@@ -105,10 +107,35 @@ class NetworkActionHandler: ActionHandler<GrouperEventSpace> {
                 networkCall: networkCall,
                 handleEvent: handleEvent
             )
-        case .uploadGroupAssignment(camper: let camper, groupID: let groupID, account: let account, networkCall: let networkCall):
-            break
-        case .markAssignmentAsUploaded(camper: let camper, groupID: let groupID, camp: let camp, networkCall: let networkCall):
-            break
+        case .uploadGroupAssignment(
+            let assignment,
+            let account,
+            let scope,
+            let networkCall
+        ):
+            handleUploadGroupAssignment(
+                assignment: assignment,
+                scope: scope,
+                account: account,
+                networkCall: networkCall,
+                handleEvent: handleEvent
+            )
+        case .markAssignmentAsUploaded(
+            let assignment,
+            let assignmentNotes,
+            let account,
+            let camp,
+            let networkCall
+        ):
+            handleMarkAssignmentAsUploaded(
+                assignment: assignment,
+                account: account,
+                camp: camp,
+                notes: assignmentNotes,
+                networkCall: networkCall,
+                handleEvent: handleEvent
+            )
+
         default:
             break
         }

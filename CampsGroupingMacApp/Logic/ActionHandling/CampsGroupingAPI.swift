@@ -84,7 +84,13 @@ enum CampsGroupingEndpoint: CampsGroupingEndpointProtocol {
 
     var method: RequestMethod {
         switch self {
-        case .authenticate, .setReport, .updateReportFormat, .setCamperAssigments: .POST
+        case 
+                .authenticate,
+                .setReport,
+                .updateReportFormat,
+                .setCamperAssigments,
+                .uploadCamperGroup,
+                .markCamperAssigmentUpload: .POST
         default: .GET
         }
     }

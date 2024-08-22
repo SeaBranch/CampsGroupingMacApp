@@ -81,10 +81,75 @@ enum APIEventReducer {
                 networkCall: networkCall,
                 state: &state
             )
-        case .didRespondToUploadCamperGrouping(result: let result, requestData: let requestData, networkCall: let networkCall):
-            []
-        case .didRespondToMarkAssignmentAsUploaded(result: let result, requestData: let requestData, networkCall: let networkCall):
-            []
+        case .didRespondToUploadCamperGrouping(
+            let result,
+            let requestData,
+            let networkCall
+        ):
+            handleUploadCamperGroupingResponse(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        case .didRespondToMarkAssignmentAsUploaded(
+            let result,
+            let requestData,
+            let networkCall
+        ):
+            handleMarkAssignmentAsUploadedResponse(
+                result: result,
+                requestData: requestData,
+                networkCall: networkCall,
+                state: &state
+            )
+        }
+    }
+    
+    static func handleUploadCamperGroupingResponse(
+        result: UploadGroupAssignmentResult,
+        requestData: UploadGroupAssignmentData,
+        networkCall: NetworkCall,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        guard let camp = state.camp else { return [] }
+        
+        let notes = camp.camperNotes(requestData.camper)
+        return [
+            state.beginMarkAssignmentAsUploaded(
+                assignment: CamperAssignment(
+                    camper: requestData.camper,
+                    group: requestData.groupID
+                ),
+                assignmentNotes: notes,
+                account: requestData.account,
+                camp: camp
+            )
+        ]
+    }
+    
+    static func handleMarkAssignmentAsUploadedResponse(
+        result: MarkUploadedResult,
+        requestData: MarkUploadedData,
+        networkCall: NetworkCall,
+        state: inout GrouperState
+    ) -> [GrouperAction] {
+        state.activeFetches.remove(networkCall)
+        switch result {
+        case .success(let camperSettings):
+            state.applyCamperSettings(for: requestData.camp.info.eventNumber, settings: camperSettings)
+            return []
+        case .failure(let error):
+            state.errors = state.errors.filter { error in
+                if case .updateCampers = error {
+                    false
+                } else {
+                    true
+                }
+            }
+            state.errors.insert(.updateCampers(error: error, networkCall: networkCall))
+            
+            return []
         }
     }
 }

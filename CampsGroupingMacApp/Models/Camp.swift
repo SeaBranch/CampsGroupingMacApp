@@ -43,6 +43,12 @@ struct Camp: Equatable, Hashable {
         groups(withGroupingFields: groupingFields, andEquivelencies: equivelencies)
     }
 
+    func group(withID groupID: GroupIdentification) -> CampGroup? {
+        groups.first { group in
+            group.groupID == groupID
+        }
+    }
+
     var currentFields: [ReportFieldSetting] {
         let campSettings = campSettings?.withChanges(changes)
         var settings = campSettings?.report.reportFieldSettings ?? []
@@ -88,6 +94,12 @@ struct Camp: Equatable, Hashable {
         camp.campSettings = campSettings?.withChanges(changes)
         camp.changes = []
         return camp
+    }
+
+    func camperNotes(_ camper: Camper) -> String {
+        withChangesApplied.campSettings?.campers.first(where: { setting in
+            setting.camperID == camper.id
+        })?.notes ?? ""
     }
 
     mutating func applyChange(_ change: CampChange) {

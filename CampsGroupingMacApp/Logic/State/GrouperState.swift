@@ -112,31 +112,32 @@ extension GrouperEventSpace.State {
     }
 
     mutating func beginUploadGroupAssignment(
-        camper: Camper,
-        groupID: GroupIdentification,
-        account: CampAccessAccount
+        assignment: CamperAssignment,
+        account: CampAccessAccount,
+        scope: CampsScope
     ) -> GrouperAction {
         let networkCall: NetworkCall = .uploadGroupAssignment()
         activeFetches.insert(networkCall)
         return .uploadGroupAssignment(
-            camper: camper,
-            groupID: groupID,
+            assignment: assignment,
             account: account,
+            scope: scope,
             networkCall: networkCall
         )
     }
 
     mutating func beginMarkAssignmentAsUploaded(
-        camper: Camper,
-        groupID: GroupIdentification,
-        camp: Camp,
-        networkCall: NetworkCall
+        assignment: CamperAssignment,
+        assignmentNotes: String,
+        account: CampAccessAccount,
+        camp: Camp
     ) -> GrouperAction {
         let networkCall: NetworkCall = .markAssignmentAsUploaded()
         activeFetches.insert(networkCall)
         return .markAssignmentAsUploaded(
-            camper: camper,
-            groupID: groupID,
+            assignment: assignment,
+            assignmentNotes: assignmentNotes,
+            account: account,
             camp: camp,
             networkCall: networkCall
         )

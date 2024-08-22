@@ -124,14 +124,6 @@ struct CamperAndGroupSearchView: View {
         return filteredArray
     }
 
-    func pendingGroupForCamperElement(element: CamperRowDataElement) -> CamperAssignment? {
-        guard element.field.fieldType == .groupNumber else { return nil }
-        let match = coordinator.state.groupingState?.pendingAssignments.first {
-            $0.camper.id == element.camper.id
-        }
-        return match
-    }
-
     @ViewBuilder
     func camperView(_ camperElement: CamperRowDataElement) -> some View {
         let isSelected = coordinator.state.groupingState?.camperSelections
@@ -159,6 +151,22 @@ struct CamperAndGroupSearchView: View {
                 if let dist = camperElement.distance, camperElement.field.includeInGrouping {
                     Text("\(dist)")
                         .foregroundStyle(Color(enum: .positiveDetail))
+                } else if camperElement.field.fieldType == .fullName,
+                          camperElement.field.isRegistrantData {
+                    
+                    if let groupID = assignment?.group
+                      ?? camperElement.camper.currentGroup,
+                       let group = coordinator.state.camp?.group(withID: groupID),
+                       let fields = coordinator.state.camp?.groupingFields {
+                        let avgDelta = group.averagedDifference(
+                            fromCamper: camperElement.camper,
+                            groupingFields: fields,
+                            equivelences: coordinator.state.camp?.equivelencies ?? [:]
+                        )
+                        Text("avg∆:\(Int(avgDelta))")
+                    }
+
+
                 } else if camperElement.field.fieldType == .groupNumber,
                           camperElement.field.isRegistrantData {
 

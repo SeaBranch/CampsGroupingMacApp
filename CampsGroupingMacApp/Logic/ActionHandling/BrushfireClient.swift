@@ -134,6 +134,10 @@ class BrushfireScopeClient {
                 performDecodableTask(call: decodableCall.decodableCall)
             }
 
+            if let decodableCall = nextCall as? UploadGroupingCall {
+                performDecodableTask(call: decodableCall.decodableCall)
+            }
+
             if let passFailCall = nextCall as? VoidCall {
                 performPassFailTask(call: passFailCall)
             }

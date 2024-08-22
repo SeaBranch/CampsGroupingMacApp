@@ -117,16 +117,18 @@ enum GroupingEventReducer {
                 var actions = [GrouperAction]()
                 campers.forEach { camper in
                     if let group = camper.currentGroup,
-                       let account = state.accessAccount {
+                       let account = state.accessAccount,
+                       let scope = state.campScope {
                         actions.append(
                             state.beginUploadGroupAssignment(
-                                camper: camper,
-                                groupID: group,
-                                account: account
+                                assignment: CamperAssignment(camper: camper, group: group),
+                                account: account,
+                                scope: scope
                             )
                         )
                     }
                 }
+                return actions
             }
         case .didToggleGroupingMode:
             if let camp = state.selectedCamp {

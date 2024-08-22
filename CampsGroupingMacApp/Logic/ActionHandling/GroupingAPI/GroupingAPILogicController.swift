@@ -37,6 +37,11 @@ protocol GroupingAPILogicControllerProtocol {
         networkCall: NetworkCall,
         completion: @escaping (SetCamperAssigmentsResult) -> Void
     )
+    func markUploaded(
+        requestData: MarkUploadedData,
+        networkCall: NetworkCall,
+        completion: @escaping (MarkUploadedResult) -> Void
+    )
 }
 
 class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
@@ -236,6 +241,40 @@ class GroupingAPILogicController: GroupingAPILogicControllerProtocol {
                         }
                     )
                 )            
+            case .failure(let failure):
+                completion(.failure(.fromNSError(failure, endpoint: requestData.endpoint)))
+            }
+        }
+    }
+
+    func markUploaded(requestData: MarkUploadedData, networkCall: NetworkCall, completion: @escaping (MarkUploadedResult) -> Void) {
+        communicator.update(requestData: requestData) { result in
+            switch result {
+            case .success(let result):
+                completion(
+                    .success(
+                        result.data.assignments.compactMap { dto -> CamperSetting? in
+                            guard let camperID: Int = Int(dto.camperID) else { return nil }
+
+                            let associatedArray: [String] = dto.associatedCampers
+                                .components(separatedBy: ",")
+
+                            let associatedCamperIDs = associatedArray.compactMap { stringID in
+                                Int(stringID)
+                            }
+
+                            return CamperSetting(
+                                camperID: camperID,
+                                attendeeID: dto.attendeeID,
+                                groupNumber: dto.groupNumber,
+                                groupID: dto.groupID,
+                                associatedCampers: associatedCamperIDs,
+                                status: dto.status,
+                                notes: dto.notes
+                            )
+                        }
+                    )
+                )
             case .failure(let failure):
                 completion(.failure(.fromNSError(failure, endpoint: requestData.endpoint)))
             }

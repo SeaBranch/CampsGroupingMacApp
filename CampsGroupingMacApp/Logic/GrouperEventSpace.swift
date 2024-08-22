@@ -74,8 +74,20 @@ enum GrouperEventSpace: EventSpace {
             sizeCap: Int
         )
 
-        case uploadGroupAssignment(camper: Camper, groupID: GroupIdentification, account: CampAccessAccount, networkCall: NetworkCall)
-        case markAssignmentAsUploaded(camper: Camper, groupID: GroupIdentification, camp: Camp, networkCall: NetworkCall)
+        case uploadGroupAssignment(
+            assignment: CamperAssignment,
+            account: CampAccessAccount,
+            scope: CampsScope,
+            networkCall: NetworkCall
+        )
+
+        case markAssignmentAsUploaded(
+            assignment: CamperAssignment,
+            assignmentNotes: String,
+            account: CampAccessAccount,
+            camp: Camp,
+            networkCall: NetworkCall
+        )
     }
 
     static func handle(event: Event, state: inout State) -> [Action] {
