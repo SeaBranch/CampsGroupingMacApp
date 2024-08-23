@@ -85,8 +85,8 @@ enum GroupingEventReducer {
                 CamperSetting(
                     camperID: camper.id,
                     attendeeID: camper.attendeeID,
-                    groupNumber: camper.currentGroup?.groupNumber,
-                    groupID: camper.currentGroup?.groupId,
+                    groupNumber: groupID.groupNumber,
+                    groupID: groupID.groupId,
                     associatedCampers: camper.associatedCamperIDs,
                     status: .edited,
                     notes: "directly assigned"

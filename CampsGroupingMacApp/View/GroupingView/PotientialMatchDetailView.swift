@@ -14,78 +14,163 @@ struct PotientialMatchDetailView: View {
     @State var equivelences = [String: Double]()
 
     var body: some View {
+        let tableSelections = coordinator.state.groupingState?.camperSelections ?? []
         if let selectedID = coordinator.state.groupingState?.camperCurrentlyBeingGrouped,
-           let selectedCamper = coordinator.state.camp?.campers.first(where: { $0.id == selectedID }),
-           let camperIDs = coordinator.state.groupingState?.camperSelections {
-            
-            let campers = camperIDs.compactMap({ camperID in
-                coordinator.state.camp?.campers.first(where: { $0.id == camperID })
-            })
-            let groupingFields = coordinator.state.currentFields
-                .filter {
-                    $0.includeInGrouping &&
-                    !($0.isRegistrantData && $0.fieldType == .fullName)
-                }
-                .map { $0.fieldName }
+           let selectedCamper = coordinator.state.camp?.campers.first(where: { $0.id == selectedID }) {
+            viewForSelectedToTableSelections(selectedCamper: selectedCamper, tableSelections: tableSelections)
+        } else {
+            viewForTableSelectionsOnly(tableSelections: tableSelections)
+        }
+    }
 
-            let diffValues = campers.averageValuesDiff(
-                from: selectedCamper,
-                inFields: groupingFields,
-                with: equivelences
-            )
-            let eachFieldAndDiff = fieldNamesWithDiffs(from: diffValues)
-            let totalDiff = diffValues["AVGTOTAL"] ?? nil
+    @ViewBuilder
+    func viewForSelectedToTableSelections(selectedCamper: Camper, tableSelections: Set<Int>) -> some View {
+        let campers = tableSelections.compactMap({ camperID in
+            coordinator.state.camp?.campers.first(where: { $0.id == camperID })
+        })
+        let groupingFields = coordinator.state.currentFields
+            .filter {
+                $0.includeInGrouping &&
+                !($0.isRegistrantData && $0.fieldType == .fullName)
+            }
+            .map { $0.fieldName }
 
-            VStack(spacing: 2) {
-                Rectangle().fill(.primary).frame(height: 1)
-                HStack {
-                    Text(campers.count > 1 ? "Average Difference" : campers.first?.name ?? "Selected Camper")
-                    Spacer()
-                    if let diff = totalDiff {
-                        Text("∆: \(diff)")
-                    }
-                }
-                Rectangle().fill(.tertiary).frame(height: 1)
-                if showDetails {
-                    ForEach(eachFieldAndDiff, id: \.0) { fieldName, diff in
-                        HStack {
-                            Text(fieldName + ":")
-                                .font(.footnote)
-                            Spacer()
-                            if let diffFound = diff {
-                                Text("∆: \(diffFound)")
-                                    .font(.footnote)
-                            }
-                        }
-                    }
-                }
+        let diffValues = campers.averageValuesDiff(
+            from: selectedCamper,
+            inFields: groupingFields,
+            with: equivelences
+        )
+        let eachFieldAndDiff = fieldNamesWithDiffs(from: diffValues)
+        let totalDiff = diffValues["AVGTOTAL"] ?? nil
 
-                Rectangle().fill(.primary).frame(height: 1)
-                HStack {
-                    Button(showDetails ? "hide comparison" : "show comparison") {
-                        showDetails.toggle()
-                    }
-                    Spacer()
-                }
-                Rectangle().fill(.primary).frame(height: 1)
-                
-                let groupIDs = Set(campers.compactMap({ $0.currentGroup })).sorted { id1, id2 in
-                    id1.groupNumber < id2.groupNumber
-                }
-
-                if !groupIDs.isEmpty {
-                    ForEach(groupIDs, id: \.self) { groupID in
-                        Button("Group Campers in \(groupID)") {
-                            var campersToSet = campers
-                            campersToSet.append(selectedCamper)
-                            groupCampers(campersToSet, inGroup: groupID)
-                        }
-                    }
-
+        VStack(spacing: 2) {
+            Rectangle().fill(.primary).frame(height: 1)
+            HStack {
+                Text(campers.count > 1 ? "Average Difference" : campers.first?.name ?? "Selected Camper")
+                Spacer()
+                if let diff = totalDiff {
+                    Text("∆: \(diff)")
                 }
             }
-            .padding()
+            Rectangle().fill(.tertiary).frame(height: 1)
+            if showDetails {
+                ForEach(eachFieldAndDiff, id: \.0) { fieldName, diff in
+                    HStack {
+                        Text(fieldName + ":")
+                            .font(.footnote)
+                        Spacer()
+                        if let diffFound = diff {
+                            Text("∆: \(diffFound)")
+                                .font(.footnote)
+                        }
+                    }
+                }
+            }
+
+            Rectangle().fill(.primary).frame(height: 1)
+            HStack {
+                Button(showDetails ? "hide comparison" : "show comparison") {
+                    showDetails.toggle()
+                }
+                Spacer()
+            }
+            Rectangle().fill(.primary).frame(height: 1)
+
+            let groupIDs = Set(campers.compactMap({ $0.currentGroup })).sorted { id1, id2 in
+                id1.groupNumber < id2.groupNumber
+            }
+
+            if !groupIDs.isEmpty {
+                ForEach(groupIDs, id: \.self) { groupID in
+                    Button("Group Campers in \(groupID.groupNumber)") {
+                        var campersToSet = campers
+                        campersToSet.append(selectedCamper)
+                        groupCampers(campersToSet, inGroup: groupID)
+                    }
+                }
+
+            }
         }
+        .padding()
+    }
+
+    func campersForTableSelectionsOnly(tableSelections: Set<Int>) -> ([Camper], [String: Double]) {
+        let campers = tableSelections.compactMap({ camperID in
+            coordinator.state.camp?.campers.first(where: { $0.id == camperID })
+        })
+        let groupingFields = coordinator.state.currentFields
+            .filter {
+                $0.includeInGrouping &&
+                !($0.isRegistrantData && $0.fieldType == .fullName)
+            }
+            .map { $0.fieldName }
+        var diffValues = [String: Double]()
+        campers.forEach({ camper in
+            if let avg = campers.filter({ $0.id != camper.id }).averageValuesDiff(
+                from: camper,
+                inFields: groupingFields,
+                with: equivelences
+            )["AVGTOTAL"] {
+                diffValues[camper.name] = avg
+            }
+        })
+
+        return (campers, diffValues)
+    }
+    @ViewBuilder
+    func viewForTableSelectionsOnly(tableSelections: Set<Int>) -> some View {
+        let (campers, diffValues) = campersForTableSelectionsOnly(tableSelections: tableSelections)
+        let totalAVG = Array<Double>(diffValues.values).average ?? 0
+
+        VStack(spacing: 2) {
+            Rectangle().fill(.primary).frame(height: 1)
+            HStack {
+                Text("Average Difference")
+                Spacer()
+                Text("∆: \(Int(totalAVG))")
+            }
+            Rectangle().fill(.tertiary).frame(height: 1)
+
+            let arrayOfNamesAndDiffs = diffValues.map { name, diff in
+                (name, diff)
+            }
+
+            if showDetails {
+                ForEach(arrayOfNamesAndDiffs, id: \.0) { camperName, diff in
+                    HStack {
+                        Text(camperName + ":")
+                            .font(.footnote)
+                        Spacer()
+                        Text("∆: \(Int(diff))")
+                            .font(.footnote)
+                    }
+                }
+            }
+
+            Rectangle().fill(.primary).frame(height: 1)
+            HStack {
+                Button(showDetails ? "hide comparison" : "show comparison") {
+                    showDetails.toggle()
+                }
+                Spacer()
+            }
+            Rectangle().fill(.primary).frame(height: 1)
+
+            let groupIDs = Set(campers.compactMap({ $0.currentGroup })).sorted { id1, id2 in
+                id1.groupNumber < id2.groupNumber
+            }
+
+            if !groupIDs.isEmpty {
+                ForEach(groupIDs, id: \.self) { groupID in
+                    Button("Group Campers in \(groupID.groupNumber)") {
+                        var campersToSet = campers
+                        groupCampers(campersToSet, inGroup: groupID)
+                    }
+                }
+
+            }
+        }
+        .padding()
     }
 
     func groupCampers(_ campers: [Camper], inGroup groupID: GroupIdentification) {
