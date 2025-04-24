@@ -149,22 +149,22 @@ struct CamperAndGroupSearchView: View {
                 let hasAssignment = assignment != nil
 
                 if let dist = camperElement.distance, camperElement.field.includeInGrouping {
-                    Text("\(dist)")
-                        .foregroundStyle(Color(enum: .positiveDetail))
-                } else if camperElement.field.fieldType == .fullName,
-                          camperElement.field.isRegistrantData {
+//                    Text("\(dist)")
+//                        .foregroundStyle(Color(enum: .positiveDetail))
+//                } else if camperElement.field.fieldType == .fullName,
+//                          camperElement.field.isRegistrantData {
                     
-                    if let groupID = assignment?.group
-                      ?? camperElement.camper.currentGroup,
-                       let group = coordinator.state.camp?.group(withID: groupID),
-                       let fields = coordinator.state.camp?.groupingFields {
-                        let avgDelta = group.averagedDifference(
-                            fromCamper: camperElement.camper,
-                            groupingFields: fields,
-                            equivelences: coordinator.state.camp?.equivelencies ?? [:]
-                        )
-                        Text("avg∆:\(Int(avgDelta))")
-                    }
+//                    if let groupID = assignment?.group
+//                      ?? camperElement.camper.currentGroup,
+//                       let group = coordinator.state.camp?.group(withID: groupID),
+//                       let fields = coordinator.state.camp?.groupingFields {
+//                        let avgDelta = group.averagedDifference(
+//                            fromCamper: camperElement.camper,
+//                            groupingFields: fields,
+//                            equivelences: coordinator.state.camp?.equivelencies ?? [:]
+//                        )
+//                        Text("avg∆:\(Int(avgDelta))")
+//                    }
 
 
                 } else if camperElement.field.fieldType == .groupNumber,

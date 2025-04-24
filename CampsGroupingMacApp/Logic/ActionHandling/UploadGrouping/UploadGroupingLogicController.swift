@@ -36,19 +36,6 @@ class UploadGroupingLogicController: UploadGroupingLogicControllerProtocol {
                     )
                 )
             case .failure(let nsError):
-#if DEBUG
-                if requestData.scope == .sandbox {
-                    completion(
-                        .success(
-                            .init(
-                                camper: requestData.camper,
-                                groupID: requestData.groupID.groupId
-                            )
-                        )
-                    )
-                }
-                return
-#endif
                 completion(.failure(
                     .fromNSError(
                         nsError,
@@ -77,10 +64,12 @@ class UploadGroupingCommunicator: UploadGroupingCommunicatorProtocol {
     }
 
     func uploadGrouping(requestData: UploadGroupAssignmentData, completion: @escaping (Result<UploadGroupAssignmentResponseDTO, NSError>) -> Void) {
-        let request = URLRequest(
+        var request = URLRequest(
             endpoint: requestData.endpoint,
             scope: requestData.scope
         )
+
+        request.httpBody = requestData.body.data
 
         _ = client.networkTask(
             scope: requestData.scope,

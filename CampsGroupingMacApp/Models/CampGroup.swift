@@ -14,8 +14,8 @@ struct CampGroup: Equatable, Hashable {
     let attendeeTypeId: String
     let type: CampGroupType
     let attendeeCount: Int
-    let adminPasscode: String
-    let joinPasscode: String
+    let adminPasscode: String?
+    let joinPasscode: String?
     let communityId: String?
     let communityPartition: String?
     let communityName: String?

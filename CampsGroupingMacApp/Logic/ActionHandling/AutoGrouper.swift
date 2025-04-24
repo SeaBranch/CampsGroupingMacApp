@@ -20,7 +20,15 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
            let campers = state.camp?.campers,
            let groups = state.camp?.groups,
            let fields = state.camp?.groupingFields {
-            DispatchQueue.main.async {
+
+            print("""
+            AUTOGROUP:
+            minSize: \(minSize)
+            sizeCap: \(sizeCap)
+            """
+            )
+
+            DispatchQueue.global().async {
                 let assignments = self.autoGroupings(
                     for: campers,
                     in: groups,
@@ -55,7 +63,7 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
         sizeCap: Int
     ) -> [CamperAssignment] {
         let groupsToUse = groups.filter { group in
-            group.attendeeCount < minSize
+            group.attendeeCount < minSize// && group.attendeeCount > 0
             // && group.type == .tripCaptain // TODO: handle this later
         }
 
@@ -67,22 +75,33 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
             in: groups,
             existingAssignments: existingAssignments
         )
+        let totalAutoGrouped = campersLeftToGroup.count
 
         while !campersLeftToGroup.isEmpty {
+            
+            let remaining = campersLeftToGroup.count
+
+            DispatchQueue.global().async {
+//                GLOBAL_MESSAGES["CAMPERS LEFT TO AUTOGROUP"] = "\(remaining)/\(totalAutoGrouped)"
+                print("CAMPERS LEFT TO AUTOGROUP: \(remaining)/\(totalAutoGrouped) in \(groupsToUse.count) groups")
+            }
+
             for group in groupsToUse {
                 // add camper that is closest to group and their groupmates
+                let ag = autoGrouping(
+                    for: group,
+                    with: campersLeftToGroup,
+                    camperGroups: groups,
+                    usingFields: fields,
+                    assigneeFilters: assigneeFilters,
+                    groupMemberFilters: groupMemberFilters,
+                    equivelencies: equivelencies,
+                    minSize: minSize,
+                    sizeCap: sizeCap
+                )
+
                 existingAssignments.append(
-                    contentsOf: autoGrouping(
-                        for: group,
-                        with: campersLeftToGroup,
-                        camperGroups: groups,
-                        usingFields: fields,
-                        assigneeFilters: assigneeFilters,
-                        groupMemberFilters: groupMemberFilters,
-                        equivelencies: equivelencies,
-                        minSize: minSize,
-                        sizeCap: sizeCap
-                    )
+                    contentsOf: ag
                 )
 
                 filteredGroups = groupsToUse.filter { group in
@@ -124,7 +143,7 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
                 .contains(camper.id) {
                 return false
             }
-            return !camper.requiresDirectHandling
+            return !camper.requiresDirectHandling && camper.currentGroup == nil
         })
     }
 
@@ -139,12 +158,14 @@ class AutoGrouper: ActionHandler<GrouperEventSpace> {
         minSize: Int,
         sizeCap: Int
     ) -> [CamperAssignment] {
-        let camper = campers.filter({ camper in
-//            let cGroup = camperGroups.first(where: { $0.groupID == camper.currentGroup })
-//            if cGroup?.type == .tripCaptain { return false }
-//            if (cGroup?.campers ?? []).count + group.campers.count > sizeCap { return false }
+        let filtered = campers.filter({ camper in
+            //            let cGroup = camperGroups.first(where: { $0.groupID == camper.currentGroup })
+            //            if cGroup?.type == .tripCaptain { return false }
+            //            if (cGroup?.campers ?? []).count + group.campers.count > sizeCap { return false }
             return !camper.requiresDirectHandling && camper.currentGroup == nil
-        }).map { camper in
+        })
+
+        let camper = filtered.map { camper in
             let diff = group.averagedDifference(
                 fromCamper: camper,
                 groupingFields: fields,

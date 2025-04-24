@@ -15,8 +15,8 @@ struct CampGroupDTO: Codable, Equatable, Hashable {
     let attendeeTypeId: String// "a3a712c8-07c2-46d8-9967-396ff6c412a1",
     let typeName: String// "Camper - Joining an existing Group",
     let attendeeCount: Int// 18,
-    let adminPasscode: String// "manage",
-    let joinPasscode: String// "passcode",
+    let adminPasscode: String?// "manage",
+    let joinPasscode: String?// "passcode",
     let communityId: String?// null,
     let communityPartition: String?// null,
     let communityName: String?// null

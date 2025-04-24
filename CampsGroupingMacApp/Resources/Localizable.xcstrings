@@ -59,6 +59,9 @@
     "∆: %lf" : {
 
     },
+    "∆: %lld" : {
+
+    },
     "< %@" : {
 
     },
@@ -78,7 +81,7 @@
     "Auto Group" : {
 
     },
-    "avg∆:%lld" : {
+    "Average Difference" : {
 
     },
     "Back" : {

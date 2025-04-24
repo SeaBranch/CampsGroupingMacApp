@@ -72,27 +72,28 @@ struct CamperSelectionDetailView: View {
                         }))
                     }
                 }
-
-                Button("Auto Group") {
-                    coordinator.send(event: .grouping(event: .didTapAutoGroupRemainingCampers))
-                }
-
-                Button("Confirm Auto Grouping") {
-                    coordinator.send(event: .grouping(event: .didTapAcceptAutoGrouping))
-                }
-                .disabled(coordinator.state.groupingState?.pendingAssignments.isEmpty ?? true)
-
-                Button("Commit Group Assignments") {
-                    coordinator.send(event: .grouping(event: .requestUploadGroupAssignments))
-                }
-                .disabled(!(coordinator.state.camp?.campSettings?.campers.map { $0.status }.contains(.edited) ?? false))
-
-                VSeparator(color: .primary)
-                ForEach(coordinator.state.groupingState?.pendingAssignments ?? [], id: \.camper.id) { assignment in
-                    Text("\(assignment.camper.name) -> \(assignment.group.groupNumber)")
-                }
-                VSeparator(color: .primary)
             }
+        }
+        VStack {
+            Button("Auto Group") {
+                coordinator.send(event: .grouping(event: .didTapAutoGroupRemainingCampers))
+            }
+            
+            Button("Confirm Auto Grouping") {
+                coordinator.send(event: .grouping(event: .didTapAcceptAutoGrouping))
+            }
+            .disabled(coordinator.state.groupingState?.pendingAssignments.isEmpty ?? true)
+            
+            Button("Commit Group Assignments") {
+                coordinator.send(event: .grouping(event: .requestUploadGroupAssignments))
+            }
+            .disabled(!(coordinator.state.camp?.campSettings?.campers.map { $0.status }.contains(.edited) ?? false))
+            
+            VSeparator(color: .primary)
+            ForEach(coordinator.state.groupingState?.pendingAssignments ?? [], id: \.camper.id) { assignment in
+                Text("\(assignment.camper.name) -> \(assignment.group.groupNumber)")
+            }
+            VSeparator(color: .primary)
         }
     }
 }

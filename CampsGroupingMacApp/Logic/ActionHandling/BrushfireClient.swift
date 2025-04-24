@@ -150,7 +150,7 @@ class BrushfireScopeClient {
         let nextCallWindow = rateLimit?.nextCallWindow ?? 6
         print("waiting \(nextCallWindow) untill calling \(call.domain)")
 
-        DispatchQueue.network.asyncAfter(deadline: .now() + nextCallWindow) {
+        DispatchQueue.network.asyncAfter(deadline: .now() + max(1, nextCallWindow)) {
             print("calling \(call.domain)")
             self.urlSession.passFailTask(
                 request: call.request,
@@ -166,7 +166,7 @@ class BrushfireScopeClient {
     ) {
         let nextCallWindow = rateLimit?.nextCallWindow ?? 6
         print("waiting \(nextCallWindow) untill calling \(call.domain)")
-        DispatchQueue.network.asyncAfter(deadline: .now() + nextCallWindow) {
+        DispatchQueue.network.asyncAfter(deadline: .now() + max(1, nextCallWindow)) {
             print("calling \(call.domain)")
             self.urlSession.decodableTask(
                 request: call.request,

@@ -12,6 +12,8 @@ extension APIEventReducer {
             switch result {
             case .success(let camperSettings):
                 state.applyCamperSettings(for: requestData.camp.info.eventNumber, settings: camperSettings)
+                state.groupingState?.camperCurrentlyBeingGrouped = nil
+                state.groupingState?.camperSelections = []
                 return []
             case .failure(let error):
                 state.errors = state.errors.filter { error in

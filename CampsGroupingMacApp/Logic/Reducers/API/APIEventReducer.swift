@@ -112,20 +112,42 @@ enum APIEventReducer {
         networkCall: NetworkCall,
         state: inout GrouperState
     ) -> [GrouperAction] {
-        guard let camp = state.camp else { return [] }
-        
-        let notes = camp.camperNotes(requestData.camper)
-        return [
-            state.beginMarkAssignmentAsUploaded(
-                assignment: CamperAssignment(
-                    camper: requestData.camper,
-                    group: requestData.groupID
-                ),
-                assignmentNotes: notes,
-                account: requestData.account,
-                camp: camp
+        state.activeFetches.remove(networkCall)
+        switch result {
+        case .success(let success):
+            guard let camp = state.camp else { return [] }
+
+            let notes = camp.camperNotes(requestData.camper)
+            return [
+                state.beginMarkAssignmentAsUploaded(
+                    assignment: CamperAssignment(
+                        camper: requestData.camper,
+                        group: requestData.groupID
+                    ),
+                    assignmentNotes: notes,
+                    account: requestData.account,
+                    camp: camp
+                )
+            ]
+        case .failure(let error):
+            state.errors = state.errors.filter { error in
+                if case .uploadGroupAssignment(camper: requestData.camper.id, _, _, _) = error {
+                    false
+                } else {
+                    true
+                }
+            }
+            state.errors.insert(.uploadGroupAssignment(
+                camper: requestData.camper.id,
+                group: requestData.groupID.groupNumber,
+                error: error, networkCall: networkCall
             )
-        ]
+            )
+
+            return []
+        }
+
+
     }
     
     static func handleMarkAssignmentAsUploadedResponse(

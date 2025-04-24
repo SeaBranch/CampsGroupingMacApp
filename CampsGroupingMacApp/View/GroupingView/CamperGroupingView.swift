@@ -9,7 +9,9 @@ struct CamperGroupingView: View {
         } content: {
             CamperAndGroupSearchView()
         } detail: {
-            CampersAndGroupsDetailView()
+            ScrollView {
+                CampersAndGroupsDetailView()
+            }
         }
     }
 }
